@@ -1,0 +1,37 @@
+/* Tab bar */
+"tab.home" = "ホーム";
+"tab.programs" = "プログラム";
+"tab.history" = "履歴";
+"tab.settings" = "設定";
+
+/* Dashboard */
+"dashboard.todayFlow" = "今日のフロー";
+"dashboard.reps" = "reps";
+"dashboard.sessions" = "%d セッション";
+"dashboard.bestPushUp" = "プッシュアップ最高 %d";
+"dashboard.gtgTitle" = "GTGモード";
+"dashboard.on" = "ON";
+"dashboard.off" = "OFF";
+"dashboard.gtgBlurb" = "Apple Watchが一日中、軽いプッシュアップ・プルアップを通知します。\n実証済みのGTG法で本物の進歩を。";
+"dashboard.gtgProgress" = "%d / %d 完了";
+"dashboard.quickStart" = "クイックスタート";
+"dashboard.startOnWatch" = "Watchで開始";
+"dashboard.recent" = "最近のセッション";
+
+/* Onboarding */
+"onb.welcome" = "Watchがあなたのコーチ";
+"onb.welcomeBody" = "プッシュアップとプルアップを自動カウント。GTG法で一日中軽く分散して鍛え、最大反復回数を素早く伸ばそう。";
+"onb.differentiator1" = "Watchモーション自動カウント";
+"onb.differentiator2" = "GTG: 実証済み進歩トレーニング法";
+"onb.differentiator3" = "EMOM・タバタ・AMRAP";
+"onb.permissions" = "権限の許可";
+"onb.permissionsBody" = "次の権限が必要です。すべてデバイス内で処理されます。";
+"onb.permNotifications" = "通知";
+"onb.permNotificationsDesc" = "GTG通知の送信。";
+"onb.permMotion" = "モーションとフィットネス";
+"onb.permMotionDesc" = "Watchセンサーで自動カウント。";
+"onb.permHealth" = "ヘルスケア (任意)";
+"onb.permHealthDesc" = "ワークアウトをヘルスケアに保存。";
+"onb.continueButton" = "続ける";
+"onb.startButton" = "始める";
+"onb.skip" = "スキップ";

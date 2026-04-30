@@ -1,0 +1,7 @@
+v1.0.2 — First public beta
+- Push-up/pull-up auto-count via Apple Watch
+- GTG Mode (Pro)
+- Interval trainer (EMOM/Tabata/AMRAP)
+- HealthKit — heart rate + workout history
+- Local-first data (no external servers)
+- Linear-inspired modern dark UI

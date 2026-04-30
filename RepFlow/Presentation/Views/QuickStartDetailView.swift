@@ -4,61 +4,78 @@ struct QuickStartDetailView: View {
     let exercise: ExerciseKind
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                Image(systemName: exercise.symbol)
-                    .font(.system(size: 80, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 140, height: 140)
-                    .background(Color.accentColor.gradient, in: RoundedRectangle(cornerRadius: 30))
-                    .padding(.top, 20)
-
-                Text(exercise.displayName)
-                    .font(.title.bold())
-
-                instructionCard
-
-                modesGrid
-
-                Spacer(minLength: 30)
+        ZStack {
+            RFColor.bg.ignoresSafeArea()
+            ScrollView {
+                VStack(alignment: .leading, spacing: RFSpace.xl) {
+                    heroBlock
+                    instructionBlock
+                    modesBlock
+                }
+                .padding(.horizontal, RFSpace.lg)
+                .padding(.top, RFSpace.lg)
+                .padding(.bottom, RFSpace.xxl)
             }
-            .padding()
         }
         .navigationTitle(exercise.displayName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
-    private var instructionCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("워치에서 시작하세요", systemImage: "applewatch.radiowaves.left.and.right")
-                .font(.headline)
-            Text("애플워치 RepFlow 앱에서 \(exercise.displayName)을 선택하면 모션 센서가 자동으로 카운트합니다. 햅틱으로 매 횟수를 확인하세요.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+    private var heroBlock: some View {
+        VStack(spacing: RFSpace.md) {
+            Image(systemName: exercise.symbol)
+                .font(.system(size: 56, weight: .semibold))
+                .foregroundStyle(RFColor.accent)
+                .frame(width: 96, height: 96)
+                .background(RFColor.accentSoft, in: RoundedRectangle(cornerRadius: RFRadius.lg))
+
+            Text(exercise.displayName)
+                .font(.rfDisplayMd)
+                .foregroundStyle(RFColor.fg)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var instructionBlock: some View {
+        VStack(alignment: .leading, spacing: RFSpace.sm) {
+            HStack(spacing: RFSpace.sm) {
+                Image(systemName: "applewatch.radiowaves.left.and.right")
+                    .foregroundStyle(RFColor.accent)
+                Text("워치에서 시작하세요")
+                    .font(.rfTitleMd)
+                    .foregroundStyle(RFColor.fg)
+            }
+            Text("Apple Watch RepFlow 앱에서 \(exercise.displayName)을 선택하면 모션 센서가 자동으로 카운트합니다. 햅틱으로 매 횟수를 확인하세요.")
+                .font(.rfCaption)
+                .foregroundStyle(RFColor.fgMuted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .rfCard()
     }
 
-    private var modesGrid: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("운동 모드")
-                .font(.headline)
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+    private var modesBlock: some View {
+        VStack(alignment: .leading, spacing: RFSpace.md) {
+            Text("MODES").rfSectionHeader()
+
+            VStack(spacing: 1) {
                 ForEach([WorkoutMode.freeCount, .emom, .tabata, .amrap], id: \.self) { mode in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(mode.displayName)
-                            .font(.subheadline.weight(.semibold))
-                        Text(modeBlurb(mode))
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(mode.displayName)
+                                .font(.rfTitleMd)
+                                .foregroundStyle(RFColor.fg)
+                            Text(modeBlurb(mode))
+                                .font(.rfCaptionSm)
+                                .foregroundStyle(RFColor.fgSubtle)
+                        }
+                        Spacer()
                     }
-                    .frame(maxWidth: .infinity, minHeight: 70, alignment: .leading)
-                    .padding(12)
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    .padding(RFSpace.md)
                 }
             }
+            .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
+            .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))
         }
     }
 

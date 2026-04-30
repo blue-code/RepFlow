@@ -1,0 +1,7 @@
+v1.0.2 — 首次公开测试
+- 俯卧撑/引体向上自动计数 (Apple Watch)
+- GTG 模式 (Pro)
+- 间歇训练 (EMOM/塔巴塔/AMRAP)
+- HealthKit — 心率 + 训练记录
+- 本地优先 (不使用外部服务器)
+- 受 Linear 启发的现代深色 UI

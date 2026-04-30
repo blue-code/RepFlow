@@ -25,8 +25,10 @@
 		5B86F8358AAD1A9030CEF490 /* WatchMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0DFD64E1FC576BB9FEA726 /* WatchMessage.swift */; };
 		5E8C05C330CCE6F39D4E2E31 /* WatchWorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB76B6F8C4F9D6CDBC6EA47 /* WatchWorkoutManager.swift */; };
 		65FB7518F4CA1FFFD22C9B0E /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC585A7ED80581293B27885 /* PersistenceService.swift */; };
+		65FC57EFE1DE28197D2F9B2A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D748C406D41557746A8389 /* Theme.swift */; };
 		6B93AF9D1BFC4A16FF01A847 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E725DF992709225C5C531430 /* HealthKitService.swift */; };
 		70CAF9FC53F426AF85619616 /* WorkoutLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FADD93A21E6A484079B7FAA /* WorkoutLiveView.swift */; };
+		7665256115726B5F0DF52DF8 /* RepFlow.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A4ACC1895AA652D8A2971718 /* RepFlow.storekit */; };
 		7A03D4F46AF013BBDF631DAA /* GTGQuickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385A008854DFAEFBA06E829 /* GTGQuickView.swift */; };
 		7AA48B7D580EAE42B3B4ABC4 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01203AF0192EE76BC7DC46E0 /* RootView.swift */; };
 		82BBBBB9B9B0FF31981013BC /* RepFlowWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 92CC32FD3D987E056AD8DBA8 /* RepFlowWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -36,6 +38,7 @@
 		91984317CC8CBCBAAA6D97A8 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 690CB1A02778321608716002 /* WatchConnectivity.framework */; };
 		91C8926F26458C3FE976EF1B /* IntervalTimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6696DDA59B4787765FFDA5AD /* IntervalTimerProtocol.swift */; };
 		98CC2D24A0D3DAD16B236214 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992355CF7A5BFC5671E55EF7 /* SettingsView.swift */; };
+		98F6F0E97EBFB9BF3874D50D /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24040A427736C733BBC30D5A /* PaywallView.swift */; };
 		9AEEA63B64FFA84EDE551D31 /* RootWatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F299E102985D9BBD0F64F524 /* RootWatchView.swift */; };
 		9DF3B78958F7CDCACFEEA38F /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BE6849455A7C2FAE88A9F0 /* DashboardView.swift */; };
 		AB686FFDAD6D9FC2C0544D50 /* QuickStartDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0810522E8EF59292ADD26E5E /* QuickStartDetailView.swift */; };
@@ -52,6 +55,7 @@
 		CAF8277AB631A119123FE9CA /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAA10FE50CD37CFA0E69581 /* HistoryView.swift */; };
 		D11E3754B3A8A0C7B0C97247 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6479A60DCBBA9DC3C586F2F /* HealthKit.framework */; };
 		E698AA58A19DB7D6CBD929F0 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE25A68EE8E3FDAE885BCC46 /* UserProfile.swift */; };
+		EC202E8485976CA00A95DAED /* ProManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8A00A16633201D35A25442 /* ProManager.swift */; };
 		F084569B6A5EBC6AABDAE1B7 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A67BA7290E064A7F74CC29 /* CoreMotion.framework */; };
 		F0E9E9E885E73818B893AFFE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE1EE83F7C5C93B105486749 /* Localizable.strings */; };
 		F10A7D86C1A13BB9839DE8D3 /* RepFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96CF6C4EA35656C528791CF /* RepFlowApp.swift */; };
@@ -105,7 +109,9 @@
 		0FADD93A21E6A484079B7FAA /* WorkoutLiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutLiveView.swift; sourceTree = "<group>"; };
 		13BE6849455A7C2FAE88A9F0 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		15ED3923B03EA1E159C2E9DD /* WorkoutSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSession.swift; sourceTree = "<group>"; };
+		19BC43F347FB4EDA976DFB11 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		21F5123C8D2E4CD7975964D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		24040A427736C733BBC30D5A /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		2BC9D7A7B51FD143B4970BD7 /* HealthKitServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitServiceProtocol.swift; sourceTree = "<group>"; };
 		359800CFBE46D8395346A62D /* RepDetectorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepDetectorService.swift; sourceTree = "<group>"; };
 		369C4CB92893112650918E1C /* ProgramsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramsView.swift; sourceTree = "<group>"; };
@@ -123,6 +129,7 @@
 		78C639723F4F8C29ACF72960 /* IntervalTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalTimerService.swift; sourceTree = "<group>"; };
 		7965E1C9E4E2DB5586C4490B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7D439CFAC896A3B7EF7E6DF8 /* RepFlowTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RepFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F8A00A16633201D35A25442 /* ProManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProManager.swift; sourceTree = "<group>"; };
 		809053D0EE77786BF00FEEE2 /* GTGSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGSession.swift; sourceTree = "<group>"; };
 		8CAA10FE50CD37CFA0E69581 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		92CC32FD3D987E056AD8DBA8 /* RepFlowWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepFlowWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -131,6 +138,7 @@
 		969DB958C679E6A2C45F9000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		992355CF7A5BFC5671E55EF7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		9B0DFD64E1FC576BB9FEA726 /* WatchMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMessage.swift; sourceTree = "<group>"; };
+		A4ACC1895AA652D8A2971718 /* RepFlow.storekit */ = {isa = PBXFileReference; path = RepFlow.storekit; sourceTree = "<group>"; };
 		A79AF410616392CFEA8AC9E8 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		AFC585A7ED80581293B27885 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
 		B2B1E0A649F27EBC3E41170D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -138,10 +146,12 @@
 		B55541F199AE3A15CDE002BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B96CF6C4EA35656C528791CF /* RepFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepFlowApp.swift; sourceTree = "<group>"; };
 		BDC8593254F03A1D38FF1B29 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C539313962116E321EF2C1DF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C9EBA10B91CA048250D2F3D0 /* RepDetectorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepDetectorProtocol.swift; sourceTree = "<group>"; };
 		CE5BE8768607B6196C4B8552 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFA7EF677C030F84EEA1CD4D /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		DE25A68EE8E3FDAE885BCC46 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		E2D748C406D41557746A8389 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		E3F778009E87986EF4292CF2 /* GTGSchedulerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGSchedulerService.swift; sourceTree = "<group>"; };
 		E584B170ECA2F5ADD3E1578E /* GTGSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGSettingsView.swift; sourceTree = "<group>"; };
 		E725DF992709225C5C531430 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
@@ -181,6 +191,7 @@
 				E725DF992709225C5C531430 /* HealthKitService.swift */,
 				AFC585A7ED80581293B27885 /* PersistenceService.swift */,
 				3CD74720871F9D647194E15E /* PhoneSessionService.swift */,
+				7F8A00A16633201D35A25442 /* ProManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -204,6 +215,7 @@
 		3B14BE3DA5A697E89DAED707 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E2D748C406D41557746A8389 /* Theme.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -355,6 +367,7 @@
 				CE5BE8768607B6196C4B8552 /* Assets.xcassets */,
 				7965E1C9E4E2DB5586C4490B /* Info.plist */,
 				4CE0EC5EBEE35C540CC1E9DA /* RepFlow.entitlements */,
+				A4ACC1895AA652D8A2971718 /* RepFlow.storekit */,
 				AE1EE83F7C5C93B105486749 /* Localizable.strings */,
 			);
 			path = Resources;
@@ -376,6 +389,7 @@
 				E584B170ECA2F5ADD3E1578E /* GTGSettingsView.swift */,
 				8CAA10FE50CD37CFA0E69581 /* HistoryView.swift */,
 				B2B1E0A649F27EBC3E41170D /* OnboardingView.swift */,
+				24040A427736C733BBC30D5A /* PaywallView.swift */,
 				369C4CB92893112650918E1C /* ProgramsView.swift */,
 				0810522E8EF59292ADD26E5E /* QuickStartDetailView.swift */,
 				01203AF0192EE76BC7DC46E0 /* RootView.swift */,
@@ -509,7 +523,9 @@
 			knownRegions = (
 				Base,
 				en,
+				ja,
 				ko,
+				"zh-Hans",
 			);
 			mainGroup = BFE168A34CA80282F98FA50B;
 			minimizedProjectReferenceProxies = 1;
@@ -541,6 +557,7 @@
 			files = (
 				254934D73C04FA4056C92827 /* Assets.xcassets in Resources */,
 				F0E9E9E885E73818B893AFFE /* Localizable.strings in Resources */,
+				7665256115726B5F0DF52DF8 /* RepFlow.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,8 +580,10 @@
 				91C8926F26458C3FE976EF1B /* IntervalTimerProtocol.swift in Sources */,
 				495138EABF1FACB729C2BA4F /* IntervalTimerService.swift in Sources */,
 				ACE1E996C4C27DCE8784A518 /* OnboardingView.swift in Sources */,
+				98F6F0E97EBFB9BF3874D50D /* PaywallView.swift in Sources */,
 				65FB7518F4CA1FFFD22C9B0E /* PersistenceService.swift in Sources */,
 				FDF90EB7680EE9066022907B /* PhoneSessionService.swift in Sources */,
+				EC202E8485976CA00A95DAED /* ProManager.swift in Sources */,
 				4AB862E774BB500AE2E2D992 /* ProgramsView.swift in Sources */,
 				AB686FFDAD6D9FC2C0544D50 /* QuickStartDetailView.swift in Sources */,
 				14DF783485688A08544266DD /* RepDetectorProtocol.swift in Sources */,
@@ -572,6 +591,7 @@
 				F10A7D86C1A13BB9839DE8D3 /* RepFlowApp.swift in Sources */,
 				7AA48B7D580EAE42B3B4ABC4 /* RootView.swift in Sources */,
 				98CC2D24A0D3DAD16B236214 /* SettingsView.swift in Sources */,
+				65FC57EFE1DE28197D2F9B2A /* Theme.swift in Sources */,
 				E698AA58A19DB7D6CBD929F0 /* UserProfile.swift in Sources */,
 				5B86F8358AAD1A9030CEF490 /* WatchMessage.swift in Sources */,
 				FD4DC07BFBCCCF253927ACC6 /* WorkoutSession.swift in Sources */,
@@ -639,7 +659,9 @@
 			isa = PBXVariantGroup;
 			children = (
 				BDC8593254F03A1D38FF1B29 /* en */,
+				C539313962116E321EF2C1DF /* ja */,
 				969DB958C679E6A2C45F9000 /* ko */,
+				19BC43F347FB4EDA976DFB11 /* zh-Hans */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -690,7 +712,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				INFOPLIST_FILE = RepFlow/Resources/Info.plist;
-				KNOWN_REGIONS = "en ko";
+				KNOWN_REGIONS = "en ko ja zh-Hans";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -808,7 +830,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -822,7 +844,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -867,7 +889,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -887,7 +909,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -907,7 +929,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				INFOPLIST_FILE = RepFlow/Resources/Info.plist;
-				KNOWN_REGIONS = "en ko";
+				KNOWN_REGIONS = "en ko ja zh-Hans";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

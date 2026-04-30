@@ -9,12 +9,18 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                colors: [Color(red: 1.0, green: 0.51, blue: 0.16),
-                         Color(red: 0.71, green: 0.10, blue: 0.24)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ).ignoresSafeArea()
+            RFColor.bg.ignoresSafeArea()
+
+            // Subtle accent glow at top
+            VStack {
+                Circle()
+                    .fill(RFColor.accent.opacity(0.18))
+                    .frame(width: 600, height: 600)
+                    .blur(radius: 120)
+                    .offset(y: -300)
+                Spacer()
+            }
+            .ignoresSafeArea()
 
             TabView(selection: $page) {
                 introPage.tag(0)
@@ -27,149 +33,137 @@ struct OnboardingView: View {
         .preferredColorScheme(.dark)
     }
 
-    // MARK: - Page 1: Welcome
+    // MARK: - Page 1
 
     private var introPage: some View {
-        VStack(spacing: 24) {
+        VStack(alignment: .leading, spacing: RFSpace.lg) {
             Spacer()
-            Image(systemName: "applewatch.radiowaves.left.and.right")
-                .font(.system(size: 80, weight: .bold))
-                .foregroundStyle(.white)
+            Text("REPFLOW")
+                .rfSectionHeader()
 
-            Text(LocalizedStringResource("onb.welcome"))
-                .font(.largeTitle.bold())
-                .foregroundStyle(.white)
-                .multilineTextAlignment(.center)
+            Text("워치가\n너의 코치다.")
+                .font(.system(size: 44, weight: .heavy, design: .default))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundStyle(RFColor.fg)
+                .multilineTextAlignment(.leading)
 
-            Text(LocalizedStringResource("onb.welcomeBody"))
-                .font(.body)
-                .foregroundStyle(.white.opacity(0.85))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 24)
+            Text("푸시업·풀업을 자동으로 카운트하고, 하루 종일 가볍게 분산해서 운동하는 GTG 훈련법으로 빠르게 늘어보자.")
+                .font(.rfBody)
+                .foregroundStyle(RFColor.fgMuted)
+                .padding(.top, RFSpace.sm)
 
             Spacer()
-            HStack {
-                Spacer()
-                Button {
-                    withAnimation { page = 1 }
-                } label: {
-                    HStack {
-                        Text(LocalizedStringResource("onb.continueButton"))
-                        Image(systemName: "arrow.right")
-                    }
-                    .font(.headline)
-                    .foregroundStyle(Color(red: 0.71, green: 0.10, blue: 0.24))
-                    .padding(.horizontal, 28).padding(.vertical, 14)
-                    .background(.white, in: Capsule())
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { page = 1 }
+            } label: {
+                HStack(spacing: 6) {
+                    Text("다음")
+                    Image(systemName: "arrow.right")
                 }
             }
-            .padding(.horizontal, 32)
-            .padding(.bottom, 56)
+            .buttonStyle(RFPrimaryButton())
+            .padding(.bottom, RFSpace.xxxl)
         }
+        .padding(.horizontal, RFSpace.xl)
     }
 
-    // MARK: - Page 2: Differentiators
+    // MARK: - Page 2
 
     private var differentiatorPage: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: RFSpace.lg) {
             Spacer()
-            Text("RepFlow")
-                .font(.largeTitle.bold())
-                .foregroundStyle(.white)
-                .padding(.horizontal, 32)
+            Text("DIFFERENTIATORS")
+                .rfSectionHeader()
 
-            VStack(alignment: .leading, spacing: 18) {
-                FeatureRow(symbol: "applewatch.side.right", titleKey: "onb.differentiator1")
-                FeatureRow(symbol: "bolt.heart.fill", titleKey: "onb.differentiator2")
-                FeatureRow(symbol: "timer", titleKey: "onb.differentiator3")
+            Text("다른 앱에 없는 것")
+                .font(.system(size: 36, weight: .heavy))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundStyle(RFColor.fg)
+
+            VStack(spacing: 1) {
+                FeatureRow(symbol: "applewatch.side.right", title: "워치 모션 자동 카운트", desc: "가속도 + 자이로 디텍션")
+                FeatureRow(symbol: "bolt.heart.fill", title: "GTG: 검증된 진보 훈련법", desc: "하루 종일 분산 알림")
+                FeatureRow(symbol: "timer", title: "EMOM · 타바타 · AMRAP", desc: "햅틱 인터벌 트레이너")
             }
-            .padding(.horizontal, 32)
+            .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
+            .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))
+            .padding(.top, RFSpace.md)
 
             Spacer()
-            HStack {
-                Spacer()
-                Button {
-                    withAnimation { page = 2 }
-                } label: {
-                    HStack {
-                        Text(LocalizedStringResource("onb.continueButton"))
-                        Image(systemName: "arrow.right")
-                    }
-                    .font(.headline)
-                    .foregroundStyle(Color(red: 0.71, green: 0.10, blue: 0.24))
-                    .padding(.horizontal, 28).padding(.vertical, 14)
-                    .background(.white, in: Capsule())
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { page = 2 }
+            } label: {
+                HStack(spacing: 6) {
+                    Text("다음")
+                    Image(systemName: "arrow.right")
                 }
             }
-            .padding(.horizontal, 32)
-            .padding(.bottom, 56)
+            .buttonStyle(RFPrimaryButton())
+            .padding(.bottom, RFSpace.xxxl)
         }
+        .padding(.horizontal, RFSpace.xl)
     }
 
-    // MARK: - Page 3: Permissions
+    // MARK: - Page 3 (permissions)
 
     @State private var motionRequested = false
     @State private var notifGranted = false
 
     private var permissionsPage: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Spacer().frame(height: 40)
+        VStack(alignment: .leading, spacing: RFSpace.lg) {
+            Spacer().frame(height: RFSpace.xl)
+            Text("PERMISSIONS").rfSectionHeader()
 
-            Text(LocalizedStringResource("onb.permissions"))
-                .font(.largeTitle.bold())
-                .foregroundStyle(.white)
-                .padding(.horizontal, 32)
+            Text("권한 허용")
+                .font(.system(size: 36, weight: .heavy))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .foregroundStyle(RFColor.fg)
 
-            Text(LocalizedStringResource("onb.permissionsBody"))
-                .font(.callout)
-                .foregroundStyle(.white.opacity(0.9))
-                .padding(.horizontal, 32)
+            Text("RepFlow는 외부 서버로 어떠한 데이터도 보내지 않습니다.")
+                .font(.rfCaption)
+                .foregroundStyle(RFColor.fgMuted)
 
-            Spacer().frame(height: 12)
-
-            VStack(spacing: 10) {
+            VStack(spacing: 1) {
                 PermissionTile(
                     symbol: "bell.fill",
-                    titleKey: "onb.permNotifications",
-                    descKey: "onb.permNotificationsDesc",
+                    title: "알림",
+                    desc: "GTG 알림 발송",
                     granted: notifGranted
                 ) {
                     Task { await requestNotifications() }
                 }
                 PermissionTile(
                     symbol: "figure.walk.motion",
-                    titleKey: "onb.permMotion",
-                    descKey: "onb.permMotionDesc",
+                    title: "모션 & 피트니스",
+                    desc: "워치 자동 카운트",
                     granted: motionRequested
                 ) {
                     requestMotion()
                 }
             }
-            .padding(.horizontal, 32)
+            .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
+            .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))
 
             Spacer()
-            HStack {
-                Button {
-                    done = true
-                } label: {
-                    Text(LocalizedStringResource("onb.skip"))
-                        .font(.subheadline)
-                        .foregroundStyle(.white.opacity(0.8))
-                }
-                Spacer()
-                Button {
-                    done = true
-                } label: {
-                    Text(LocalizedStringResource("onb.startButton"))
-                        .font(.headline)
-                        .foregroundStyle(Color(red: 0.71, green: 0.10, blue: 0.24))
-                        .padding(.horizontal, 28).padding(.vertical, 14)
-                        .background(.white, in: Capsule())
-                }
+
+            Button {
+                done = true
+            } label: {
+                Text("시작하기")
             }
-            .padding(.horizontal, 32)
-            .padding(.bottom, 56)
+            .buttonStyle(RFPrimaryButton())
+
+            Button {
+                done = true
+            } label: {
+                Text("건너뛰기")
+                    .font(.rfCaption)
+                    .foregroundStyle(RFColor.fgMuted)
+            }
+            .padding(.bottom, RFSpace.xxl)
+            .frame(maxWidth: .infinity)
         }
+        .padding(.horizontal, RFSpace.xl)
     }
 
     private func requestNotifications() async {
@@ -183,7 +177,6 @@ struct OnboardingView: View {
     }
 
     private func requestMotion() {
-        // CoreMotion은 iOS에서 별도 권한 트리거 필요
         let manager = CMMotionActivityManager()
         let queue = OperationQueue.main
         manager.queryActivityStarting(from: .now.addingTimeInterval(-60), to: .now, to: queue) { _, _ in
@@ -194,53 +187,49 @@ struct OnboardingView: View {
 
 private struct FeatureRow: View {
     let symbol: String
-    let titleKey: String.LocalizationValue
+    let title: String
+    let desc: String
     var body: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: RFSpace.md) {
             Image(systemName: symbol)
-                .font(.system(size: 24, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 44, height: 44)
-                .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 10))
-            Text(String(localized: titleKey))
-                .font(.headline)
-                .foregroundStyle(.white)
+                .font(.rfTitleMd)
+                .foregroundStyle(RFColor.accent)
+                .frame(width: 32, height: 32)
+                .background(RFColor.accentSoft, in: RoundedRectangle(cornerRadius: RFRadius.sm))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.rfTitleMd).foregroundStyle(RFColor.fg)
+                Text(desc).font(.rfCaptionSm).foregroundStyle(RFColor.fgSubtle)
+            }
+            Spacer()
         }
+        .padding(RFSpace.md)
     }
 }
 
 private struct PermissionTile: View {
     let symbol: String
-    let titleKey: String.LocalizationValue
-    let descKey: String.LocalizationValue
+    let title: String
+    let desc: String
     let granted: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 12) {
+            HStack(spacing: RFSpace.md) {
                 Image(systemName: symbol)
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 40, height: 40)
-                    .background(.white.opacity(0.18), in: RoundedRectangle(cornerRadius: 10))
-
+                    .font(.rfTitleMd)
+                    .foregroundStyle(RFColor.accent)
+                    .frame(width: 32, height: 32)
+                    .background(RFColor.accentSoft, in: RoundedRectangle(cornerRadius: RFRadius.sm))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(String(localized: titleKey))
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
-                    Text(String(localized: descKey))
-                        .font(.caption2)
-                        .foregroundStyle(.white.opacity(0.8))
+                    Text(title).font(.rfTitleMd).foregroundStyle(RFColor.fg)
+                    Text(desc).font(.rfCaptionSm).foregroundStyle(RFColor.fgSubtle)
                 }
-
                 Spacer()
-
                 Image(systemName: granted ? "checkmark.circle.fill" : "chevron.right")
-                    .foregroundStyle(.white)
+                    .foregroundStyle(granted ? RFColor.success : RFColor.fgSubtle)
             }
-            .padding(12)
-            .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
+            .padding(RFSpace.md)
         }
         .buttonStyle(.plain)
     }

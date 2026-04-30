@@ -1,0 +1,37 @@
+/* Tab bar */
+"tab.home" = "首页";
+"tab.programs" = "训练";
+"tab.history" = "记录";
+"tab.settings" = "设置";
+
+/* Dashboard */
+"dashboard.todayFlow" = "今日动量";
+"dashboard.reps" = "次";
+"dashboard.sessions" = "%d 次训练";
+"dashboard.bestPushUp" = "俯卧撑最高 %d";
+"dashboard.gtgTitle" = "GTG 模式";
+"dashboard.on" = "开启";
+"dashboard.off" = "关闭";
+"dashboard.gtgBlurb" = "Apple Watch 全天提醒你做轻量俯卧撑/引体向上。\n经过验证的 GTG 训练法,真正的进步从这里开始。";
+"dashboard.gtgProgress" = "%d / %d 已完成";
+"dashboard.quickStart" = "快速开始";
+"dashboard.startOnWatch" = "在 Watch 上开始";
+"dashboard.recent" = "最近训练";
+
+/* Onboarding */
+"onb.welcome" = "Watch 就是你的教练";
+"onb.welcomeBody" = "自动计数俯卧撑和引体向上。用 GTG 训练法全天分散小量训练,快速提升最大次数。";
+"onb.differentiator1" = "Watch 运动自动计数";
+"onb.differentiator2" = "GTG: 经过验证的进阶方法";
+"onb.differentiator3" = "EMOM · 塔巴塔 · AMRAP";
+"onb.permissions" = "权限授予";
+"onb.permissionsBody" = "RepFlow 需要以下权限。所有数据都仅保存在你的设备上。";
+"onb.permNotifications" = "通知";
+"onb.permNotificationsDesc" = "发送 GTG 提醒。";
+"onb.permMotion" = "运动与健身";
+"onb.permMotionDesc" = "通过 Watch 传感器自动计数。";
+"onb.permHealth" = "健康 (可选)";
+"onb.permHealthDesc" = "将训练保存到健康 App。";
+"onb.continueButton" = "继续";
+"onb.startButton" = "开始使用";
+"onb.skip" = "跳过";

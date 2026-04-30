@@ -8,7 +8,7 @@ options:
 
 settings:
   base:
-    MARKETING_VERSION: "1.0.1"
+    MARKETING_VERSION: "1.0.2"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
     DEVELOPMENT_TEAM: KUDC7C6Z9H
@@ -58,13 +58,16 @@ targets:
       - path: RepFlow/Resources/Assets.xcassets
       - path: RepFlow/Resources/en.lproj
       - path: RepFlow/Resources/ko.lproj
+      - path: RepFlow/Resources/ja.lproj
+      - path: RepFlow/Resources/zh-Hans.lproj
+      - path: RepFlow/Resources/RepFlow.storekit
     settings:
       base:
         INFOPLIST_FILE: RepFlow/Resources/Info.plist
         PRODUCT_BUNDLE_IDENTIFIER: com.digimaru.repflow
         TARGETED_DEVICE_FAMILY: "1"
         SUPPORTED_INTERFACE_ORIENTATIONS: UIInterfaceOrientationPortrait
-        KNOWN_REGIONS: "en ko"
+        KNOWN_REGIONS: "en ko ja zh-Hans"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
     entitlements:
       path: RepFlow/Resources/RepFlow.entitlements

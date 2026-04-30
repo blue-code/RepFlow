@@ -1,0 +1,31 @@
+RepFlow is laser-focused on two exercises: push-ups and pull-ups. Auto-count via Apple Watch motion sensors, and grow fast with the proven GTG (Grease the Groove) method.
+
+▷ GTG MODE ⭐ The differentiator no other app delivers right
+Popularized by Pavel Tsatsouline, GTG is the proven method for progressing on simple bodyweight exercises. Spread light reps (RPE 5) throughout the day; your nervous system adapts and your max reps grow rapidly. RepFlow automates this via watch notifications.
+
+▷ Watch Motion Auto-Count
+Real-time push-up/pull-up cycle detection from the watch's accelerometer + gyroscope. Runs in the background even when the screen is off, with haptic feedback every rep.
+
+▷ Intelligent Interval Trainer
+EMOM (every minute), Tabata (20s/10s × 8), and AMRAP (max reps in time). Watch haptics signal round transitions.
+
+▷ Local-First
+All workout data lives on your device. No external servers. No ads. No analytics SDKs.
+
+▷ HealthKit Integration
+Completed workouts auto-save to the Health app. Live heart rate on the watch during workouts.
+
+▷ Apple Watch is essential
+- Motion auto-count
+- Haptic interval
+- HKWorkoutSession background
+- Heart rate + active calories
+
+▼ Pro Subscription
+GTG Mode, intelligent intervals, and advanced analytics unlock with Pro:
+- Monthly: $2.99 (1-week free trial)
+- Yearly: $19.99 (~45% off monthly)
+- Lifetime: $39.99 (one-time)
+
+Terms: https://blue-code.github.io/legal/repflow/terms.html
+Privacy: https://blue-code.github.io/legal/repflow/privacy.html

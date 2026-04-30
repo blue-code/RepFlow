@@ -1,0 +1,7 @@
+v1.0.2 — 첫 공개 베타
+- 푸시업/풀업 자동 카운트 (Apple Watch)
+- GTG 모드 (Pro)
+- 인터벌 트레이너 (EMOM/Tabata/AMRAP)
+- HealthKit 통합 — 심박수 + 운동 기록
+- 로컬-퍼스트 데이터 처리 (외부 서버 미사용)
+- Linear-inspired 모던 다크 UI

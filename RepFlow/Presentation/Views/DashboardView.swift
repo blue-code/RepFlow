@@ -18,56 +18,47 @@ struct DashboardView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    heroCard
-                    gtgCard
-                    quickStartGrid
-                    recentSection
+                VStack(alignment: .leading, spacing: RFSpace.xl) {
+                    heroBlock
+                    gtgBlock
+                    quickStartBlock
+                    recentBlock
                 }
-                .padding()
+                .padding(.horizontal, RFSpace.lg)
+                .padding(.bottom, RFSpace.xxl)
             }
-            .background(
-                LinearGradient(
-                    colors: [Color(.systemBackground), Color.accentColor.opacity(0.06)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                ).ignoresSafeArea()
-            )
+            .background(RFColor.bg.ignoresSafeArea())
             .navigationTitle("RepFlow")
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 
-    // MARK: - Hero
+    // MARK: - Hero (영웅 카운터)
 
-    private var heroCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("오늘의 흐름")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            HStack(alignment: .firstTextBaseline) {
+    private var heroBlock: some View {
+        VStack(alignment: .leading, spacing: RFSpace.sm) {
+            Text("TODAY'S FLOW")
+                .rfSectionHeader()
+
+            HStack(alignment: .firstTextBaseline, spacing: RFSpace.sm) {
                 Text("\(todayTotalReps)")
-                    .font(.system(size: 56, weight: .heavy, design: .rounded))
+                    .font(.system(size: 64, weight: .heavy, design: .default))
+                    .foregroundStyle(RFColor.fg)
                     .contentTransition(.numericText())
                 Text("reps")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .font(.rfTitleLg)
+                    .foregroundStyle(RFColor.fgMuted)
             }
-            HStack(spacing: 12) {
-                Label("\(sessions.count) 세션", systemImage: "flame.fill")
+
+            HStack(spacing: RFSpace.lg) {
+                StatChip(value: "\(sessions.count)", label: "세션")
                 if let profile {
-                    Label("최고 푸시업 \(profile.pushUpBest)", systemImage: "trophy.fill")
+                    StatChip(value: "\(profile.pushUpBest)", label: "푸시업 최고")
+                    StatChip(value: "\(profile.pullUpBest)", label: "풀업 최고")
                 }
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(20)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.accentColor.opacity(0.2), lineWidth: 1)
-        )
+        .padding(.top, RFSpace.lg)
     }
 
     private var todayTotalReps: Int {
@@ -80,59 +71,58 @@ struct DashboardView: View {
 
     // MARK: - GTG
 
-    private var gtgCard: some View {
+    @ViewBuilder
+    private var gtgBlock: some View {
         NavigationLink {
             GTGSettingsView()
         } label: {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack {
+            VStack(alignment: .leading, spacing: RFSpace.md) {
+                HStack(spacing: RFSpace.sm) {
                     Image(systemName: "bolt.heart.fill")
-                        .foregroundStyle(.orange)
-                    Text("GTG 모드")
-                        .font(.headline)
+                        .font(.rfTitleMd)
+                        .foregroundStyle(RFColor.accent)
+                    Text("GTG MODE")
+                        .rfSectionHeader()
                     Spacer()
-                    if profile?.gtgEnabled == true {
-                        Text("ON")
-                            .font(.caption.bold())
-                            .padding(.horizontal, 8).padding(.vertical, 3)
-                            .background(.green.opacity(0.2), in: Capsule())
-                            .foregroundStyle(.green)
-                    } else {
-                        Text("OFF")
-                            .font(.caption.bold())
-                            .padding(.horizontal, 8).padding(.vertical, 3)
-                            .background(.gray.opacity(0.2), in: Capsule())
-                            .foregroundStyle(.secondary)
-                    }
+                    Text(profile?.gtgEnabled == true ? "ON" : "OFF")
+                        .rfChip(profile?.gtgEnabled == true ? RFColor.success : RFColor.fgMuted)
                 }
 
-                Text("워치가 하루 종일 가벼운 푸시업/풀업을 알려줍니다.\n검증된 GTG 훈련법으로 진짜 진보가 시작됩니다.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                Text("워치가 하루 종일 가벼운 푸시업/풀업을 알려줍니다. 검증된 GTG 훈련법으로 진짜 진보가 시작됩니다.")
+                    .font(.rfCaption)
+                    .foregroundStyle(RFColor.fgMuted)
                     .multilineTextAlignment(.leading)
 
                 if let gtg = todayGTG {
-                    ProgressView(value: gtg.progressRatio)
-                        .tint(.orange)
-                    Text("\(gtg.completedReps) / \(gtg.targetReps)개 완료")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: RFSpace.xs) {
+                        ProgressView(value: gtg.progressRatio)
+                            .tint(RFColor.accent)
+                        HStack {
+                            Text("\(gtg.completedReps) / \(gtg.targetReps)")
+                                .font(.rfMonoBody)
+                                .foregroundStyle(RFColor.fg)
+                            Spacer()
+                            Text("오늘")
+                                .font(.rfCaptionSm)
+                                .foregroundStyle(RFColor.fgSubtle)
+                        }
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(16)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .rfCard()
         }
         .buttonStyle(.plain)
     }
 
     // MARK: - Quick start
 
-    private var quickStartGrid: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("바로 시작")
-                .font(.headline)
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+    private var quickStartBlock: some View {
+        VStack(alignment: .leading, spacing: RFSpace.md) {
+            Text("QUICK START")
+                .rfSectionHeader()
+
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: RFSpace.md), GridItem(.flexible())], spacing: RFSpace.md) {
                 ForEach(ExerciseKind.allCases) { kind in
                     NavigationLink {
                         QuickStartDetailView(exercise: kind)
@@ -148,37 +138,73 @@ struct DashboardView: View {
     // MARK: - Recent
 
     @ViewBuilder
-    private var recentSection: some View {
+    private var recentBlock: some View {
         if !sessions.isEmpty {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("최근 세션")
-                    .font(.headline)
-                ForEach(sessions.prefix(3)) { s in
-                    HistoryRow(session: s)
+            VStack(alignment: .leading, spacing: RFSpace.md) {
+                Text("RECENT")
+                    .rfSectionHeader()
+
+                VStack(spacing: 1) {
+                    ForEach(sessions.prefix(4)) { s in
+                        HistoryRow(session: s)
+                            .padding(.vertical, RFSpace.sm)
+                            .padding(.horizontal, RFSpace.md)
+                    }
                 }
+                .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
+                .overlay(
+                    RoundedRectangle(cornerRadius: RFRadius.md)
+                        .stroke(RFColor.border, lineWidth: 1)
+                )
             }
+        }
+    }
+}
+
+private struct StatChip: View {
+    let value: String
+    let label: String
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(value)
+                .font(.rfMonoBody)
+                .foregroundStyle(RFColor.fg)
+            Text(label)
+                .font(.rfCaptionSm)
+                .foregroundStyle(RFColor.fgSubtle)
         }
     }
 }
 
 private struct QuickStartTile: View {
     let kind: ExerciseKind
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        HStack(spacing: RFSpace.md) {
             Image(systemName: kind.symbol)
-                .font(.system(size: 28, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: 44, height: 44)
-                .background(Color.accentColor.gradient, in: RoundedRectangle(cornerRadius: 10))
-            Text(kind.displayName)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.primary)
-            Text("워치에서 시작")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(RFColor.accent)
+                .frame(width: 36, height: 36)
+                .background(RFColor.accentSoft, in: RoundedRectangle(cornerRadius: RFRadius.sm))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(kind.displayName)
+                    .font(.rfTitleMd)
+                    .foregroundStyle(RFColor.fg)
+                Text("워치에서 시작")
+                    .font(.rfCaptionSm)
+                    .foregroundStyle(RFColor.fgSubtle)
+            }
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(RFColor.fgSubtle)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 14))
+        .padding(RFSpace.md)
+        .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
+        .overlay(
+            RoundedRectangle(cornerRadius: RFRadius.md)
+                .stroke(RFColor.border, lineWidth: 1)
+        )
     }
 }

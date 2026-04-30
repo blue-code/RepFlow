@@ -1,0 +1,100 @@
+{
+  "identifier": "REPFLOW_STOREKIT",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "39000",
+      "familyShareable": true,
+      "internalID": "001",
+      "localizations": [
+        {
+          "description": "RepFlow Pro 평생 잠금 해제. GTG 모드 + 인텔리전트 인터벌 + 전체 분석.",
+          "displayName": "RepFlow Pro Lifetime",
+          "locale": "ko_KR"
+        },
+        {
+          "description": "Unlock RepFlow Pro forever. GTG Mode, intelligent intervals, full analytics.",
+          "displayName": "RepFlow Pro Lifetime",
+          "locale": "en_US"
+        }
+      ],
+      "productID": "com.digimaru.repflow.pro.lifetime",
+      "referenceName": "Pro Lifetime",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "ko_KR",
+    "_storefront": "KOR",
+    "_storeKitErrors": []
+  },
+  "subscriptionGroups": [
+    {
+      "id": "21577810",
+      "localizations": [],
+      "name": "RepFlow Pro",
+      "subscriptions": [
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "2900",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "002",
+          "introductoryOffer": {
+            "internalID": "003",
+            "paymentMode": "free",
+            "subscriptionPeriod": "P1W"
+          },
+          "localizations": [
+            {
+              "description": "월 구독으로 Pro 기능 모두 잠금 해제. 1주일 무료 체험.",
+              "displayName": "RepFlow Pro Monthly",
+              "locale": "ko_KR"
+            },
+            {
+              "description": "Monthly Pro subscription. 1-week free trial.",
+              "displayName": "RepFlow Pro Monthly",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.digimaru.repflow.pro.monthly",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Pro Monthly",
+          "subscriptionGroupID": "21577810",
+          "type": "RecurringSubscription"
+        },
+        {
+          "adHocOffers": [],
+          "codeOffers": [],
+          "displayPrice": "19000",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "004",
+          "localizations": [
+            {
+              "description": "연 구독으로 Pro 기능 모두 잠금 해제. 월 환산 시 약 45% 할인.",
+              "displayName": "RepFlow Pro Yearly",
+              "locale": "ko_KR"
+            },
+            {
+              "description": "Yearly Pro subscription. ~45% off monthly rate.",
+              "displayName": "RepFlow Pro Yearly",
+              "locale": "en_US"
+            }
+          ],
+          "productID": "com.digimaru.repflow.pro.yearly",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Pro Yearly",
+          "subscriptionGroupID": "21577810",
+          "type": "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}
