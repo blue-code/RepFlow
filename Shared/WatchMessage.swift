@@ -56,18 +56,38 @@ enum ExerciseKind: String, Codable, CaseIterable, Identifiable, Hashable {
         }
     }
 
-    /// SF Symbols 사용. iOS/watchOS 17+에 존재 검증된 것만 사용.
-    /// 푸시업/풀업 전용 심볼은 없으므로 동작에 가장 가까운 figure 변형 사용.
-    var symbol: String {
+    /// 커스텀 픽토그램 자산 이름 (Asset Catalog에 imageset으로 등록됨, template-rendering).
+    /// SF Symbols에는 push-up/pull-up 전용 심볼이 없어 직접 디자인.
+    var assetName: String {
         switch self {
-        case .pushUp:     return "figure.core.training"           // 플랭크/매트 자세
-        case .pullUp:     return "figure.climbing"                // 매달려 끌어올리는 동작
-        case .dip:        return "figure.strengthtraining.traditional"  // 바벨/딥스 바
-        case .inverseRow: return "figure.rower"                   // 당기는 동작
-        case .pikePushUp: return "figure.flexibility"             // 다운독 자세 유사
+        case .pushUp:     return "exercise_pushup"
+        case .pullUp:     return "exercise_pullup"
+        case .dip:        return "exercise_dip"
+        case .inverseRow: return "exercise_row"
+        case .pikePushUp: return "exercise_pike"
         }
     }
+
+    /// 호환성을 위해 SF Symbol fallback 유지 (사용처 마이그레이션 후 제거 가능).
+    var symbol: String { assetName }
 }
+
+#if canImport(SwiftUI)
+import SwiftUI
+
+extension ExerciseKind {
+    /// 커스텀 픽토그램. .template renderingMode → SwiftUI .foregroundStyle 로 색 적용.
+    var pictogram: Image {
+        Image(assetName).renderable()
+    }
+}
+
+private extension Image {
+    func renderable() -> Image {
+        self.renderingMode(.template)
+    }
+}
+#endif
 
 // 운동 모드
 enum WorkoutMode: String, Codable, CaseIterable, Hashable {

@@ -8,14 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		0E99C8686CE45F92951D469B /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 690CB1A02778321608716002 /* WatchConnectivity.framework */; };
+		0EB347C8C4094066167BC733 /* exercise_pushup.png in Resources */ = {isa = PBXBuildFile; fileRef = C276F5F65F60443EF8B194CD /* exercise_pushup.png */; };
 		1059F01CECD4A1D1E5E8F5F2 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6479A60DCBBA9DC3C586F2F /* HealthKit.framework */; };
 		14BBE9B10D4D43F2C8FDDCBC /* IntervalProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A98FB9B6CF41EEDA23E16 /* IntervalProgram.swift */; };
 		14DF783485688A08544266DD /* RepDetectorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EBA10B91CA048250D2F3D0 /* RepDetectorProtocol.swift */; };
+		14E06E47DEBF1ED4A9DE49F2 /* exercise_dip.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EF98093C10C03D4D73D2A06 /* exercise_dip.png */; };
 		15812574CBDBDDFB9F71EEAA /* GTGSchedulerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51112055AF5B0FDB42C8ADDA /* GTGSchedulerProtocol.swift */; };
+		19E4143B3F79705E4F2B82C8 /* exercise_row.png in Resources */ = {isa = PBXBuildFile; fileRef = C81CF5AC3A564154E33ED7EF /* exercise_row.png */; };
 		254934D73C04FA4056C92827 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE5BE8768607B6196C4B8552 /* Assets.xcassets */; };
 		278CF183B26735622C71A4C5 /* WatchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376732E55C140D119F1E7CBF /* WatchCoordinator.swift */; };
 		29E1AD175DC6F3239F0EEEC8 /* ReviewPromptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E78B0225659CA8B21A95D37 /* ReviewPromptService.swift */; };
 		2D4625AE361DBF38F888188E /* GTGSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809053D0EE77786BF00FEEE2 /* GTGSession.swift */; };
+		3E6F74CE3A30CE8713E95A5B /* exercise_pullup.png in Resources */ = {isa = PBXBuildFile; fileRef = ED169A0666F5FF2B14AF16DE /* exercise_pullup.png */; };
 		495138EABF1FACB729C2BA4F /* IntervalTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C639723F4F8C29ACF72960 /* IntervalTimerService.swift */; };
 		4AB862E774BB500AE2E2D992 /* ProgramsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C4CB92893112650918E1C /* ProgramsView.swift */; };
 		4CBA9BD41321E54C0FF8A6F6 /* IntervalProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36A98FB9B6CF41EEDA23E16 /* IntervalProgram.swift */; };
@@ -43,6 +47,7 @@
 		98CC2D24A0D3DAD16B236214 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992355CF7A5BFC5671E55EF7 /* SettingsView.swift */; };
 		98F6F0E97EBFB9BF3874D50D /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24040A427736C733BBC30D5A /* PaywallView.swift */; };
 		9AEEA63B64FFA84EDE551D31 /* RootWatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F299E102985D9BBD0F64F524 /* RootWatchView.swift */; };
+		9CD932A6BCA0DB3F01CA6B18 /* exercise_pike.png in Resources */ = {isa = PBXBuildFile; fileRef = CF61A8552ABB15BBC82B9D7B /* exercise_pike.png */; };
 		9DF3B78958F7CDCACFEEA38F /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BE6849455A7C2FAE88A9F0 /* DashboardView.swift */; };
 		AB686FFDAD6D9FC2C0544D50 /* QuickStartDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0810522E8EF59292ADD26E5E /* QuickStartDetailView.swift */; };
 		AC45A2FCA46A25B3045DA460 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A67BA7290E064A7F74CC29 /* CoreMotion.framework */; };
@@ -135,6 +140,7 @@
 		5FCA7F8B230055E9CADECADC /* RepFlow.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RepFlow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6696DDA59B4787765FFDA5AD /* IntervalTimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalTimerProtocol.swift; sourceTree = "<group>"; };
 		690CB1A02778321608716002 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
+		6EF98093C10C03D4D73D2A06 /* exercise_dip.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exercise_dip.png; sourceTree = "<group>"; };
 		78C639723F4F8C29ACF72960 /* IntervalTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalTimerService.swift; sourceTree = "<group>"; };
 		7965E1C9E4E2DB5586C4490B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7D439CFAC896A3B7EF7E6DF8 /* RepFlowTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RepFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,9 +163,12 @@
 		B55541F199AE3A15CDE002BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B96CF6C4EA35656C528791CF /* RepFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepFlowApp.swift; sourceTree = "<group>"; };
 		BDC8593254F03A1D38FF1B29 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C276F5F65F60443EF8B194CD /* exercise_pushup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exercise_pushup.png; sourceTree = "<group>"; };
 		C539313962116E321EF2C1DF /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C81CF5AC3A564154E33ED7EF /* exercise_row.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exercise_row.png; sourceTree = "<group>"; };
 		C9EBA10B91CA048250D2F3D0 /* RepDetectorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepDetectorProtocol.swift; sourceTree = "<group>"; };
 		CE5BE8768607B6196C4B8552 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CF61A8552ABB15BBC82B9D7B /* exercise_pike.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exercise_pike.png; sourceTree = "<group>"; };
 		CFA7EF677C030F84EEA1CD4D /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		D4C4E66D98C6ECC8D955058D /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		DE25A68EE8E3FDAE885BCC46 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
@@ -167,6 +176,7 @@
 		E3F778009E87986EF4292CF2 /* GTGSchedulerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGSchedulerService.swift; sourceTree = "<group>"; };
 		E584B170ECA2F5ADD3E1578E /* GTGSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGSettingsView.swift; sourceTree = "<group>"; };
 		E725DF992709225C5C531430 /* HealthKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitService.swift; sourceTree = "<group>"; };
+		ED169A0666F5FF2B14AF16DE /* exercise_pullup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exercise_pullup.png; sourceTree = "<group>"; };
 		F299E102985D9BBD0F64F524 /* RootWatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootWatchView.swift; sourceTree = "<group>"; };
 		F6479A60DCBBA9DC3C586F2F /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -382,6 +392,11 @@
 			isa = PBXGroup;
 			children = (
 				CE5BE8768607B6196C4B8552 /* Assets.xcassets */,
+				6EF98093C10C03D4D73D2A06 /* exercise_dip.png */,
+				CF61A8552ABB15BBC82B9D7B /* exercise_pike.png */,
+				ED169A0666F5FF2B14AF16DE /* exercise_pullup.png */,
+				C276F5F65F60443EF8B194CD /* exercise_pushup.png */,
+				C81CF5AC3A564154E33ED7EF /* exercise_row.png */,
 				7965E1C9E4E2DB5586C4490B /* Info.plist */,
 				4CE0EC5EBEE35C540CC1E9DA /* RepFlow.entitlements */,
 				A4ACC1895AA652D8A2971718 /* RepFlow.storekit */,
@@ -576,6 +591,11 @@
 				254934D73C04FA4056C92827 /* Assets.xcassets in Resources */,
 				F0E9E9E885E73818B893AFFE /* Localizable.strings in Resources */,
 				7665256115726B5F0DF52DF8 /* RepFlow.storekit in Resources */,
+				14E06E47DEBF1ED4A9DE49F2 /* exercise_dip.png in Resources */,
+				9CD932A6BCA0DB3F01CA6B18 /* exercise_pike.png in Resources */,
+				3E6F74CE3A30CE8713E95A5B /* exercise_pullup.png in Resources */,
+				0EB347C8C4094066167BC733 /* exercise_pushup.png in Resources */,
+				19E4143B3F79705E4F2B82C8 /* exercise_row.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -854,7 +874,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -913,7 +933,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

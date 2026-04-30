@@ -181,8 +181,10 @@ private struct QuickStartTile: View {
 
     var body: some View {
         HStack(spacing: RFSpace.md) {
-            Image(systemName: kind.symbol)
-                .font(.system(size: 22, weight: .semibold))
+            kind.pictogram
+                .resizable()
+                .scaledToFit()
+                .padding(4)
                 .foregroundStyle(RFColor.accent)
                 .frame(width: 36, height: 36)
                 .background(RFColor.accentSoft, in: RoundedRectangle(cornerRadius: RFRadius.sm))

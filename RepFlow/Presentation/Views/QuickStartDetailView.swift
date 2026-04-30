@@ -24,8 +24,10 @@ struct QuickStartDetailView: View {
 
     private var heroBlock: some View {
         VStack(spacing: RFSpace.md) {
-            Image(systemName: exercise.symbol)
-                .font(.system(size: 56, weight: .semibold))
+            exercise.pictogram
+                .resizable()
+                .scaledToFit()
+                .padding(14)
                 .foregroundStyle(RFColor.accent)
                 .frame(width: 96, height: 96)
                 .background(RFColor.accentSoft, in: RoundedRectangle(cornerRadius: RFRadius.lg))

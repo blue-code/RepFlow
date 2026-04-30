@@ -43,8 +43,10 @@ struct HistoryRow: View {
 
     var body: some View {
         HStack(spacing: RFSpace.md) {
-            Image(systemName: session.exercise.symbol)
-                .font(.rfTitleMd)
+            session.exercise.pictogram
+                .resizable()
+                .scaledToFit()
+                .padding(3)
                 .foregroundStyle(RFColor.accent)
                 .frame(width: 32, height: 32)
                 .background(RFColor.accentSoft, in: RoundedRectangle(cornerRadius: RFRadius.sm))

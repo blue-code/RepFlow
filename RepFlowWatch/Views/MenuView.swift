@@ -68,7 +68,10 @@ private struct NavigationGroup: View {
                 expanded.toggle()
             } label: {
                 HStack {
-                    Image(systemName: kind.symbol)
+                    kind.pictogram
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 18, height: 18)
                     Text(kind.displayName)
                         .font(.subheadline.weight(.semibold))
                     Spacer()
