@@ -22,10 +22,10 @@ platform :ios do
     authenticate
 
     create_app_online(
-      app_identifier: "com.repflow.app",
+      app_identifier: "com.digimaru.repflow",
       app_name: "RepFlow",
       language: "ko",
-      sku: "com.repflow.app.001",
+      sku: "com.digimaru.repflow.001",
       team_id: ENV["TEAM_ID"],
       platforms: ["ios"],
       skip_devcenter: false
@@ -43,17 +43,70 @@ platform :ios do
       )
     end
 
+    # 워치 bundle ID는 Developer Portal에만 등록 (ASC App 생성 불필요)
+    produce(
+      app_identifier: "com.digimaru.repflow.watch",
+      app_name: "RepFlowWatch",
+      team_id: ENV["TEAM_ID"],
+      skip_itc: true
+    )
+
+    # 수동 서명: sigh로 App Store 프로비저닝 프로파일 가져오기 (없으면 생성)
+    main_profile = get_provisioning_profile(
+      app_identifier: "com.digimaru.repflow",
+      team_id: ENV["TEAM_ID"],
+      output_path: "./build",
+      filename: "main.mobileprovision",
+      ignore_profiles_with_different_name: false
+    )
+    watch_profile = get_provisioning_profile(
+      app_identifier: "com.digimaru.repflow.watch",
+      team_id: ENV["TEAM_ID"],
+      output_path: "./build",
+      filename: "watch.mobileprovision",
+      ignore_profiles_with_different_name: false
+    )
+
+    # sigh 결과 환경 변수에서 실제 프로파일 이름 가져오기
+    main_profile_name = ENV["sigh_com.digimaru.repflow_appstore_profile-name"] || "com.digimaru.repflow AppStore"
+    watch_profile_name = ENV["sigh_com.digimaru.repflow.watch_appstore_profile-name"] || "com.digimaru.repflow.watch AppStore"
+
+    UI.message("📋 Main profile: #{main_profile_name}")
+    UI.message("📋 Watch profile: #{watch_profile_name}")
+
+    # 자동 서명에서 수동 서명으로 전환 (xcconfig)
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "RepFlow.xcodeproj",
+      bundle_identifier: "com.digimaru.repflow",
+      team_id: ENV["TEAM_ID"],
+      profile_name: main_profile_name,
+      code_sign_identity: "Apple Distribution",
+      targets: ["RepFlow"]
+    )
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "RepFlow.xcodeproj",
+      bundle_identifier: "com.digimaru.repflow.watch",
+      team_id: ENV["TEAM_ID"],
+      profile_name: watch_profile_name,
+      code_sign_identity: "Apple Distribution",
+      targets: ["RepFlowWatch"]
+    )
+
     build_app(
       project: "RepFlow.xcodeproj",
       scheme: "RepFlow",
       clean: true,
       export_method: "app-store",
       export_options: {
-        signingStyle: "automatic",
-        teamID: ENV["TEAM_ID"]
+        signingStyle: "manual",
+        teamID: ENV["TEAM_ID"],
+        provisioningProfiles: {
+          "com.digimaru.repflow" => main_profile_name,
+          "com.digimaru.repflow.watch" => watch_profile_name
+        }
       },
-      export_xcargs: "-allowProvisioningUpdates",
-      xcargs: "-allowProvisioningUpdates",
       output_directory: "./build",
       output_name: "RepFlow.ipa"
     )
@@ -77,12 +130,13 @@ platform :ios do
       scheme: "RepFlow",
       clean: true,
       export_method: "app-store",
+      api_key_path: ENV["ASC_KEY_PATH"],
       export_options: {
         signingStyle: "automatic",
         teamID: ENV["TEAM_ID"]
       },
-      export_xcargs: "-allowProvisioningUpdates",
-      xcargs: "-allowProvisioningUpdates",
+      export_xcargs: "-allowProvisioningUpdates -authenticationKeyIssuerID #{ENV['ASC_ISSUER_ID']} -authenticationKeyID #{ENV['ASC_KEY_ID']} -authenticationKeyPath #{File.expand_path(ENV['ASC_KEY_PATH'])}",
+      xcargs: "-allowProvisioningUpdates -authenticationKeyIssuerID #{ENV['ASC_ISSUER_ID']} -authenticationKeyID #{ENV['ASC_KEY_ID']} -authenticationKeyPath #{File.expand_path(ENV['ASC_KEY_PATH'])}",
       output_directory: "./build",
       output_name: "RepFlow.ipa"
     )
