@@ -56,13 +56,15 @@ enum ExerciseKind: String, Codable, CaseIterable, Identifiable, Hashable {
         }
     }
 
+    /// SF Symbols 사용. iOS/watchOS 17+에 존재 검증된 것만 사용.
+    /// 푸시업/풀업 전용 심볼은 없으므로 동작에 가장 가까운 figure 변형 사용.
     var symbol: String {
         switch self {
-        case .pushUp: return "figure.strengthtraining.functional"
-        case .pullUp: return "figure.pull.up"
-        case .dip: return "figure.strengthtraining.traditional"
-        case .inverseRow: return "figure.cross.training"
-        case .pikePushUp: return "figure.core.training"
+        case .pushUp:     return "figure.core.training"           // 플랭크/매트 자세
+        case .pullUp:     return "figure.climbing"                // 매달려 끌어올리는 동작
+        case .dip:        return "figure.strengthtraining.traditional"  // 바벨/딥스 바
+        case .inverseRow: return "figure.rower"                   // 당기는 동작
+        case .pikePushUp: return "figure.flexibility"             // 다운독 자세 유사
         }
     }
 }

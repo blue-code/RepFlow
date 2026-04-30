@@ -6,21 +6,12 @@ struct OnboardingView: View {
 
     @AppStorage("hasFinishedOnboarding") private var done = false
     @State private var page = 0
+    @State private var motionRequested = false
+    @State private var notifGranted = false
 
     var body: some View {
         ZStack {
             RFColor.bg.ignoresSafeArea()
-
-            // Subtle accent glow at top
-            VStack {
-                Circle()
-                    .fill(RFColor.accent.opacity(0.18))
-                    .frame(width: 600, height: 600)
-                    .blur(radius: 120)
-                    .offset(y: -300)
-                Spacer()
-            }
-            .ignoresSafeArea()
 
             TabView(selection: $page) {
                 introPage.tag(0)
@@ -36,134 +27,139 @@ struct OnboardingView: View {
     // MARK: - Page 1
 
     private var introPage: some View {
-        VStack(alignment: .leading, spacing: RFSpace.lg) {
-            Spacer()
-            Text("REPFLOW")
-                .rfSectionHeader()
+        GeometryReader { geo in
+            VStack(alignment: .leading, spacing: RFSpace.lg) {
+                Spacer()
 
-            Text("워치가\n너의 코치다.")
-                .font(.system(size: 44, weight: .heavy, design: .default))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundStyle(RFColor.fg)
-                .multilineTextAlignment(.leading)
+                Text("REPFLOW")
+                    .rfSectionHeader()
 
-            Text("푸시업·풀업을 자동으로 카운트하고, 하루 종일 가볍게 분산해서 운동하는 GTG 훈련법으로 빠르게 늘어보자.")
-                .font(.rfBody)
-                .foregroundStyle(RFColor.fgMuted)
-                .padding(.top, RFSpace.sm)
+                Text("워치가\n너의 코치다.")
+                    .font(.system(size: 36, weight: .heavy))
+                    .foregroundStyle(RFColor.fg)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
 
-            Spacer()
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) { page = 1 }
-            } label: {
-                HStack(spacing: 6) {
-                    Text("다음")
-                    Image(systemName: "arrow.right")
+                Text("푸시업·풀업을 자동으로 카운트하고, 하루 종일 가볍게 분산해서 운동하는 GTG 훈련법으로 빠르게 늘어보자.")
+                    .font(.rfBody)
+                    .foregroundStyle(RFColor.fgMuted)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) { page = 1 }
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("다음")
+                        Image(systemName: "arrow.right")
+                    }
                 }
+                .buttonStyle(RFPrimaryButton())
+                .padding(.bottom, RFSpace.xxxl)
             }
-            .buttonStyle(RFPrimaryButton())
-            .padding(.bottom, RFSpace.xxxl)
+            .frame(width: geo.size.width - RFSpace.xl * 2, alignment: .leading)
+            .padding(.horizontal, RFSpace.xl)
         }
-        .padding(.horizontal, RFSpace.xl)
     }
 
     // MARK: - Page 2
 
     private var differentiatorPage: some View {
-        VStack(alignment: .leading, spacing: RFSpace.lg) {
-            Spacer()
-            Text("DIFFERENTIATORS")
-                .rfSectionHeader()
+        GeometryReader { geo in
+            VStack(alignment: .leading, spacing: RFSpace.lg) {
+                Spacer()
 
-            Text("다른 앱에 없는 것")
-                .font(.system(size: 36, weight: .heavy))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundStyle(RFColor.fg)
+                Text("DIFFERENTIATORS")
+                    .rfSectionHeader()
 
-            VStack(spacing: 1) {
-                FeatureRow(symbol: "applewatch.side.right", title: "워치 모션 자동 카운트", desc: "가속도 + 자이로 디텍션")
-                FeatureRow(symbol: "bolt.heart.fill", title: "GTG: 검증된 진보 훈련법", desc: "하루 종일 분산 알림")
-                FeatureRow(symbol: "timer", title: "EMOM · 타바타 · AMRAP", desc: "햅틱 인터벌 트레이너")
-            }
-            .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
-            .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))
-            .padding(.top, RFSpace.md)
+                Text("다른 앱에 없는 것")
+                    .font(.system(size: 32, weight: .heavy))
+                    .foregroundStyle(RFColor.fg)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
 
-            Spacer()
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) { page = 2 }
-            } label: {
-                HStack(spacing: 6) {
-                    Text("다음")
-                    Image(systemName: "arrow.right")
+                VStack(spacing: 1) {
+                    FeatureRow(symbol: "applewatch.side.right", title: "워치 모션 자동 카운트", desc: "가속도 + 자이로 디텍션")
+                    FeatureRow(symbol: "bolt.heart.fill", title: "GTG 훈련법", desc: "하루 종일 분산 알림")
+                    FeatureRow(symbol: "timer", title: "EMOM · 타바타 · AMRAP", desc: "햅틱 인터벌 트레이너")
                 }
+                .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
+                .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))
+                .padding(.top, RFSpace.md)
+
+                Spacer()
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) { page = 2 }
+                } label: {
+                    HStack(spacing: 6) {
+                        Text("다음")
+                        Image(systemName: "arrow.right")
+                    }
+                }
+                .buttonStyle(RFPrimaryButton())
+                .padding(.bottom, RFSpace.xxxl)
             }
-            .buttonStyle(RFPrimaryButton())
-            .padding(.bottom, RFSpace.xxxl)
+            .frame(width: geo.size.width - RFSpace.xl * 2, alignment: .leading)
+            .padding(.horizontal, RFSpace.xl)
         }
-        .padding(.horizontal, RFSpace.xl)
     }
 
     // MARK: - Page 3 (permissions)
 
-    @State private var motionRequested = false
-    @State private var notifGranted = false
-
     private var permissionsPage: some View {
-        VStack(alignment: .leading, spacing: RFSpace.lg) {
-            Spacer().frame(height: RFSpace.xl)
-            Text("PERMISSIONS").rfSectionHeader()
+        GeometryReader { geo in
+            VStack(alignment: .leading, spacing: RFSpace.lg) {
+                Spacer().frame(height: RFSpace.xl)
 
-            Text("권한 허용")
-                .font(.system(size: 36, weight: .heavy))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .foregroundStyle(RFColor.fg)
+                Text("PERMISSIONS").rfSectionHeader()
 
-            Text("RepFlow는 외부 서버로 어떠한 데이터도 보내지 않습니다.")
-                .font(.rfCaption)
-                .foregroundStyle(RFColor.fgMuted)
+                Text("권한 허용")
+                    .font(.system(size: 32, weight: .heavy))
+                    .foregroundStyle(RFColor.fg)
+                    .fixedSize(horizontal: false, vertical: true)
 
-            VStack(spacing: 1) {
-                PermissionTile(
-                    symbol: "bell.fill",
-                    title: "알림",
-                    desc: "GTG 알림 발송",
-                    granted: notifGranted
-                ) {
-                    Task { await requestNotifications() }
-                }
-                PermissionTile(
-                    symbol: "figure.walk.motion",
-                    title: "모션 & 피트니스",
-                    desc: "워치 자동 카운트",
-                    granted: motionRequested
-                ) {
-                    requestMotion()
-                }
-            }
-            .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
-            .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))
-
-            Spacer()
-
-            Button {
-                done = true
-            } label: {
-                Text("시작하기")
-            }
-            .buttonStyle(RFPrimaryButton())
-
-            Button {
-                done = true
-            } label: {
-                Text("건너뛰기")
+                Text("RepFlow는 외부 서버로 어떠한 데이터도 보내지 않습니다.")
                     .font(.rfCaption)
                     .foregroundStyle(RFColor.fgMuted)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                VStack(spacing: 1) {
+                    PermissionTile(symbol: "bell.fill", title: "알림", desc: "GTG 알림 발송", granted: notifGranted) {
+                        Task { await requestNotifications() }
+                    }
+                    PermissionTile(symbol: "figure.walk.motion", title: "모션 & 피트니스", desc: "워치 자동 카운트", granted: motionRequested) {
+                        requestMotion()
+                    }
+                }
+                .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
+                .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))
+
+                Spacer()
+
+                Button {
+                    done = true
+                } label: {
+                    Text("시작하기")
+                }
+                .buttonStyle(RFPrimaryButton())
+
+                Button {
+                    done = true
+                } label: {
+                    Text("건너뛰기")
+                        .font(.rfCaption)
+                        .foregroundStyle(RFColor.fgMuted)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, RFSpace.xxl)
             }
-            .padding(.bottom, RFSpace.xxl)
-            .frame(maxWidth: .infinity)
+            .frame(width: geo.size.width - RFSpace.xl * 2, alignment: .leading)
+            .padding(.horizontal, RFSpace.xl)
         }
-        .padding(.horizontal, RFSpace.xl)
     }
 
     private func requestNotifications() async {

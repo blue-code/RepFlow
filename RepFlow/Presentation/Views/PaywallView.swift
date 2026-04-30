@@ -5,7 +5,23 @@ struct PaywallView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var manager = ProManager.shared
-    @State private var selectedID: String?
+    @State private var selectedID: String? = ProManager.yearlyID   // 기본 선택 (상품 로드 전에도 활성화)
+    @State private var showNoProductAlert = false
+
+    // ASC IAP 등록 전에도 페이월 UX가 작동하도록 fallback 가격 정보
+    struct FallbackPlan: Identifiable {
+        let id: String
+        let label: String
+        let price: String
+        let suffix: String
+    }
+    private var fallbackPlans: [FallbackPlan] {
+        [
+            .init(id: ProManager.monthlyID, label: "월간", price: "₩2,900", suffix: "1주일 무료 후 자동 갱신"),
+            .init(id: ProManager.yearlyID, label: "연간", price: "₩19,000", suffix: "연 자동 갱신 (~45% 할인)"),
+            .init(id: ProManager.lifetimeID, label: "평생", price: "₩39,000", suffix: "1회 결제, 평생 사용")
+        ]
+    }
 
     var body: some View {
         ZStack {
@@ -38,7 +54,11 @@ struct PaywallView: View {
         .preferredColorScheme(.dark)
         .task {
             await manager.loadProducts()
-            selectedID = ProManager.yearlyID
+        }
+        .alert("출시 후 사용 가능", isPresented: $showNoProductAlert) {
+            Button("확인", role: .cancel) { }
+        } message: {
+            Text("RepFlow Pro는 정식 출시 후 결제가 활성화됩니다.\n현재 TestFlight에서는 미리보기만 제공됩니다.")
         }
     }
 
@@ -86,10 +106,20 @@ struct PaywallView: View {
             if manager.products.isEmpty && manager.isLoading {
                 ProgressView().tint(RFColor.accent).padding()
             } else if manager.products.isEmpty {
-                Text("상품을 불러올 수 없습니다.")
-                    .font(.rfCaption)
-                    .foregroundStyle(RFColor.fgMuted)
-                    .padding()
+                // ASC에 IAP 상품이 아직 등록 안 된 경우 — preview tile 표시
+                ForEach(fallbackPlans, id: \.id) { plan in
+                    FallbackTile(
+                        plan: plan,
+                        selected: selectedID == plan.id,
+                        recommended: plan.id == ProManager.yearlyID
+                    ) {
+                        selectedID = plan.id
+                    }
+                }
+                Text("정식 출시 후 결제가 활성화됩니다.")
+                    .font(.rfCaptionSm)
+                    .foregroundStyle(RFColor.fgSubtle)
+                    .padding(.top, RFSpace.xs)
             } else {
                 ForEach(manager.products, id: \.id) { product in
                     ProductTile(
@@ -107,9 +137,13 @@ struct PaywallView: View {
     private var purchaseButton: some View {
         Button {
             Task {
-                guard let p = manager.products.first(where: { $0.id == selectedID }) else { return }
-                await manager.purchase(p)
-                if manager.isPro { dismiss() }
+                guard let id = selectedID else { return }
+                if let p = manager.products.first(where: { $0.id == id }) {
+                    await manager.purchase(p)
+                    if manager.isPro { dismiss() }
+                } else {
+                    showNoProductAlert = true
+                }
             }
         } label: {
             Group {
@@ -121,7 +155,7 @@ struct PaywallView: View {
             }
         }
         .buttonStyle(RFPrimaryButton())
-        .disabled(selectedID == nil || manager.isLoading)
+        .disabled(manager.isLoading)
     }
 
     private var legalLinks: some View {
@@ -135,14 +169,60 @@ struct PaywallView: View {
     }
 
     private var buttonTitle: String {
-        guard let id = selectedID,
-              let p = manager.products.first(where: { $0.id == id }) else {
-            return "Pro 시작"
+        guard let id = selectedID else { return "Pro 시작" }
+        if let p = manager.products.first(where: { $0.id == id }) {
+            if id == ProManager.monthlyID, p.subscription?.introductoryOffer?.paymentMode == .freeTrial {
+                return "1주일 무료, 그 후 \(p.displayPrice)/월"
+            }
+            return "Pro 시작 — \(p.displayPrice)"
         }
-        if id == ProManager.monthlyID, p.subscription?.introductoryOffer?.paymentMode == .freeTrial {
-            return "1주일 무료, 그 후 \(p.displayPrice)/월"
+        // Fallback: 상품 로드 전이거나 ASC 미등록 상태
+        if let plan = fallbackPlans.first(where: { $0.id == id }) {
+            return "Pro 시작 — \(plan.price)"
         }
-        return "Pro 시작 — \(p.displayPrice)"
+        return "Pro 시작"
+    }
+}
+
+private struct FallbackTile: View {
+    let plan: PaywallView.FallbackPlan
+    let selected: Bool
+    let recommended: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: RFSpace.md) {
+                Image(systemName: selected ? "largecircle.fill.circle" : "circle")
+                    .font(.title3)
+                    .foregroundStyle(selected ? RFColor.accent : RFColor.fgSubtle)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
+                        Text(plan.label).font(.rfTitleMd).foregroundStyle(RFColor.fg)
+                        if recommended { Text("BEST").rfChip() }
+                    }
+                    Text(plan.suffix)
+                        .font(.rfCaptionSm)
+                        .foregroundStyle(RFColor.fgSubtle)
+                }
+                Spacer()
+                Text(plan.price)
+                    .font(.rfMonoBody.bold())
+                    .foregroundStyle(RFColor.fg)
+            }
+            .padding(RFSpace.md)
+            .background(
+                RoundedRectangle(cornerRadius: RFRadius.md)
+                    .fill(selected ? RFColor.accentSoft : RFColor.bgElevated)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: RFRadius.md)
+                    .stroke(selected ? RFColor.accent.opacity(0.6) : RFColor.border, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.15), value: selected)
     }
 }
 
