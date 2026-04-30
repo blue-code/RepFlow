@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>$(DEVELOPMENT_LANGUAGE)</string>
+    <key>CFBundleDisplayName</key>
+    <string>RepFlow</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>$(PRODUCT_NAME)</string>
+    <key>CFBundlePackageType</key>
+    <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+    <key>CFBundleShortVersionString</key>
+    <string>$(MARKETING_VERSION)</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>WKApplication</key>
+    <true/>
+    <key>WKCompanionAppBundleIdentifier</key>
+    <string>com.digimaru.repflow</string>
+    <key>WKBackgroundModes</key>
+    <array>
+        <string>workout-processing</string>
+    </array>
+    <key>NSMotionUsageDescription</key>
+    <string>푸시업/풀업 동작을 자동 카운트하기 위해 모션 센서를 사용합니다.</string>
+    <key>NSHealthShareUsageDescription</key>
+    <string>운동 세션을 측정하기 위해 HealthKit 데이터를 사용합니다.</string>
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>완료한 운동 세션을 건강 앱에 기록합니다.</string>
+</dict>
+</plist>
