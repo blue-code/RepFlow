@@ -8,7 +8,7 @@ options:
 
 settings:
   base:
-    MARKETING_VERSION: "1.0.0"
+    MARKETING_VERSION: "1.0.1"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
     DEVELOPMENT_TEAM: KUDC7C6Z9H
@@ -56,10 +56,8 @@ targets:
           - "**/.DS_Store"
     resources:
       - path: RepFlow/Resources/Assets.xcassets
-      - path: RepFlow/Resources
-        includes:
-          - "**/*.plist"
-          - "**/*.strings"
+      - path: RepFlow/Resources/en.lproj
+      - path: RepFlow/Resources/ko.lproj
     settings:
       base:
         INFOPLIST_FILE: RepFlow/Resources/Info.plist
@@ -68,6 +66,10 @@ targets:
         SUPPORTED_INTERFACE_ORIENTATIONS: UIInterfaceOrientationPortrait
         KNOWN_REGIONS: "en ko"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    entitlements:
+      path: RepFlow/Resources/RepFlow.entitlements
+      properties:
+        com.apple.developer.healthkit: true
     dependencies:
       - sdk: WatchConnectivity.framework
       - sdk: HealthKit.framework
@@ -97,6 +99,10 @@ targets:
         TARGETED_DEVICE_FAMILY: "4"
         WATCHOS_DEPLOYMENT_TARGET: "10.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    entitlements:
+      path: RepFlowWatch/Resources/RepFlowWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true
     dependencies:
       - sdk: WatchConnectivity.framework
       - sdk: HealthKit.framework

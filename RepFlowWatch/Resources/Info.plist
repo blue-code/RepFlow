@@ -19,11 +19,15 @@
     <key>CFBundleShortVersionString</key>
     <string>$(MARKETING_VERSION)</string>
     <key>CFBundleVersion</key>
-    <string>2</string>
+    <string>3</string>
     <key>WKApplication</key>
     <true/>
     <key>WKCompanionAppBundleIdentifier</key>
     <string>com.digimaru.repflow</string>
+    <key>WKBackgroundModes</key>
+    <array>
+        <string>workout-processing</string>
+    </array>
     <key>NSMotionUsageDescription</key>
     <string>푸시업/풀업 동작을 자동 카운트하기 위해 모션 센서를 사용합니다.</string>
     <key>NSHealthShareUsageDescription</key>

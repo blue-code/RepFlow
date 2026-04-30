@@ -23,6 +23,7 @@
 		54E488AFCCCD79E32C1EE1F7 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A79AF410616392CFEA8AC9E8 /* UserNotifications.framework */; };
 		5AAA53C209B5C3B0F7122912 /* IntervalRunView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9566A594D7393A400F6D8561 /* IntervalRunView.swift */; };
 		5B86F8358AAD1A9030CEF490 /* WatchMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0DFD64E1FC576BB9FEA726 /* WatchMessage.swift */; };
+		5E8C05C330CCE6F39D4E2E31 /* WatchWorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB76B6F8C4F9D6CDBC6EA47 /* WatchWorkoutManager.swift */; };
 		65FB7518F4CA1FFFD22C9B0E /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC585A7ED80581293B27885 /* PersistenceService.swift */; };
 		6B93AF9D1BFC4A16FF01A847 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E725DF992709225C5C531430 /* HealthKitService.swift */; };
 		70CAF9FC53F426AF85619616 /* WorkoutLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FADD93A21E6A484079B7FAA /* WorkoutLiveView.swift */; };
@@ -39,6 +40,7 @@
 		9DF3B78958F7CDCACFEEA38F /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13BE6849455A7C2FAE88A9F0 /* DashboardView.swift */; };
 		AB686FFDAD6D9FC2C0544D50 /* QuickStartDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0810522E8EF59292ADD26E5E /* QuickStartDetailView.swift */; };
 		AC45A2FCA46A25B3045DA460 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A67BA7290E064A7F74CC29 /* CoreMotion.framework */; };
+		ACE1E996C4C27DCE8784A518 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B1E0A649F27EBC3E41170D /* OnboardingView.swift */; };
 		AF3FFF3E0AB7A2D5E730CDBA /* HealthKitServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC9D7A7B51FD143B4970BD7 /* HealthKitServiceProtocol.swift */; };
 		B87A3C5C58D80A2F9615EB0D /* WatchMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0DFD64E1FC576BB9FEA726 /* WatchMessage.swift */; };
 		BB0D6FA9D6C3C51B7234F299 /* RepDetectorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EBA10B91CA048250D2F3D0 /* RepDetectorProtocol.swift */; };
@@ -51,6 +53,7 @@
 		D11E3754B3A8A0C7B0C97247 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6479A60DCBBA9DC3C586F2F /* HealthKit.framework */; };
 		E698AA58A19DB7D6CBD929F0 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE25A68EE8E3FDAE885BCC46 /* UserProfile.swift */; };
 		F084569B6A5EBC6AABDAE1B7 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A67BA7290E064A7F74CC29 /* CoreMotion.framework */; };
+		F0E9E9E885E73818B893AFFE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE1EE83F7C5C93B105486749 /* Localizable.strings */; };
 		F10A7D86C1A13BB9839DE8D3 /* RepFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96CF6C4EA35656C528791CF /* RepFlowApp.swift */; };
 		FD4DC07BFBCCCF253927ACC6 /* WorkoutSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ED3923B03EA1E159C2E9DD /* WorkoutSession.swift */; };
 		FDF90EB7680EE9066022907B /* PhoneSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD74720871F9D647194E15E /* PhoneSessionService.swift */; };
@@ -110,6 +113,7 @@
 		3CD74720871F9D647194E15E /* PhoneSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneSessionService.swift; sourceTree = "<group>"; };
 		4385A008854DFAEFBA06E829 /* GTGQuickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGQuickView.swift; sourceTree = "<group>"; };
 		4505EFE06D1D0020BB28C14A /* RepFlowWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RepFlowWatch.entitlements; sourceTree = "<group>"; };
+		4BB76B6F8C4F9D6CDBC6EA47 /* WatchWorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchWorkoutManager.swift; sourceTree = "<group>"; };
 		4CE0EC5EBEE35C540CC1E9DA /* RepFlow.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RepFlow.entitlements; sourceTree = "<group>"; };
 		51112055AF5B0FDB42C8ADDA /* GTGSchedulerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGSchedulerProtocol.swift; sourceTree = "<group>"; };
 		52A67BA7290E064A7F74CC29 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
@@ -124,13 +128,16 @@
 		92CC32FD3D987E056AD8DBA8 /* RepFlowWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepFlowWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9566A594D7393A400F6D8561 /* IntervalRunView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalRunView.swift; sourceTree = "<group>"; };
 		95789BC53E320AD90463615F /* RepFlowUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RepFlowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		969DB958C679E6A2C45F9000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		992355CF7A5BFC5671E55EF7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		9B0DFD64E1FC576BB9FEA726 /* WatchMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMessage.swift; sourceTree = "<group>"; };
 		A79AF410616392CFEA8AC9E8 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		AFC585A7ED80581293B27885 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
+		B2B1E0A649F27EBC3E41170D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		B36A98FB9B6CF41EEDA23E16 /* IntervalProgram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalProgram.swift; sourceTree = "<group>"; };
 		B55541F199AE3A15CDE002BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B96CF6C4EA35656C528791CF /* RepFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepFlowApp.swift; sourceTree = "<group>"; };
+		BDC8593254F03A1D38FF1B29 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C9EBA10B91CA048250D2F3D0 /* RepDetectorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepDetectorProtocol.swift; sourceTree = "<group>"; };
 		CE5BE8768607B6196C4B8552 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFA7EF677C030F84EEA1CD4D /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
@@ -348,6 +355,7 @@
 				CE5BE8768607B6196C4B8552 /* Assets.xcassets */,
 				7965E1C9E4E2DB5586C4490B /* Info.plist */,
 				4CE0EC5EBEE35C540CC1E9DA /* RepFlow.entitlements */,
+				AE1EE83F7C5C93B105486749 /* Localizable.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -356,6 +364,7 @@
 			isa = PBXGroup;
 			children = (
 				08235E03D8226D10B4BD7256 /* WatchSessionService.swift */,
+				4BB76B6F8C4F9D6CDBC6EA47 /* WatchWorkoutManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -366,6 +375,7 @@
 				13BE6849455A7C2FAE88A9F0 /* DashboardView.swift */,
 				E584B170ECA2F5ADD3E1578E /* GTGSettingsView.swift */,
 				8CAA10FE50CD37CFA0E69581 /* HistoryView.swift */,
+				B2B1E0A649F27EBC3E41170D /* OnboardingView.swift */,
 				369C4CB92893112650918E1C /* ProgramsView.swift */,
 				0810522E8EF59292ADD26E5E /* QuickStartDetailView.swift */,
 				01203AF0192EE76BC7DC46E0 /* RootView.swift */,
@@ -499,6 +509,7 @@
 			knownRegions = (
 				Base,
 				en,
+				ko,
 			);
 			mainGroup = BFE168A34CA80282F98FA50B;
 			minimizedProjectReferenceProxies = 1;
@@ -529,6 +540,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				254934D73C04FA4056C92827 /* Assets.xcassets in Resources */,
+				F0E9E9E885E73818B893AFFE /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,6 +562,7 @@
 				4CBA9BD41321E54C0FF8A6F6 /* IntervalProgram.swift in Sources */,
 				91C8926F26458C3FE976EF1B /* IntervalTimerProtocol.swift in Sources */,
 				495138EABF1FACB729C2BA4F /* IntervalTimerService.swift in Sources */,
+				ACE1E996C4C27DCE8784A518 /* OnboardingView.swift in Sources */,
 				65FB7518F4CA1FFFD22C9B0E /* PersistenceService.swift in Sources */,
 				FDF90EB7680EE9066022907B /* PhoneSessionService.swift in Sources */,
 				4AB862E774BB500AE2E2D992 /* ProgramsView.swift in Sources */,
@@ -582,6 +595,7 @@
 				278CF183B26735622C71A4C5 /* WatchCoordinator.swift in Sources */,
 				B87A3C5C58D80A2F9615EB0D /* WatchMessage.swift in Sources */,
 				506E992A1FAADC712D8514F5 /* WatchSessionService.swift in Sources */,
+				5E8C05C330CCE6F39D4E2E31 /* WatchWorkoutManager.swift in Sources */,
 				70CAF9FC53F426AF85619616 /* WorkoutLiveView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -619,6 +633,18 @@
 			targetProxy = B8312064C76152B74DEF3B33 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		AE1EE83F7C5C93B105486749 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BDC8593254F03A1D38FF1B29 /* en */,
+				969DB958C679E6A2C45F9000 /* ko */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		07E5DD4B2B25B8A2970B32B3 /* Release */ = {
@@ -659,6 +685,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RepFlow/Resources/RepFlow.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
@@ -669,7 +696,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.digimaru.repflow;
-				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow AppStore 1777525508";
 				SDKROOT = iphoneos;
 				SUPPORTED_INTERFACE_ORIENTATIONS = UIInterfaceOrientationPortrait;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -697,12 +724,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RepFlowWatch/Resources/RepFlowWatch.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				INFOPLIST_FILE = RepFlowWatch/Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.digimaru.repflow.watch;
-				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow.watch AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow.watch AppStore 1777525512";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -731,12 +759,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RepFlowWatch/Resources/RepFlowWatch.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				INFOPLIST_FILE = RepFlowWatch/Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.digimaru.repflow.watch;
-				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow.watch AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow.watch AppStore 1777525512";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -779,7 +808,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -793,7 +822,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -838,7 +867,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -858,7 +887,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -873,6 +902,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RepFlow/Resources/RepFlow.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
@@ -883,7 +913,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.digimaru.repflow;
-				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow AppStore";
+				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow AppStore 1777525508";
 				SDKROOT = iphoneos;
 				SUPPORTED_INTERFACE_ORIENTATIONS = UIInterfaceOrientationPortrait;
 				TARGETED_DEVICE_FAMILY = 1;

@@ -52,24 +52,23 @@ platform :ios do
     )
 
     # 수동 서명: sigh로 App Store 프로비저닝 프로파일 가져오기 (없으면 생성)
-    main_profile = get_provisioning_profile(
+    get_provisioning_profile(
       app_identifier: "com.digimaru.repflow",
       team_id: ENV["TEAM_ID"],
       output_path: "./build",
       filename: "main.mobileprovision",
       ignore_profiles_with_different_name: false
     )
-    watch_profile = get_provisioning_profile(
+    main_profile_name = lane_context[SharedValues::SIGH_NAME]
+
+    get_provisioning_profile(
       app_identifier: "com.digimaru.repflow.watch",
       team_id: ENV["TEAM_ID"],
       output_path: "./build",
       filename: "watch.mobileprovision",
       ignore_profiles_with_different_name: false
     )
-
-    # sigh 결과 환경 변수에서 실제 프로파일 이름 가져오기
-    main_profile_name = ENV["sigh_com.digimaru.repflow_appstore_profile-name"] || "com.digimaru.repflow AppStore"
-    watch_profile_name = ENV["sigh_com.digimaru.repflow.watch_appstore_profile-name"] || "com.digimaru.repflow.watch AppStore"
+    watch_profile_name = lane_context[SharedValues::SIGH_NAME]
 
     UI.message("📋 Main profile: #{main_profile_name}")
     UI.message("📋 Watch profile: #{watch_profile_name}")
@@ -140,6 +139,35 @@ platform :ios do
       output_directory: "./build",
       output_name: "RepFlow.ipa"
     )
+  end
+
+  desc "Bundle ID에 HealthKit capability 활성화"
+  lane :enable_healthkit do
+    authenticate
+
+    require 'spaceship'
+    ['com.digimaru.repflow', 'com.digimaru.repflow.watch'].each do |bid|
+      bundle = Spaceship::ConnectAPI::BundleId.find(bid)
+      unless bundle
+        UI.important("Bundle #{bid} not found")
+        next
+      end
+      caps = bundle.get_capabilities
+      existing = caps.map { |c| c.capability_type }
+      UI.message("#{bid}: existing capabilities = #{existing}")
+      unless existing.include?('HEALTHKIT')
+        begin
+          # Spaceship API: BundleIdCapability.create takes bundle_id_id + capability_type
+          Spaceship::ConnectAPI.post_bundle_id_capability(
+            bundle_id_id: bundle.id,
+            capability_type: Spaceship::ConnectAPI::BundleIdCapability::Type::HEALTHKIT
+          )
+          UI.success("✅ enabled HEALTHKIT on #{bid}")
+        rescue => e
+          UI.error("⚠️ failed: #{e.message}")
+        end
+      end
+    end
   end
 
   desc "유닛 테스트"

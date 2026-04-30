@@ -1,0 +1,37 @@
+/* Tab bar */
+"tab.home" = "Home";
+"tab.programs" = "Programs";
+"tab.history" = "History";
+"tab.settings" = "Settings";
+
+/* Dashboard */
+"dashboard.todayFlow" = "Today's Flow";
+"dashboard.reps" = "reps";
+"dashboard.sessions" = "%d sessions";
+"dashboard.bestPushUp" = "Best push-up %d";
+"dashboard.gtgTitle" = "GTG Mode";
+"dashboard.on" = "ON";
+"dashboard.off" = "OFF";
+"dashboard.gtgBlurb" = "Your watch nudges you all day for light push-ups/pull-ups.\nThe proven GTG method actually moves the needle.";
+"dashboard.gtgProgress" = "%d / %d done";
+"dashboard.quickStart" = "Quick Start";
+"dashboard.startOnWatch" = "Start on Watch";
+"dashboard.recent" = "Recent Sessions";
+
+/* Onboarding */
+"onb.welcome" = "Your watch is your coach";
+"onb.welcomeBody" = "Auto-count push-ups & pull-ups, and grow fast with GTG — small reps spread through the day.";
+"onb.differentiator1" = "Watch motion auto-count";
+"onb.differentiator2" = "GTG: proven progress method";
+"onb.differentiator3" = "EMOM · Tabata · AMRAP";
+"onb.permissions" = "Permissions";
+"onb.permissionsBody" = "RepFlow needs the following. Everything stays on your device.";
+"onb.permNotifications" = "Notifications";
+"onb.permNotificationsDesc" = "Sends GTG reminders.";
+"onb.permMotion" = "Motion & Fitness";
+"onb.permMotionDesc" = "Auto-count via watch sensors.";
+"onb.permHealth" = "Health (optional)";
+"onb.permHealthDesc" = "Saves workouts to Health app.";
+"onb.continueButton" = "Continue";
+"onb.startButton" = "Get Started";
+"onb.skip" = "Skip";

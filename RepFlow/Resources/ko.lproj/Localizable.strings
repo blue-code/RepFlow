@@ -1,0 +1,37 @@
+/* Tab bar */
+"tab.home" = "홈";
+"tab.programs" = "프로그램";
+"tab.history" = "기록";
+"tab.settings" = "설정";
+
+/* Dashboard */
+"dashboard.todayFlow" = "오늘의 흐름";
+"dashboard.reps" = "reps";
+"dashboard.sessions" = "%d 세션";
+"dashboard.bestPushUp" = "최고 푸시업 %d";
+"dashboard.gtgTitle" = "GTG 모드";
+"dashboard.on" = "ON";
+"dashboard.off" = "OFF";
+"dashboard.gtgBlurb" = "워치가 하루 종일 가벼운 푸시업/풀업을 알려줍니다.\n검증된 GTG 훈련법으로 진짜 진보가 시작됩니다.";
+"dashboard.gtgProgress" = "%d / %d개 완료";
+"dashboard.quickStart" = "바로 시작";
+"dashboard.startOnWatch" = "워치에서 시작";
+"dashboard.recent" = "최근 세션";
+
+/* Onboarding */
+"onb.welcome" = "워치가 너의 코치다";
+"onb.welcomeBody" = "푸시업·풀업을 자동으로 카운트하고, 하루 종일 가볍게 분산해서 운동하는 GTG 훈련법으로 빠르게 늘어보자.";
+"onb.differentiator1" = "워치 모션 자동 카운트";
+"onb.differentiator2" = "GTG: 검증된 진보 훈련법";
+"onb.differentiator3" = "EMOM · 타바타 · AMRAP";
+"onb.permissions" = "권한 허용";
+"onb.permissionsBody" = "다음 권한이 필요해요. 모두 기기 안에서만 사용되며 외부로 전송되지 않습니다.";
+"onb.permNotifications" = "알림";
+"onb.permNotificationsDesc" = "GTG 알림을 보내드립니다.";
+"onb.permMotion" = "모션 & 피트니스";
+"onb.permMotionDesc" = "워치 가속도/자이로로 자동 카운트.";
+"onb.permHealth" = "건강 (선택)";
+"onb.permHealthDesc" = "운동을 건강 앱에 기록.";
+"onb.continueButton" = "계속";
+"onb.startButton" = "시작하기";
+"onb.skip" = "건너뛰기";

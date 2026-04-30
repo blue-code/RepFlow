@@ -86,6 +86,7 @@ struct IntervalRunView: View {
     }
 
     private func start() {
+        WatchWorkoutManager.shared.start(exercise: program.exercise)
         // 모션 자동 카운트 + 인터벌 동시 진행
         coord.intervalTimer.onStateChange = { newState in
             state = newState
@@ -111,6 +112,7 @@ struct IntervalRunView: View {
     private func finish() {
         coord.intervalTimer.stop()
         coord.detector.stop()
+        WatchWorkoutManager.shared.stop(totalReps: totalReps, exercise: program.exercise)
         WatchSessionService.shared.sendWorkoutEnded(
             exercise: program.exercise,
             mode: program.mode,

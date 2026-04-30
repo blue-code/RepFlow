@@ -6,6 +6,7 @@ struct WorkoutLiveView: View {
     let mode: WorkoutMode
 
     @Environment(WatchCoordinator.self) private var coord
+    @State private var workoutManager = WatchWorkoutManager.shared
     @State private var reps: Int = 0
     @State private var elapsed: Int = 0
     @State private var avgTempo: Double = 0
@@ -32,9 +33,16 @@ struct WorkoutLiveView: View {
                 .foregroundStyle(Color.accentColor)
                 .animation(.spring(duration: 0.25), value: reps)
 
-            Text(avgTempo > 0 ? String(format: "%.1fs/rep", avgTempo) : "준비")
-                .font(.caption2.monospacedDigit())
-                .foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                Text(avgTempo > 0 ? String(format: "%.1fs/rep", avgTempo) : "준비")
+                if workoutManager.heartRate > 0 {
+                    Text("·")
+                    Label(String(format: "%.0f", workoutManager.heartRate), systemImage: "heart.fill")
+                        .foregroundStyle(.red)
+                }
+            }
+            .font(.caption2.monospacedDigit())
+            .foregroundStyle(.secondary)
 
             Spacer(minLength: 4)
 
@@ -70,6 +78,7 @@ struct WorkoutLiveView: View {
 
     private func start() {
         startedAt = .now
+        workoutManager.start(exercise: exercise)
         coord.detector.onRepDetected = { count, tempo in
             reps = count
             avgTempo = coord.detector.avgTempoSeconds
@@ -94,6 +103,7 @@ struct WorkoutLiveView: View {
 
     private func finish() {
         stop()
+        workoutManager.stop(totalReps: reps, exercise: exercise)
         let duration = Int(Date.now.timeIntervalSince(startedAt))
         WatchSessionService.shared.sendWorkoutEnded(
             exercise: exercise,

@@ -12,6 +12,9 @@ struct RepFlowWatchApp: App {
         WindowGroup {
             RootWatchView()
                 .environment(coordinator)
+                .task {
+                    await WatchWorkoutManager.shared.requestAuthorization()
+                }
         }
     }
 }
