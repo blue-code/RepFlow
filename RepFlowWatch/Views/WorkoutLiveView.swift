@@ -86,7 +86,7 @@ struct WorkoutLiveView: View {
             sendUpdate()
         }
         do {
-            try coord.detector.start(for: exercise)
+            try coord.detector.start(for: exercise, mode: .detect)
         } catch {
             self.error = error.localizedDescription
         }

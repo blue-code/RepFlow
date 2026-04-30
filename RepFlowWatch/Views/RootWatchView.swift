@@ -15,6 +15,8 @@ struct RootWatchView: View {
                 IntervalRunView(program: program)
             case let .gtgQuick(exercise, reps):
                 GTGQuickView(exercise: exercise, suggestedReps: reps)
+            case let .calibrate(exercise):
+                CalibrationView(exercise: exercise)
             }
         }
         .animation(.easeInOut(duration: 0.18), value: coord.screen)

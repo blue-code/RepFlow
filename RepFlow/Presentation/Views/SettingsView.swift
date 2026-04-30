@@ -42,6 +42,11 @@ struct SettingsView: View {
                                     settingRow(symbol: "bolt.heart.fill", title: "GTG 모드", chip: pro.isPro ? nil : "Pro")
                                 }
                                 .buttonStyle(.plain)
+
+                                NavigationLink { CalibrationGuideView() } label: {
+                                    settingRow(symbol: "scope", title: "디텍션 정확도", chip: nil)
+                                }
+                                .buttonStyle(.plain)
                             }
                             .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
                             .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))

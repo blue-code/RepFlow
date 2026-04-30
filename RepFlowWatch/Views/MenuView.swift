@@ -31,6 +31,24 @@ struct MenuView: View {
                     Label("EMOM 풀업 5×8", systemImage: "metronome")
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
+
+                Divider().padding(.vertical, 4)
+
+                Text("캘리브레이션")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                ForEach(ExerciseKind.allCases) { kind in
+                    Button {
+                        coord.haptic(.click)
+                        coord.openCalibration(exercise: kind)
+                    } label: {
+                        Label(kind.displayName, systemImage: "scope")
+                            .font(.caption)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
             }
             .padding(.horizontal, 4)
         }

@@ -9,7 +9,8 @@ final class WatchCoordinator {
         case menu
         case workout(ExerciseKind, WorkoutMode)
         case interval(IntervalProgram)
-        case gtgQuick(ExerciseKind, Int)   // suggestedReps
+        case gtgQuick(ExerciseKind, Int)
+        case calibrate(ExerciseKind)
     }
 
     var screen: Screen = .menu
@@ -27,6 +28,10 @@ final class WatchCoordinator {
 
     func openGTGQuick(exercise: ExerciseKind, reps: Int) {
         screen = .gtgQuick(exercise, reps)
+    }
+
+    func openCalibration(exercise: ExerciseKind) {
+        screen = .calibrate(exercise)
     }
 
     func backToMenu() {

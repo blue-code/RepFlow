@@ -179,4 +179,33 @@ platform :ios do
       clean: true
     )
   end
+
+  desc "다국어 App Store 스크린샷 자동 생성"
+  lane :screenshots do
+    capture_ios_screenshots(
+      project: "RepFlow.xcodeproj",
+      scheme: "RepFlow",
+      output_directory: "./fastlane/screenshots",
+      clear_previous_screenshots: true,
+      devices: ["iPhone 17"],
+      languages: ["ko", "en-US", "ja", "zh-Hans"],
+      override_status_bar: true,
+      stop_after_first_error: false,
+      concurrent_simulators: false,
+      reinstall_app: true,
+      app_identifier: "com.digimaru.repflow"
+    )
+  end
+
+  desc "스크린샷 + 메타데이터 ASC 업로드"
+  lane :upload_metadata do
+    authenticate
+    upload_to_app_store(
+      skip_binary_upload: true,
+      skip_screenshots: false,
+      overwrite_screenshots: true,
+      force: true,
+      precheck_include_in_app_purchases: false
+    )
+  end
 end

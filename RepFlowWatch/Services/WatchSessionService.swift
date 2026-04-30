@@ -84,9 +84,25 @@ extension WatchSessionService: WCSessionDelegate {
     }
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
-        guard let eventRaw = message[WatchMessageKey.event] as? String,
-              let event = PhoneEvent(rawValue: eventRaw) else { return }
+        handleIncoming(message)
+    }
 
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+        handleIncoming(applicationContext)
+    }
+
+    private func handleIncoming(_ message: [String: Any]) {
+        guard let eventRaw = message[WatchMessageKey.event] as? String else { return }
+
+        // 캘리브레이션 동기화 메시지 (민감도 변경)
+        if eventRaw == CalibrationSyncKey.event {
+            if let sens = message[CalibrationSyncKey.sensitivity] as? Double {
+                CalibrationStore.setSensitivity(sens)
+            }
+            return
+        }
+
+        guard let event = PhoneEvent(rawValue: eventRaw) else { return }
         Task { @MainActor in
             switch event {
             case .gtgPrompt:

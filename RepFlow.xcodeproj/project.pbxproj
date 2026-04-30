@@ -14,6 +14,7 @@
 		15812574CBDBDDFB9F71EEAA /* GTGSchedulerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51112055AF5B0FDB42C8ADDA /* GTGSchedulerProtocol.swift */; };
 		254934D73C04FA4056C92827 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE5BE8768607B6196C4B8552 /* Assets.xcassets */; };
 		278CF183B26735622C71A4C5 /* WatchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376732E55C140D119F1E7CBF /* WatchCoordinator.swift */; };
+		29E1AD175DC6F3239F0EEEC8 /* ReviewPromptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E78B0225659CA8B21A95D37 /* ReviewPromptService.swift */; };
 		2D4625AE361DBF38F888188E /* GTGSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809053D0EE77786BF00FEEE2 /* GTGSession.swift */; };
 		495138EABF1FACB729C2BA4F /* IntervalTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C639723F4F8C29ACF72960 /* IntervalTimerService.swift */; };
 		4AB862E774BB500AE2E2D992 /* ProgramsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369C4CB92893112650918E1C /* ProgramsView.swift */; };
@@ -26,6 +27,7 @@
 		5E8C05C330CCE6F39D4E2E31 /* WatchWorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB76B6F8C4F9D6CDBC6EA47 /* WatchWorkoutManager.swift */; };
 		65FB7518F4CA1FFFD22C9B0E /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFC585A7ED80581293B27885 /* PersistenceService.swift */; };
 		65FC57EFE1DE28197D2F9B2A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D748C406D41557746A8389 /* Theme.swift */; };
+		6729B449C71D1654F5F2DABD /* MockDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13C81DCA50288C773F9384ED /* MockDataLoader.swift */; };
 		6B93AF9D1BFC4A16FF01A847 /* HealthKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E725DF992709225C5C531430 /* HealthKitService.swift */; };
 		70CAF9FC53F426AF85619616 /* WorkoutLiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FADD93A21E6A484079B7FAA /* WorkoutLiveView.swift */; };
 		7665256115726B5F0DF52DF8 /* RepFlow.storekit in Resources */ = {isa = PBXBuildFile; fileRef = A4ACC1895AA652D8A2971718 /* RepFlow.storekit */; };
@@ -35,6 +37,7 @@
 		82C4E50F7FBAF82524965946 /* IntervalTimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6696DDA59B4787765FFDA5AD /* IntervalTimerProtocol.swift */; };
 		87F8965CF4BE69A52896282F /* RepDetectorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359800CFBE46D8395346A62D /* RepDetectorService.swift */; };
 		891172714B0785C3E26F5412 /* GTGSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E584B170ECA2F5ADD3E1578E /* GTGSettingsView.swift */; };
+		8BCDAF0A80BFE1822AA4099D /* CalibrationGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D647218FCFD3D0257A049FF /* CalibrationGuideView.swift */; };
 		91984317CC8CBCBAAA6D97A8 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 690CB1A02778321608716002 /* WatchConnectivity.framework */; };
 		91C8926F26458C3FE976EF1B /* IntervalTimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6696DDA59B4787765FFDA5AD /* IntervalTimerProtocol.swift */; };
 		98CC2D24A0D3DAD16B236214 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 992355CF7A5BFC5671E55EF7 /* SettingsView.swift */; };
@@ -45,6 +48,7 @@
 		AC45A2FCA46A25B3045DA460 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A67BA7290E064A7F74CC29 /* CoreMotion.framework */; };
 		ACE1E996C4C27DCE8784A518 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B1E0A649F27EBC3E41170D /* OnboardingView.swift */; };
 		AF3FFF3E0AB7A2D5E730CDBA /* HealthKitServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC9D7A7B51FD143B4970BD7 /* HealthKitServiceProtocol.swift */; };
+		AFC79819C4327D55103CF264 /* CalibrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C4E66D98C6ECC8D955058D /* CalibrationView.swift */; };
 		B87A3C5C58D80A2F9615EB0D /* WatchMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0DFD64E1FC576BB9FEA726 /* WatchMessage.swift */; };
 		BB0D6FA9D6C3C51B7234F299 /* RepDetectorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EBA10B91CA048250D2F3D0 /* RepDetectorProtocol.swift */; };
 		BC5776AC8B861D95199C124E /* GTGSchedulerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3F778009E87986EF4292CF2 /* GTGSchedulerService.swift */; };
@@ -54,11 +58,13 @@
 		C93E3CD146BAB7ACFC801066 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA7EF677C030F84EEA1CD4D /* MenuView.swift */; };
 		CAF8277AB631A119123FE9CA /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAA10FE50CD37CFA0E69581 /* HistoryView.swift */; };
 		D11E3754B3A8A0C7B0C97247 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6479A60DCBBA9DC3C586F2F /* HealthKit.framework */; };
+		D225C62BB2A12757B8A1D92F /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8CFBDDE1FD39DA584748D9 /* SnapshotHelper.swift */; };
 		E698AA58A19DB7D6CBD929F0 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE25A68EE8E3FDAE885BCC46 /* UserProfile.swift */; };
 		EC202E8485976CA00A95DAED /* ProManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F8A00A16633201D35A25442 /* ProManager.swift */; };
 		F084569B6A5EBC6AABDAE1B7 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52A67BA7290E064A7F74CC29 /* CoreMotion.framework */; };
 		F0E9E9E885E73818B893AFFE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE1EE83F7C5C93B105486749 /* Localizable.strings */; };
 		F10A7D86C1A13BB9839DE8D3 /* RepFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B96CF6C4EA35656C528791CF /* RepFlowApp.swift */; };
+		F7E12F1FC2A787928342B3CA /* RepFlowSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 000816401128D482731ABECE /* RepFlowSnapshotTests.swift */; };
 		FD4DC07BFBCCCF253927ACC6 /* WorkoutSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15ED3923B03EA1E159C2E9DD /* WorkoutSession.swift */; };
 		FDF90EB7680EE9066022907B /* PhoneSessionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD74720871F9D647194E15E /* PhoneSessionService.swift */; };
 /* End PBXBuildFile section */
@@ -102,14 +108,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		000816401128D482731ABECE /* RepFlowSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepFlowSnapshotTests.swift; sourceTree = "<group>"; };
 		01203AF0192EE76BC7DC46E0 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		040B6A35AE6A553A128FB914 /* RepFlowWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepFlowWatchApp.swift; sourceTree = "<group>"; };
 		0810522E8EF59292ADD26E5E /* QuickStartDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickStartDetailView.swift; sourceTree = "<group>"; };
 		08235E03D8226D10B4BD7256 /* WatchSessionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionService.swift; sourceTree = "<group>"; };
 		0FADD93A21E6A484079B7FAA /* WorkoutLiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutLiveView.swift; sourceTree = "<group>"; };
 		13BE6849455A7C2FAE88A9F0 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		13C81DCA50288C773F9384ED /* MockDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataLoader.swift; sourceTree = "<group>"; };
 		15ED3923B03EA1E159C2E9DD /* WorkoutSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSession.swift; sourceTree = "<group>"; };
 		19BC43F347FB4EDA976DFB11 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		1E8CFBDDE1FD39DA584748D9 /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
 		21F5123C8D2E4CD7975964D5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		24040A427736C733BBC30D5A /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		2BC9D7A7B51FD143B4970BD7 /* HealthKitServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitServiceProtocol.swift; sourceTree = "<group>"; };
@@ -129,6 +138,7 @@
 		78C639723F4F8C29ACF72960 /* IntervalTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalTimerService.swift; sourceTree = "<group>"; };
 		7965E1C9E4E2DB5586C4490B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7D439CFAC896A3B7EF7E6DF8 /* RepFlowTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = RepFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E78B0225659CA8B21A95D37 /* ReviewPromptService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPromptService.swift; sourceTree = "<group>"; };
 		7F8A00A16633201D35A25442 /* ProManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProManager.swift; sourceTree = "<group>"; };
 		809053D0EE77786BF00FEEE2 /* GTGSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGSession.swift; sourceTree = "<group>"; };
 		8CAA10FE50CD37CFA0E69581 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
@@ -138,6 +148,7 @@
 		969DB958C679E6A2C45F9000 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		992355CF7A5BFC5671E55EF7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		9B0DFD64E1FC576BB9FEA726 /* WatchMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchMessage.swift; sourceTree = "<group>"; };
+		9D647218FCFD3D0257A049FF /* CalibrationGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationGuideView.swift; sourceTree = "<group>"; };
 		A4ACC1895AA652D8A2971718 /* RepFlow.storekit */ = {isa = PBXFileReference; path = RepFlow.storekit; sourceTree = "<group>"; };
 		A79AF410616392CFEA8AC9E8 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		AFC585A7ED80581293B27885 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
@@ -150,6 +161,7 @@
 		C9EBA10B91CA048250D2F3D0 /* RepDetectorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepDetectorProtocol.swift; sourceTree = "<group>"; };
 		CE5BE8768607B6196C4B8552 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFA7EF677C030F84EEA1CD4D /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		D4C4E66D98C6ECC8D955058D /* CalibrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalibrationView.swift; sourceTree = "<group>"; };
 		DE25A68EE8E3FDAE885BCC46 /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		E2D748C406D41557746A8389 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		E3F778009E87986EF4292CF2 /* GTGSchedulerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTGSchedulerService.swift; sourceTree = "<group>"; };
@@ -189,9 +201,11 @@
 			children = (
 				E3F778009E87986EF4292CF2 /* GTGSchedulerService.swift */,
 				E725DF992709225C5C531430 /* HealthKitService.swift */,
+				13C81DCA50288C773F9384ED /* MockDataLoader.swift */,
 				AFC585A7ED80581293B27885 /* PersistenceService.swift */,
 				3CD74720871F9D647194E15E /* PhoneSessionService.swift */,
 				7F8A00A16633201D35A25442 /* ProManager.swift */,
+				7E78B0225659CA8B21A95D37 /* ReviewPromptService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -261,6 +275,8 @@
 		5FBD1FE7FAB395F52BD00CF8 /* RepFlowUITests */ = {
 			isa = PBXGroup;
 			children = (
+				000816401128D482731ABECE /* RepFlowSnapshotTests.swift */,
+				1E8CFBDDE1FD39DA584748D9 /* SnapshotHelper.swift */,
 			);
 			path = RepFlowUITests;
 			sourceTree = "<group>";
@@ -268,6 +284,7 @@
 		66AF4E69B8B863DBCD297733 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D4C4E66D98C6ECC8D955058D /* CalibrationView.swift */,
 				4385A008854DFAEFBA06E829 /* GTGQuickView.swift */,
 				9566A594D7393A400F6D8561 /* IntervalRunView.swift */,
 				CFA7EF677C030F84EEA1CD4D /* MenuView.swift */,
@@ -385,6 +402,7 @@
 		E935F587A71951C82CA05476 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9D647218FCFD3D0257A049FF /* CalibrationGuideView.swift */,
 				13BE6849455A7C2FAE88A9F0 /* DashboardView.swift */,
 				E584B170ECA2F5ADD3E1578E /* GTGSettingsView.swift */,
 				8CAA10FE50CD37CFA0E69581 /* HistoryView.swift */,
@@ -433,6 +451,8 @@
 				EF5815A32E94DEF202BE696E /* PBXTargetDependency */,
 			);
 			name = RepFlowUITests;
+			packageProductDependencies = (
+			);
 			productName = RepFlowUITests;
 			productReference = 95789BC53E320AD90463615F /* RepFlowUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -449,6 +469,8 @@
 				839A6FFCEEAA3F33A90DF589 /* PBXTargetDependency */,
 			);
 			name = RepFlowTests;
+			packageProductDependencies = (
+			);
 			productName = RepFlowTests;
 			productReference = 7D439CFAC896A3B7EF7E6DF8 /* RepFlowTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -466,6 +488,8 @@
 			dependencies = (
 			);
 			name = RepFlowWatch;
+			packageProductDependencies = (
+			);
 			productName = RepFlowWatch;
 			productReference = 92CC32FD3D987E056AD8DBA8 /* RepFlowWatch.app */;
 			productType = "com.apple.product-type.application";
@@ -485,6 +509,8 @@
 				2F5423E40770A79340C0445F /* PBXTargetDependency */,
 			);
 			name = RepFlow;
+			packageProductDependencies = (
+			);
 			productName = RepFlow;
 			productReference = 5FCA7F8B230055E9CADECADC /* RepFlow.app */;
 			productType = "com.apple.product-type.application";
@@ -568,6 +594,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BCDAF0A80BFE1822AA4099D /* CalibrationGuideView.swift in Sources */,
 				9DF3B78958F7CDCACFEEA38F /* DashboardView.swift in Sources */,
 				15812574CBDBDDFB9F71EEAA /* GTGSchedulerProtocol.swift in Sources */,
 				BC5776AC8B861D95199C124E /* GTGSchedulerService.swift in Sources */,
@@ -579,6 +606,7 @@
 				4CBA9BD41321E54C0FF8A6F6 /* IntervalProgram.swift in Sources */,
 				91C8926F26458C3FE976EF1B /* IntervalTimerProtocol.swift in Sources */,
 				495138EABF1FACB729C2BA4F /* IntervalTimerService.swift in Sources */,
+				6729B449C71D1654F5F2DABD /* MockDataLoader.swift in Sources */,
 				ACE1E996C4C27DCE8784A518 /* OnboardingView.swift in Sources */,
 				98F6F0E97EBFB9BF3874D50D /* PaywallView.swift in Sources */,
 				65FB7518F4CA1FFFD22C9B0E /* PersistenceService.swift in Sources */,
@@ -589,6 +617,7 @@
 				14DF783485688A08544266DD /* RepDetectorProtocol.swift in Sources */,
 				C8430C33E54DB8931AC01668 /* RepDetectorService.swift in Sources */,
 				F10A7D86C1A13BB9839DE8D3 /* RepFlowApp.swift in Sources */,
+				29E1AD175DC6F3239F0EEEC8 /* ReviewPromptService.swift in Sources */,
 				7AA48B7D580EAE42B3B4ABC4 /* RootView.swift in Sources */,
 				98CC2D24A0D3DAD16B236214 /* SettingsView.swift in Sources */,
 				65FC57EFE1DE28197D2F9B2A /* Theme.swift in Sources */,
@@ -602,6 +631,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFC79819C4327D55103CF264 /* CalibrationView.swift in Sources */,
 				7A03D4F46AF013BBDF631DAA /* GTGQuickView.swift in Sources */,
 				14BBE9B10D4D43F2C8FDDCBC /* IntervalProgram.swift in Sources */,
 				5AAA53C209B5C3B0F7122912 /* IntervalRunView.swift in Sources */,
@@ -624,6 +654,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7E12F1FC2A787928342B3CA /* RepFlowSnapshotTests.swift in Sources */,
+				D225C62BB2A12757B8A1D92F /* SnapshotHelper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -708,9 +740,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = RepFlow/Resources/RepFlow.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = KUDC7C6Z9H;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = RepFlow/Resources/Info.plist;
 				KNOWN_REGIONS = "en ko ja zh-Hans";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -718,7 +748,6 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.digimaru.repflow;
-				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow AppStore 1777525508";
 				SDKROOT = iphoneos;
 				SUPPORTED_INTERFACE_ORIENTATIONS = UIInterfaceOrientationPortrait;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -747,12 +776,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = RepFlowWatch/Resources/RepFlowWatch.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				INFOPLIST_FILE = RepFlowWatch/Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.digimaru.repflow.watch;
-				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow.watch AppStore 1777525512";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -782,12 +807,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = RepFlowWatch/Resources/RepFlowWatch.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				INFOPLIST_FILE = RepFlowWatch/Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.digimaru.repflow.watch;
-				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow.watch AppStore 1777525512";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -830,7 +851,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -889,7 +910,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = KUDC7C6Z9H;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -925,9 +946,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = RepFlow/Resources/RepFlow.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = KUDC7C6Z9H;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = RepFlow/Resources/Info.plist;
 				KNOWN_REGIONS = "en ko ja zh-Hans";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -935,7 +954,6 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.digimaru.repflow;
-				PROVISIONING_PROFILE_SPECIFIER = "com.digimaru.repflow AppStore 1777525508";
 				SDKROOT = iphoneos;
 				SUPPORTED_INTERFACE_ORIENTATIONS = UIInterfaceOrientationPortrait;
 				TARGETED_DEVICE_FAMILY = 1;

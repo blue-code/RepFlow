@@ -106,7 +106,7 @@ struct IntervalRunView: View {
             coord.haptic(.click)
             WatchSessionService.shared.sendRepCount(totalReps)
         }
-        try? coord.detector.start(for: program.exercise)
+        try? coord.detector.start(for: program.exercise, mode: .detect)
     }
 
     private func finish() {

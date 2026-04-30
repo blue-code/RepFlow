@@ -74,7 +74,7 @@ struct GTGQuickView: View {
                 coord.haptic(.success)
             }
         }
-        try? coord.detector.start(for: exercise)
+        try? coord.detector.start(for: exercise, mode: .detect)
         coord.haptic(.start)
     }
 

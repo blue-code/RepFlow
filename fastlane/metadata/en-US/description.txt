@@ -1,10 +1,17 @@
-RepFlow is laser-focused on two exercises: push-ups and pull-ups. Auto-count via Apple Watch motion sensors, and grow fast with the proven GTG (Grease the Groove) method.
+Don't need a gym. Your watch coaches you all day.
+
+Auto-count push-ups & pull-ups + the proven GTG (Grease the Groove) method, automated on your wrist. Daily training that actually grows you.
+
+———
 
 ▷ GTG MODE ⭐ The differentiator no other app delivers right
 Popularized by Pavel Tsatsouline, GTG is the proven method for progressing on simple bodyweight exercises. Spread light reps (RPE 5) throughout the day; your nervous system adapts and your max reps grow rapidly. RepFlow automates this via watch notifications.
 
 ▷ Watch Motion Auto-Count
-Real-time push-up/pull-up cycle detection from the watch's accelerometer + gyroscope. Runs in the background even when the screen is off, with haptic feedback every rep.
+Real-time push-up/pull-up cycle detection from accelerometer + gyroscope. Runs in the background even when the screen is off, with haptic feedback every rep.
+
+▷ Personal Calibration
+Wrist size, watch position, and tempo vary per person. Five reps of personal calibration dramatically improve accuracy. A sensitivity slider gives you fine-tuning.
 
 ▷ Intelligent Interval Trainer
 EMOM (every minute), Tabata (20s/10s × 8), and AMRAP (max reps in time). Watch haptics signal round transitions.
@@ -15,17 +22,14 @@ All workout data lives on your device. No external servers. No ads. No analytics
 ▷ HealthKit Integration
 Completed workouts auto-save to the Health app. Live heart rate on the watch during workouts.
 
-▷ Apple Watch is essential
-- Motion auto-count
-- Haptic interval
-- HKWorkoutSession background
-- Heart rate + active calories
+▷ Four Languages
+한국어 / English / 日本語 / 简体中文
 
 ▼ Pro Subscription
-GTG Mode, intelligent intervals, and advanced analytics unlock with Pro:
-- Monthly: $2.99 (1-week free trial)
-- Yearly: $19.99 (~45% off monthly)
-- Lifetime: $39.99 (one-time)
+GTG Mode · intelligent intervals · advanced analytics unlock with Pro:
+- Monthly $2.99 (1-week free trial)
+- Yearly $19.99 (~45% off monthly)
+- Lifetime $39.99 (one-time)
 
 Terms: https://blue-code.github.io/legal/repflow/terms.html
 Privacy: https://blue-code.github.io/legal/repflow/privacy.html

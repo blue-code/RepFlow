@@ -10,6 +10,12 @@ final class PhoneSessionService: NSObject {
     var lastRepCountFromWatch: Int = 0
     var lastWorkoutSummary: WorkoutSummary?
 
+    /// 완료된 운동 세션 누적 카운트 (UserDefaults 영속) — 리뷰 프롬프트 트리거에 사용
+    var totalCompletedSessions: Int {
+        get { UserDefaults.standard.integer(forKey: "repflow.totalCompletedSessions") }
+        set { UserDefaults.standard.set(newValue, forKey: "repflow.totalCompletedSessions") }
+    }
+
     struct WorkoutSummary: Equatable {
         var exercise: ExerciseKind
         var mode: WorkoutMode
@@ -39,6 +45,18 @@ final class PhoneSessionService: NSObject {
             WatchMessageKey.exercise: exercise.rawValue,
             WatchMessageKey.reps: suggestedReps
         ])
+    }
+
+    /// Watch에 민감도 변경 동기화
+    func sendSensitivityUpdate(_ value: Double) {
+        let payload: [String: Any] = [
+            WatchMessageKey.event: CalibrationSyncKey.event,
+            CalibrationSyncKey.sensitivity: value
+        ]
+        // applicationContext를 사용하면 워치가 백그라운드여도 다음 활성화 시 적용됨
+        try? session?.updateApplicationContext(payload)
+        // 활성 시에는 즉시 sendMessage도 시도
+        sendMessage(payload)
     }
 
     private func sendMessage(_ message: [String: Any]) {
@@ -86,6 +104,8 @@ extension PhoneSessionService: WCSessionDelegate {
                     endedAt: .now
                 )
                 self.lastWorkoutSummary = summary
+                self.totalCompletedSessions += 1
+                ReviewPromptService.sessionCompleted(totalCount: self.totalCompletedSessions)
             default:
                 break
             }

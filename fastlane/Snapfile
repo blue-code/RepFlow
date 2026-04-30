@@ -1,0 +1,23 @@
+# Fastlane snapshot 설정
+
+devices(["iPhone 17"])
+
+languages([
+  "ko",
+  "en-US",
+  "ja",
+  "zh-Hans"
+])
+
+scheme("RepFlow")
+project("./RepFlow.xcodeproj")
+
+output_directory("./fastlane/screenshots")
+clear_previous_screenshots(true)
+
+# ios_version 자동 감지 (현재 시뮬레이터가 26.x)
+
+stop_after_first_error(false)
+concurrent_simulators(false)
+
+override_status_bar(true)
