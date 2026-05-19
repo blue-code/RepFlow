@@ -54,13 +54,15 @@ final class RepDetectorService: RepDetectorProtocol {
     }
 
     private func baseline(for exercise: ExerciseKind) -> BaselineTuning {
+        // 단위 = g. gravity projection 후 손목의 실제 수직 가속도 진폭은
+        // 푸시업 0.05~0.15g 수준이라 amplitude 컷오프는 낮게 잡아야 1회부터 잡힘.
         switch exercise {
         case .pushUp, .pikePushUp:
-            return .init(upThreshold: 0.18, downThreshold: -0.15, minInterval: 0.5, maxInterval: 4.0, smoothing: 0.25)
+            return .init(upThreshold: 0.08, downThreshold: -0.06, minInterval: 0.35, maxInterval: 4.0, smoothing: 0.22)
         case .pullUp, .inverseRow:
-            return .init(upThreshold: 0.22, downThreshold: -0.18, minInterval: 0.7, maxInterval: 5.0, smoothing: 0.30)
+            return .init(upThreshold: 0.10, downThreshold: -0.08, minInterval: 0.5, maxInterval: 5.0, smoothing: 0.25)
         case .dip:
-            return .init(upThreshold: 0.20, downThreshold: -0.16, minInterval: 0.6, maxInterval: 4.5, smoothing: 0.25)
+            return .init(upThreshold: 0.09, downThreshold: -0.07, minInterval: 0.4, maxInterval: 4.5, smoothing: 0.22)
         }
     }
 

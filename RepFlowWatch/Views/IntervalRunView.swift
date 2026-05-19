@@ -11,34 +11,35 @@ struct IntervalRunView: View {
     @State private var totalReps = 0
 
     var body: some View {
-        VStack(spacing: 6) {
-            HStack {
-                Text(program.name)
-                    .font(.caption.weight(.semibold))
-                    .lineLimit(1)
-                Spacer()
-                Text("R\(state.currentRound)/\(state.totalRounds)")
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer(minLength: 4)
+        VStack(spacing: 4) {
+            Spacer(minLength: 0)
 
             Text("\(state.remainingSeconds)")
-                .font(.system(size: 80, weight: .heavy, design: .rounded))
+                .font(.system(size: 56, weight: .heavy, design: .rounded))
                 .foregroundStyle(phaseColor)
                 .contentTransition(.numericText())
                 .animation(.spring(duration: 0.2), value: state.remainingSeconds)
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
 
-            Text(phaseLabel)
-                .font(.caption2.weight(.bold))
-                .foregroundStyle(phaseColor)
+            HStack(spacing: 4) {
+                Text(phaseLabel).fontWeight(.bold).foregroundStyle(phaseColor)
+                Text("·")
+                Text("R\(state.currentRound)/\(state.totalRounds)").monospacedDigit()
+                Text("·")
+                Text("\(totalReps)reps").monospacedDigit()
+            }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
 
-            Text("총 \(totalReps) reps")
-                .font(.caption2.monospacedDigit())
+            Text(program.name)
+                .font(.caption2)
                 .foregroundStyle(.secondary)
+                .lineLimit(1)
 
-            Spacer(minLength: 4)
+            Spacer(minLength: 2)
 
             HStack(spacing: 6) {
                 Button {
@@ -48,8 +49,8 @@ struct IntervalRunView: View {
                     WatchSessionService.shared.sendRepCount(totalReps)
                 } label: {
                     Image(systemName: "plus")
-                        .font(.headline)
                 }
+                .tint(.accentColor)
                 .frame(maxWidth: .infinity)
                 .disabled(state.phase != .work)
 
@@ -57,12 +58,15 @@ struct IntervalRunView: View {
                     finish()
                 } label: {
                     Image(systemName: "stop.fill")
-                        .font(.headline)
                 }
                 .frame(maxWidth: .infinity)
             }
+            .controlSize(.small)
+            .font(.footnote)
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 8)
+        .padding(.top, 4)
+        .padding(.bottom, 2)
         .onAppear { start() }
         .onDisappear { coord.intervalTimer.stop() }
     }

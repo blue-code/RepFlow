@@ -15,16 +15,17 @@ struct CalibrationView: View {
     enum Phase { case ready, running, done }
 
     var body: some View {
-        VStack(spacing: 6) {
-            HStack {
+        VStack(spacing: 4) {
+            HStack(spacing: 4) {
                 Image(systemName: "scope").foregroundStyle(.orange)
                 Text("캘리브레이션")
-                    .font(.caption.weight(.semibold))
-                Spacer()
+                Text("·")
                 Text(exercise.displayName)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
             }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
 
             Spacer(minLength: 4)
 
@@ -39,7 +40,9 @@ struct CalibrationView: View {
 
             Spacer(minLength: 4)
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 8)
+        .padding(.top, 4)
+        .padding(.bottom, 2)
         .onDisappear { coord.detector.stop() }
     }
 

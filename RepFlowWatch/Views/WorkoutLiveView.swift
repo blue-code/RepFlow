@@ -15,36 +15,37 @@ struct WorkoutLiveView: View {
     @State private var error: String?
 
     var body: some View {
-        VStack(spacing: 6) {
-            HStack {
-                Text(exercise.displayName)
-                    .font(.caption.weight(.semibold))
-                Spacer()
-                Text(timeString(elapsed))
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer(minLength: 4)
+        VStack(spacing: 4) {
+            Spacer(minLength: 0)
 
             Text("\(reps)")
-                .font(.system(size: 90, weight: .heavy, design: .rounded))
+                .font(.system(size: 64, weight: .heavy, design: .rounded))
                 .contentTransition(.numericText())
                 .foregroundStyle(Color.accentColor)
                 .animation(.spring(duration: 0.25), value: reps)
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
 
-            HStack(spacing: 8) {
-                Text(avgTempo > 0 ? String(format: "%.1fs/rep", avgTempo) : "준비")
+            HStack(spacing: 4) {
+                Text(exercise.displayName)
+                Text("·")
+                Text(timeString(elapsed)).monospacedDigit()
+                if avgTempo > 0 {
+                    Text("·")
+                    Text(String(format: "%.1fs", avgTempo)).monospacedDigit()
+                }
                 if workoutManager.heartRate > 0 {
                     Text("·")
-                    Label(String(format: "%.0f", workoutManager.heartRate), systemImage: "heart.fill")
-                        .foregroundStyle(.red)
+                    Image(systemName: "heart.fill").foregroundStyle(.red)
+                    Text(String(format: "%.0f", workoutManager.heartRate)).monospacedDigit()
                 }
             }
-            .font(.caption2.monospacedDigit())
+            .font(.caption2)
             .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
 
-            Spacer(minLength: 4)
+            Spacer(minLength: 2)
 
             HStack(spacing: 6) {
                 Button {
@@ -53,20 +54,23 @@ struct WorkoutLiveView: View {
                     sendUpdate()
                 } label: {
                     Image(systemName: "plus")
-                        .font(.headline)
                 }
+                .tint(.accentColor)
                 .frame(maxWidth: .infinity)
 
                 Button(role: .destructive) {
                     finish()
                 } label: {
                     Image(systemName: "stop.fill")
-                        .font(.headline)
                 }
                 .frame(maxWidth: .infinity)
             }
+            .controlSize(.small)
+            .font(.footnote)
         }
-        .padding(.horizontal, 4)
+        .padding(.horizontal, 8)
+        .padding(.top, 4)
+        .padding(.bottom, 2)
         .onAppear { start() }
         .onDisappear { stop() }
         .alert("오류", isPresented: .constant(error != nil), actions: {
