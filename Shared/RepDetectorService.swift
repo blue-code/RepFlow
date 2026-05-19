@@ -129,7 +129,11 @@ final class RepDetectorService: RepDetectorProtocol {
     }
 
     private func process(_ data: CMDeviceMotion) {
-        let raw = data.userAcceleration.y * 0.3 + data.userAcceleration.z * 0.7
+        // 중력 벡터에 user acceleration을 투영 → 손목 자세에 무관한 수직 가속도.
+        // 부호: gravity는 아래 방향 단위벡터이므로 -1을 곱해 "위로 가속 시 양수" 의미를 유지.
+        let g = data.gravity
+        let a = data.userAcceleration
+        let raw = -(a.x * g.x + a.y * g.y + a.z * g.z)
         smoothed = smoothed + smoothingAlpha * (raw - smoothed)
 
         let now = Date()
@@ -207,7 +211,8 @@ final class RepDetectorService: RepDetectorProtocol {
             avgDownAmplitude: -avgDown,
             avgCycleSeconds: avgCycle,
             sampleCount: repCount,
-            calibratedAt: .now
+            calibratedAt: .now,
+            algorithmVersion: RepDetectorAlgorithm.current
         )
         CalibrationStore.save(cal, to: userDefaults)
         return cal

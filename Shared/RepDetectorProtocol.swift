@@ -41,10 +41,16 @@ struct UserCalibration: Codable, Equatable {
     var avgCycleSeconds: Double
     var sampleCount: Int
     var calibratedAt: Date
+    var algorithmVersion: Int?        // nil = legacy (v1, fixed Y/Z weights). 2 = gravity projection.
 
     var exercise: ExerciseKind {
         ExerciseKind(rawValue: exerciseRaw) ?? .pushUp
     }
+}
+
+/// 감지 알고리즘 버전. 변경 시 캘리브레이션 amplitude 스케일이 호환되지 않음.
+enum RepDetectorAlgorithm {
+    static let current = 2
 }
 
 enum CalibrationStore {
@@ -55,7 +61,10 @@ enum CalibrationStore {
 
     static func load(_ exercise: ExerciseKind, from defaults: UserDefaults = .standard) -> UserCalibration? {
         guard let data = defaults.data(forKey: key(exercise)) else { return nil }
-        return try? JSONDecoder().decode(UserCalibration.self, from: data)
+        guard let cal = try? JSONDecoder().decode(UserCalibration.self, from: data) else { return nil }
+        // 알고리즘 버전 불일치 → 무효 (amplitude 스케일/부호가 호환되지 않음).
+        guard (cal.algorithmVersion ?? 1) == RepDetectorAlgorithm.current else { return nil }
+        return cal
     }
 
     static func save(_ cal: UserCalibration, to defaults: UserDefaults = .standard) {
