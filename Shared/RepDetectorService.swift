@@ -1,16 +1,21 @@
 import Foundation
 import CoreMotion
 
-/// 가속도/자이로 기반 푸시업·풀업 자동 카운트 (적응형 임계값).
+/// 가속도 + 자이로 결합 신호 기반 rep 자동 카운트 (v3).
 ///
 /// 알고리즘:
-/// 1. Device motion user acceleration의 Y/Z 합성 → EMA 저역 필터
-/// 2. 양/음 peak detection (히스테리시스): up-stroke 시작 → up peak 갱신 → down peak로 사이클 완료 = 1 rep
-/// 3. 임계값 결정:
-///    - 사용자 캘리브레이션 있음: 평균 amplitude × 0.55 × sensitivity
-///    - 없음: 기본값 × sensitivity
-/// 4. 검증: amplitude > threshold + minInterval ≤ 사이클 시간 ≤ maxInterval
-/// 5. 캘리브레이션 모드(.calibrate): 임계값 낮춰 모든 피크 수집, 카운트는 함
+/// 1. Device motion에서 두 신호 추출
+///    - vertical: gravity 벡터에 user acceleration 투영 (자세 무관 수직 가속도)
+///    - gyroMag: rotation rate 벡터 크기 (손목 회전 강도)
+/// 2. 결합 신호 combined = sVertical + sign(sVertical) × sGyro × kGyro
+///    푸시업 시 손목 자체 가속도가 작아도 회전 성분이 amplitude를 끌어올림.
+/// 3. Adaptive baseline: 시작 후 noiseWindow(1.5초)간 사용자 정지 상태의
+///    잡음을 95p로 측정 → noise floor × 2.5를 임계값으로 자동 설정.
+///    그래서 사용자별/세션별 잡음 차이에 자동 적응.
+/// 4. Zero-crossing detection: 결합 신호의 부호가 +threshold ↔ -threshold를
+///    가로지를 때 half-cycle 완료. 두 half-cycle = 1 rep. 각 half-cycle 중
+///    max |combined|가 threshold 이상이어야 valid (잡음 무시).
+/// 5. 캘리브레이션 모드(.calibrate): 임계값을 낮춰 모든 사이클 수집.
 final class RepDetectorService: RepDetectorProtocol {
 
     private let motion = CMMotionManager()
@@ -23,46 +28,64 @@ final class RepDetectorService: RepDetectorProtocol {
     private(set) var collectedPeakAmplitudes: [Double] = []
 
     var onRepDetected: ((_ index: Int, _ tempo: Double) -> Void)?
+    var onSignalUpdate: ((_ value: Double, _ threshold: Double, _ isCalibrated: Bool) -> Void)?
 
     private var exercise: ExerciseKind = .pushUp
     private var mode: RepDetectorMode = .detect
-    private var lastRepAt: Date?
-    private var smoothed: Double = 0
-    private var inUpStroke = false
-    private var lastUpPeak: Double = 0
-    private var lastDownPeak: Double = 0
 
-    // 동적 임계값
-    private var upThreshold: Double = 0.18
-    private var downThreshold: Double = -0.15
-    private var minRepInterval: TimeInterval = 0.5
-    private var maxRepInterval: TimeInterval = 5.0
-    private var smoothingAlpha: Double = 0.25
+    // EMA 신호
+    private var sVertical: Double = 0
+    private var sGyro: Double = 0
+
+    // 적응형 baseline
+    private let noiseWindow: TimeInterval = 1.5
+    private var startedAt: Date?
+    private var noiseSamples: [Double] = []
+    private var baselineLocked: Bool = false
+    private var threshold: Double = 0       // 최종 적용 임계값 (절댓값)
+
+    // 사이클 상태
+    private var lastSign: Int = 0
+    private var halfCycleMaxAmp: Double = 0
+    private var halfCycleCount: Int = 0
+    private var lastRepAt: Date?
 
     private var tempos: [Double] = []
+
+    // 튜닝
+    private var smoothingAlpha: Double = 0.22
+    private var gyroWeight: Double = 0.05    // gyro magnitude를 amplitude에 결합하는 비율
+    private var minRepInterval: TimeInterval = 0.35
+    private var maxRepInterval: TimeInterval = 8.0
+    private var absoluteMinThreshold: Double = 0.02
+    private var thresholdMultiplier: Double = 2.5
 
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
     }
 
     private struct BaselineTuning {
-        let upThreshold: Double
-        let downThreshold: Double
         let minInterval: TimeInterval
         let maxInterval: TimeInterval
         let smoothing: Double
+        let gyroWeight: Double
+        let thresholdMultiplier: Double
+        let absoluteMinThreshold: Double
     }
 
     private func baseline(for exercise: ExerciseKind) -> BaselineTuning {
-        // 단위 = g. gravity projection 후 손목의 실제 수직 가속도 진폭은
-        // 푸시업 0.05~0.15g 수준이라 amplitude 컷오프는 낮게 잡아야 1회부터 잡힘.
         switch exercise {
         case .pushUp, .pikePushUp:
-            return .init(upThreshold: 0.08, downThreshold: -0.06, minInterval: 0.35, maxInterval: 4.0, smoothing: 0.22)
+            // 푸시업: 손목 자체 변위 작음 → gyro weight 높임, threshold mult 낮춤
+            return .init(minInterval: 0.35, maxInterval: 8.0, smoothing: 0.22,
+                         gyroWeight: 0.08, thresholdMultiplier: 2.2, absoluteMinThreshold: 0.020)
         case .pullUp, .inverseRow:
-            return .init(upThreshold: 0.10, downThreshold: -0.08, minInterval: 0.5, maxInterval: 5.0, smoothing: 0.25)
+            // 풀업: 손목 변위 큼 → vertical 신호 비중 높임
+            return .init(minInterval: 0.5, maxInterval: 8.0, smoothing: 0.25,
+                         gyroWeight: 0.04, thresholdMultiplier: 2.5, absoluteMinThreshold: 0.040)
         case .dip:
-            return .init(upThreshold: 0.09, downThreshold: -0.07, minInterval: 0.4, maxInterval: 4.5, smoothing: 0.22)
+            return .init(minInterval: 0.4, maxInterval: 8.0, smoothing: 0.22,
+                         gyroWeight: 0.06, thresholdMultiplier: 2.3, absoluteMinThreshold: 0.030)
         }
     }
 
@@ -77,7 +100,7 @@ final class RepDetectorService: RepDetectorProtocol {
         self.exercise = exercise
         self.mode = mode
         reset()
-        applyThresholds()
+        applyTuning()
 
         motion.deviceMotionUpdateInterval = 1.0 / 50.0
         motion.startDeviceMotionUpdates(to: queue) { [weak self] data, _ in
@@ -97,82 +120,116 @@ final class RepDetectorService: RepDetectorProtocol {
         lastRepTempoSeconds = 0
         avgTempoSeconds = 0
         lastRepAt = nil
-        smoothed = 0
-        inUpStroke = false
-        lastUpPeak = 0
-        lastDownPeak = 0
+        sVertical = 0
+        sGyro = 0
+        lastSign = 0
+        halfCycleMaxAmp = 0
+        halfCycleCount = 0
+        startedAt = nil
+        noiseSamples.removeAll()
+        baselineLocked = false
+        threshold = 0
         tempos.removeAll()
         collectedPeakAmplitudes.removeAll()
     }
 
-    private func applyThresholds() {
+    private func applyTuning() {
         let base = baseline(for: exercise)
         let sensitivity = CalibrationStore.sensitivityMultiplier(from: userDefaults)
         smoothingAlpha = base.smoothing
         minRepInterval = base.minInterval
         maxRepInterval = base.maxInterval
+        gyroWeight = base.gyroWeight
+        // sensitivity > 1 = 덜 민감 (threshold 올림). < 1 = 더 민감.
+        thresholdMultiplier = base.thresholdMultiplier * sensitivity
+        absoluteMinThreshold = base.absoluteMinThreshold * sensitivity
 
         if mode == .calibrate {
-            // 매우 낮은 임계값 — 거의 모든 피크를 수집
-            upThreshold = base.upThreshold * 0.45
-            downThreshold = base.downThreshold * 0.45
-            return
-        }
-
-        if let cal = CalibrationStore.load(exercise, from: userDefaults), cal.sampleCount >= 3 {
-            // 캘리브레이션 적용: 사용자 평균 amplitude의 55%를 컷오프로
-            upThreshold = cal.avgUpAmplitude * 0.55 * sensitivity
-            downThreshold = cal.avgDownAmplitude * 0.55 * sensitivity
-            minRepInterval = max(0.4, min(base.minInterval, cal.avgCycleSeconds * 0.5))
-        } else {
-            upThreshold = base.upThreshold * sensitivity
-            downThreshold = base.downThreshold * sensitivity
+            // 캘리브레이션 모드는 더 관대하게
+            thresholdMultiplier *= 0.7
+            absoluteMinThreshold *= 0.6
         }
     }
 
     private func process(_ data: CMDeviceMotion) {
-        // 중력 벡터에 user acceleration을 투영 → 손목 자세에 무관한 수직 가속도.
-        // 부호: gravity는 아래 방향 단위벡터이므로 -1을 곱해 "위로 가속 시 양수" 의미를 유지.
         let g = data.gravity
         let a = data.userAcceleration
-        let raw = -(a.x * g.x + a.y * g.y + a.z * g.z)
-        smoothed = smoothed + smoothingAlpha * (raw - smoothed)
+        let r = data.rotationRate
+
+        // 수직 가속도 (gravity projection, +위 / -아래)
+        let vertical = -(a.x * g.x + a.y * g.y + a.z * g.z)
+        // 자이로 magnitude (rad/s)
+        let gyroMag = sqrt(r.x * r.x + r.y * r.y + r.z * r.z)
+
+        // EMA 저역 필터
+        sVertical += smoothingAlpha * (vertical - sVertical)
+        sGyro += smoothingAlpha * (gyroMag - sGyro)
+
+        // 결합 신호: 수직 가속도에 gyro magnitude를 동부호로 보강
+        let signCarrier: Double = sVertical >= 0 ? 1 : -1
+        let combined = sVertical + signCarrier * sGyro * gyroWeight
 
         let now = Date()
+        if startedAt == nil { startedAt = now }
 
-        if !inUpStroke && smoothed > upThreshold {
-            inUpStroke = true
-            lastUpPeak = max(lastUpPeak, smoothed)
-        } else if inUpStroke {
-            if smoothed > lastUpPeak {
-                lastUpPeak = smoothed
+        // Baseline 측정 단계
+        if !baselineLocked {
+            noiseSamples.append(abs(combined))
+            if let start = startedAt, now.timeIntervalSince(start) >= noiseWindow {
+                lockBaseline()
             }
-            if smoothed < downThreshold {
-                inUpStroke = false
-                lastDownPeak = min(lastDownPeak, smoothed)
-
-                let interval = lastRepAt.map { now.timeIntervalSince($0) } ?? 0
-                let validInterval = lastRepAt == nil ||
-                    (interval >= minRepInterval && interval <= maxRepInterval)
-
-                if validInterval {
-                    countRep(at: now, interval: interval, upPeak: lastUpPeak, downPeak: lastDownPeak)
-                }
-
-                lastUpPeak = 0
-                lastDownPeak = 0
-            }
+            emitSignal(combined, isCalibrated: false)
+            return
         }
 
-        // 너무 오래 동작이 없으면 cycle 상태 리셋
-        if let last = lastRepAt, now.timeIntervalSince(last) > maxRepInterval * 2 {
-            inUpStroke = false
-            lastUpPeak = 0
-            lastDownPeak = 0
+        emitSignal(combined, isCalibrated: true)
+
+        // Zero-crossing with threshold gate
+        let absC = abs(combined)
+        let sign: Int
+        if combined > threshold { sign = 1 }
+        else if combined < -threshold { sign = -1 }
+        else { sign = 0 }
+
+        if sign != 0 {
+            if lastSign != 0 && sign != lastSign {
+                // half-cycle 완료
+                if halfCycleMaxAmp >= threshold {
+                    halfCycleCount += 1
+                    if halfCycleCount >= 2 {
+                        completeRep(at: now, peakAmp: halfCycleMaxAmp)
+                        halfCycleCount = 0
+                    }
+                }
+                halfCycleMaxAmp = absC
+            }
+            lastSign = sign
+        }
+        halfCycleMaxAmp = max(halfCycleMaxAmp, absC)
+
+        // 너무 오래 활동 없으면 cycle 상태 리셋 (false continuation 방지)
+        if let last = lastRepAt, now.timeIntervalSince(last) > maxRepInterval * 1.5 {
+            halfCycleCount = 0
+            halfCycleMaxAmp = 0
+            lastSign = 0
         }
     }
 
-    private func countRep(at now: Date, interval: Double, upPeak: Double, downPeak: Double) {
+    private func lockBaseline() {
+        baselineLocked = true
+        let sorted = noiseSamples.sorted()
+        let idx = sorted.isEmpty ? 0 : min(sorted.count - 1, Int(Double(sorted.count) * 0.95))
+        let noiseFloor = sorted.isEmpty ? 0 : sorted[idx]
+        threshold = max(noiseFloor * thresholdMultiplier, absoluteMinThreshold)
+        noiseSamples.removeAll(keepingCapacity: false)
+    }
+
+    private func completeRep(at now: Date, peakAmp: Double) {
+        let interval = lastRepAt.map { now.timeIntervalSince($0) } ?? 0
+        let validInterval = lastRepAt == nil ||
+            (interval >= minRepInterval && interval <= maxRepInterval)
+        guard validInterval else { return }
+
         repCount += 1
         lastRepAt = now
         if interval > 0 {
@@ -181,8 +238,7 @@ final class RepDetectorService: RepDetectorProtocol {
             avgTempoSeconds = tempos.reduce(0, +) / Double(tempos.count)
         }
         if mode == .calibrate {
-            collectedPeakAmplitudes.append(upPeak)
-            collectedPeakAmplitudes.append(abs(downPeak))
+            collectedPeakAmplitudes.append(peakAmp)
         }
 
         let count = repCount
@@ -192,25 +248,29 @@ final class RepDetectorService: RepDetectorProtocol {
         }
     }
 
-    /// 캘리브레이션 모드에서 수집된 피크들로 UserCalibration 생성·저장
+    private func emitSignal(_ value: Double, isCalibrated: Bool) {
+        let t = threshold
+        DispatchQueue.main.async { [weak self] in
+            self?.onSignalUpdate?(value, t, isCalibrated)
+        }
+    }
+
+    /// 캘리브레이션 모드에서 수집된 peak amplitude로 UserCalibration 저장.
+    /// v3는 단일 amplitude만 사용 (zero-crossing 알고리즘이라 up/down 구분 불필요).
     @discardableResult
     func finalizeCalibration(for exercise: ExerciseKind) -> UserCalibration? {
         guard mode == .calibrate else { return nil }
         guard repCount >= 3 else { return nil }
 
-        var ups: [Double] = []
-        var downs: [Double] = []
-        for (i, v) in collectedPeakAmplitudes.enumerated() {
-            if i % 2 == 0 { ups.append(v) } else { downs.append(v) }
-        }
-        let avgUp = ups.isEmpty ? 0 : ups.reduce(0, +) / Double(ups.count)
-        let avgDown = downs.isEmpty ? 0 : downs.reduce(0, +) / Double(downs.count)
+        let avgAmp = collectedPeakAmplitudes.isEmpty
+            ? 0
+            : collectedPeakAmplitudes.reduce(0, +) / Double(collectedPeakAmplitudes.count)
         let avgCycle = tempos.isEmpty ? 0 : tempos.reduce(0, +) / Double(tempos.count)
 
         let cal = UserCalibration(
             exerciseRaw: exercise.rawValue,
-            avgUpAmplitude: avgUp,
-            avgDownAmplitude: -avgDown,
+            avgUpAmplitude: avgAmp,
+            avgDownAmplitude: -avgAmp,
             avgCycleSeconds: avgCycle,
             sampleCount: repCount,
             calibratedAt: .now,

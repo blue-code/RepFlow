@@ -8,6 +8,7 @@ struct GTGQuickView: View {
     @Environment(WatchCoordinator.self) private var coord
     @State private var done: Int = 0
     @State private var started: Bool = false
+    @State private var baselineReady: Bool = false
 
     var body: some View {
         VStack(spacing: 4) {
@@ -20,6 +21,12 @@ struct GTGQuickView: View {
                 .animation(.spring(duration: 0.2), value: done)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
+
+            if started && !baselineReady {
+                Text("정지 유지 (잡음 측정)")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.orange)
+            }
 
             HStack(spacing: 4) {
                 Image(systemName: "bolt.heart.fill").foregroundStyle(.orange)
@@ -73,6 +80,7 @@ struct GTGQuickView: View {
 
     private func start() {
         started = true
+        baselineReady = false
         coord.detector.onRepDetected = { count, _ in
             done = count
             coord.haptic(.click)
@@ -80,8 +88,13 @@ struct GTGQuickView: View {
                 coord.haptic(.success)
             }
         }
+        coord.detector.onSignalUpdate = { _, _, isCalibrated in
+            if isCalibrated && !baselineReady {
+                baselineReady = true
+                coord.haptic(.start)
+            }
+        }
         try? coord.detector.start(for: exercise, mode: .detect)
-        coord.haptic(.start)
     }
 
     private func complete() {

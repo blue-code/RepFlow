@@ -13,6 +13,7 @@ struct WorkoutLiveView: View {
     @State private var startedAt: Date = .now
     @State private var ticker: Timer?
     @State private var error: String?
+    @State private var baselineReady: Bool = false
 
     var body: some View {
         VStack(spacing: 4) {
@@ -25,6 +26,12 @@ struct WorkoutLiveView: View {
                 .animation(.spring(duration: 0.25), value: reps)
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
+
+            if !baselineReady {
+                Text("정지 유지 (잡음 측정)")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.orange)
+            }
 
             HStack(spacing: 4) {
                 Text(exercise.displayName)
@@ -82,12 +89,19 @@ struct WorkoutLiveView: View {
 
     private func start() {
         startedAt = .now
+        baselineReady = false
         workoutManager.start(exercise: exercise)
         coord.detector.onRepDetected = { count, tempo in
             reps = count
             avgTempo = coord.detector.avgTempoSeconds
             coord.haptic(.click)
             sendUpdate()
+        }
+        coord.detector.onSignalUpdate = { _, _, isCalibrated in
+            if isCalibrated && !baselineReady {
+                baselineReady = true
+                coord.haptic(.start)
+            }
         }
         do {
             try coord.detector.start(for: exercise, mode: .detect)

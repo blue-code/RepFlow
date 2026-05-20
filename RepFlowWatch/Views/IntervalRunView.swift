@@ -110,6 +110,7 @@ struct IntervalRunView: View {
             coord.haptic(.click)
             WatchSessionService.shared.sendRepCount(totalReps)
         }
+        coord.detector.onSignalUpdate = { _, _, _ in }
         try? coord.detector.start(for: program.exercise, mode: .detect)
     }
 

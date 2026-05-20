@@ -14,6 +14,9 @@ protocol RepDetectorProtocol: AnyObject {
     var collectedPeakAmplitudes: [Double] { get }
 
     var onRepDetected: ((_ index: Int, _ tempo: Double) -> Void)? { get set }
+    /// 실시간 신호 레벨 (UI 시각 피드백용). value는 결합 신호 amplitude,
+    /// threshold는 현재 컷오프, isCalibrated는 baseline 측정 완료 여부.
+    var onSignalUpdate: ((_ value: Double, _ threshold: Double, _ isCalibrated: Bool) -> Void)? { get set }
 
     func start(for exercise: ExerciseKind, mode: RepDetectorMode) throws
     func stop()
@@ -50,7 +53,7 @@ struct UserCalibration: Codable, Equatable {
 
 /// 감지 알고리즘 버전. 변경 시 캘리브레이션 amplitude 스케일이 호환되지 않음.
 enum RepDetectorAlgorithm {
-    static let current = 2
+    static let current = 3
 }
 
 enum CalibrationStore {
