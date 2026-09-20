@@ -101,13 +101,23 @@ struct MaxTestView: View {
         guard reps > 0 else { return }
 
         if let existing = enrollments.first {
-            // 재측정: 주차를 유지한 채 훈련최대만 새로 잡는다.
-            existing.trainingMax = reps
-            existing.trainingMaxHistory.append(reps)
-            existing.completedSessionsThisWeek = []
-            existing.consecutiveMissedWeeks = 0
-            existing.bestSingleSet = max(existing.bestSingleSet, reps)
-            if existing.isRetestWeek { existing.currentWeek += 1 }
+            if existing.isRetestWeek, let session = existing.nextSession {
+                // 재측정 주의 측정은 그 주의 "세션"이다. 주차 진행은 `record` 한 곳에서만
+                // 일어나야 한다 — 여기서 currentWeek를 직접 올리면 워치로 같은 세션을
+                // 했을 때 주차가 두 번 넘어간다.
+                existing.record(SessionResult(
+                    kind: session.kind,
+                    targets: session.sets.map(\.reps),
+                    achieved: [reps]
+                ))
+            } else {
+                // 주기와 무관한 수동 재측정. 훈련최대만 다시 잡고 주차는 건드리지 않는다.
+                existing.trainingMax = reps
+                existing.trainingMaxHistory.append(reps)
+                existing.completedSessionsThisWeek = []
+                existing.consecutiveMissedWeeks = 0
+                existing.bestSingleSet = max(existing.bestSingleSet, reps)
+            }
         } else {
             context.insert(ProgramEnrollment(trainingMax: reps))
         }
@@ -119,6 +129,16 @@ struct MaxTestView: View {
             totalReps: reps, durationSec: 0, avgTempo: 0, endedAt: .now
         ))
         try? context.save()
+        pushSessionToWatch()
         dismiss()
+    }
+
+    /// 측정 직후 워치의 다음 세션도 갱신한다. 허브로 돌아가지 않고 바로 워치를 드는 경우가 있다.
+    private func pushSessionToWatch() {
+        guard let enrollment = enrollments.first else { return }
+        PhoneSessionService.shared.sendProgramSession(
+            enrollment.nextSession,
+            restBonusSeconds: enrollment.restBonusSeconds
+        )
     }
 }

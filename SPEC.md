@@ -63,8 +63,17 @@
 - ✅ 폰이 다음 세션을 `updateApplicationContext` 로 미리 밀어 **워치 단독 완주** 가능
 - 🔲 **실기기 검증 필요** — 폰 없이 완주 → 폰 기록·주차 반영, Health 저장
 
-**다음 (M5)** — 폰 카메라 카운트 (Vision). 거치 가이드(정측면 1.5~2m) 필수,
-깊이 신호 두 후보를 기준 영상으로 비교 후 확정, 무릎 변형 힙라인 기준점 분기.
+**M5·M6 (자동 카운트 + 음성) — 스캐폴딩 완료 @ 2026-09-21, 튜닝은 실기기 과제**
+- ✅ `Shared/DepthRepDetector.swift` — 깊이 신호 rep 판정 (순수, 합성 신호 13종 테스트)
+- ✅ `Shared/PoseGeometry.swift` — 관절 → 깊이·폼 점수 (순수, Vision import 없음)
+- ✅ `Shared/PlacementCheck.swift` — 거치 게이트 (순수, 3초 연속 조건)
+- ✅ `CameraRepCounter`(AVCapture + Vision) · `ProximityRepCounter` · `SpeechCounter`
+- ✅ `PlacementGuideView` — 카메라 모드는 이 게이트를 통과해야 시작된다
+- ✅ 세션 화면에 카운트 3종 전환 + 음성 카운트 아웃 + 휴식 카운트다운
+- 🔲 **실기기 튜닝 필수** (§14.8) — 시뮬레이터에서는 카메라·근접센서 모두 검증 불가
+
+**다음 (M7)** — 리브랜딩 · ASO 4언어 · 스크린샷 · TestFlight → 출시.
+그 전에 실기기 검증(M1 워치 왕복 / M4 워치 단독 완주 / M5 기준 영상 튜닝)이 선행돼야 한다.
 
 **이후**
 - M3 iOS 프로그램 UI + 최대 측정 · M4 워치 프로그램 진행 화면
@@ -149,6 +158,9 @@ Shared/              — 양쪽 컴파일됨 (UIKit/WatchKit 사용 불가)
                                            WCSession 의존 없음 → 단독 테스트)
   PushUpProgram.swift                    — 100개 프로그램: PushUpLevel / SessionKind /
                                            ProgramLadder / ProgressionRule (순수 Foundation, §14)
+  DepthRepDetector.swift                 — 0~1 깊이 신호 → rep (순수, §14.8)
+  PoseGeometry.swift                     — 관절 → 깊이·폼 점수 (순수, Vision import 없음)
+  PlacementCheck.swift                   — 카메라 거치 판정 + 3초 게이트 (순수)
   ProgramSessionRunner.swift             — 세션 진행 상태머신. 폰·워치 공용, 시계 주입 (§14.6)
   IntervalProgram.swift                  — IntervalProgram, IntervalState
   IntervalTimerProtocol.swift / Service  — Timer 기반 인터벌 엔진
@@ -157,7 +169,8 @@ Shared/              — 양쪽 컴파일됨 (UIKit/WatchKit 사용 불가)
   RepDetectorService.swift               — CoreMotion 50Hz, gravity projection +
                                            gyro fusion + zero-crossing
 
-RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 / 워치 왕복 (91 tests)
+RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 /
+                       워치 왕복 / 깊이 판정 / 자세 기하 / 거치 게이트 (134 tests)
 fastlane/Fastfile    — lanes: beta, test, upload_metadata
                        (ASC API key는 외부 경로: BurnCoach 디렉토리의 .p8)
 project.yml          — XcodeGen 정의 (Signing=Automatic, healthkit entitlement true)
@@ -747,3 +760,52 @@ M4에서 워치용으로 통째로 다시 만들어야 한다.
 ⚠️ **아직 없는 것: 휴식일 강제.** 한 주를 다 끝내면 `nextSession` 이 곧바로 다음 주 A 세션을 연다.
 하루에 몰아서 할 수 있다는 뜻이다. 날짜 기반 스케줄링은 UI(M3) 또는 후속에서 다룬다.
 테스트 헬퍼에서 `while !isWeekComplete` 로 돌면 무한 루프가 되는 것도 같은 이유다.
+
+### 14.8 자동 카운트 (M5·M6)
+
+판정은 전부 **순수 타입**에 있고 프레임워크 클래스는 배관만 한다. 그래서 시뮬레이터에서
+합성 신호로 검증할 수 있다 — 실기기에서만 확인 가능한 것은 Vision의 관절 추정 정확도뿐이다.
+
+```
+카메라  AVCapture → Vision 관절 ─┐
+근접센서 proximityState ─────────┼→ PoseGeometry.depth → DepthRepDetector → addRep()
+탭/크라운 ──────────────────────┘ (기하 없이 바로)
+```
+
+**`DepthRepDetector`** — 0(락아웃)~1(바닥) 신호를 히스테리시스(0.25 / 0.75)와 **구간 연속
+체류 시간**(0.35s)으로 판정한다. 진입 시각만 보면 0.05초 간격으로 위아래를 오가는 신호도
+통과해 버린다. 두 종류의 소스를 모두 받는다:
+- 연속 샘플링(카메라 30fps) — 같은 구간이 이어지는 동안 체류가 쌓인다
+- 희소 이벤트(근접센서는 바뀔 때만 알려준다) — 구간을 **떠날 때** 직전 체류로 판정.
+  ⚠️ 마지막 1회는 다음 이벤트가 없어 미완성으로 남으므로 **세션 종료 시 `flush(at:)` 필수**
+
+**`PoseGeometry`** — 정측면 촬영이라 **카메라를 향한 쪽** 팔다리만 쓴다(반대쪽은 몸에 가려
+Vision이 저신뢰 좌표를 낸다). 깊이 산출은 두 방식이 있고 **실기기 기준 영상으로 확정한다**:
+| 방식 | 장점 | 약점 |
+|---|---|---|
+| `elbowAngle` (기본) | 직관적 | 팔꿈치를 벌리면 투영에서 각이 압축됨 |
+| `shoulderDrop` | 카메라 거리·체격에 불변 | 락아웃 기준값을 먼저 잡아야 함 |
+
+⚠️ 폼 점수의 힙라인은 **변형에 따라 기준점이 다르다**: 정자세 `shoulder–hip–ankle`,
+무릎 푸시업(L1) `shoulder–hip–knee`. 안 그러면 L1 사용자의 모든 rep이 "허리 처짐"으로 오판된다.
+`PushUpLevel.allowsKneeVariant` 가 이 분기를 결정한다.
+
+**`PlacementCheck` / `PlacementGuideView`** — 카메라 모드의 실질적 MVP는 카운터가 아니라
+**시작을 막는 게이트**다. 푸시업은 바닥 자세라 셀피 각도로는 절대 잡히지 않는데, 안내 없이
+열어두면 대부분 천장을 찍다가 0개로 끝난다. 판정 순서(각도 → 거리)가 중요하다 — 서 있는
+사람은 가로 폭이 좁아서 순서를 바꾸면 "더 가까이 오세요"라는 엉뚱한 안내가 나간다.
+3초 연속 통과해야 시작 버튼이 열리고, 거치 확인은 **세션당 한 번**이다(세트마다 시키면 못 쓴다).
+
+**음성** — 장식이 아니다. 푸시업 자세에서는 화면을 볼 수 없고 근접센서 모드는 화면이 꺼진다.
+`.duckOthers` + `.mixWithOthers` 로 음악을 끊지 않고 얹는다.
+
+### 14.9 실기기 튜닝 과제 (M5 미완)
+
+시뮬레이터에는 카메라도 근접센서도 없다. **아래는 전부 실기기에서만 확정된다.**
+
+1. 20회 기준 영상 3종(정측면 / 30° 사선 / 저조도)을 **리포 밖**에 녹화 보관
+2. `DepthMethod` 두 방식을 같은 영상으로 비교 → 하나 확정
+3. `DepthRepDetector` 임계(0.25 / 0.75 / 0.35s)를 기준 영상 오차 ≤±1회가 되도록 조정
+4. `PlacementCheck` 거리 상수(`minBodySpan` 0.30 / `maxBodySpan` 0.88)를 실제 1.5~2m 촬영으로 검증
+5. `FormScore` 임계(깊이 95° / 락아웃 160° / 힙 20°)를 육안 라벨과 대조
+6. 근접센서 모드는 책상에서 20/20 확인 (실기기 필요하지만 운동은 불필요)

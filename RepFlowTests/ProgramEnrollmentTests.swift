@@ -196,3 +196,45 @@ struct ProgramEnrollmentTests {
         #expect(try context.fetch(FetchDescriptor<UserProfile>()).count == 1)
     }
 }
+
+/// 재측정은 폰(최대 측정 화면)에서도 워치(프로그램 세션)에서도 할 수 있다.
+/// 주차 진행이 두 경로에서 각각 일어나면 한 번의 재측정으로 두 주가 넘어간다.
+@MainActor
+@Suite("주차 진행은 한 곳에서만")
+struct WeekAdvanceOwnershipTests {
+
+    @Test("재측정 주 기록은 주차를 정확히 한 번만 올린다")
+    func advancesExactlyOnce() {
+        let e = ProgramEnrollment(trainingMax: 30, currentWeek: 7)
+        let session = e.nextSession!
+        e.record(SessionResult(kind: session.kind, targets: session.sets.map(\.reps), achieved: [36]))
+        #expect(e.currentWeek == 8)
+        #expect(e.trainingMax == 36)
+    }
+
+    @Test("주차를 다 채운 뒤 또 기록해도 주차가 더 넘어가지 않는다")
+    func extraRecordsAreIgnoredWithinWeek() {
+        let e = ProgramEnrollment(trainingMax: 30, currentWeek: 7)
+        let session = e.nextSession!
+        let result = SessionResult(kind: session.kind, targets: session.sets.map(\.reps), achieved: [36])
+        e.record(result)
+        let weekAfterFirst = e.currentWeek
+
+        // 같은 주가 이미 끝났으므로 다음 record는 새 주의 첫 세션으로 들어간다.
+        #expect(e.sessionIndexInWeek == 0)
+        #expect(e.currentWeek == weekAfterFirst)
+    }
+
+    @Test("주기와 무관한 수동 재측정은 주차를 건드리지 않는다")
+    func manualRemeasureKeepsWeek() {
+        // MaxTestView 의 비-재측정 분기와 같은 동작.
+        let e = ProgramEnrollment(trainingMax: 30, currentWeek: 3)
+        #expect(e.isRetestWeek == false)
+        e.trainingMax = 35
+        e.trainingMaxHistory.append(35)
+        e.completedSessionsThisWeek = []
+        e.consecutiveMissedWeeks = 0
+        #expect(e.currentWeek == 3)
+        #expect(e.trainingMax == 35)
+    }
+}

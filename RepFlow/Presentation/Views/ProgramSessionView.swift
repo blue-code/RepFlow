@@ -16,6 +16,21 @@ struct ProgramSessionView: View {
     @State private var adjustment: ProgramAdjustment?
     @State private var showAbandonConfirm = false
 
+    // 카운트 방식. 어느 소스든 결과는 runner.addRep() 하나로 들어간다.
+    @AppStorage("repflow.countingMode") private var modeRaw = CountingMode.manual.rawValue
+    @State private var camera = CameraRepCounter()
+    @State private var proximity = ProximityRepCounter()
+    @State private var speech = SpeechCounter()
+    @AppStorage("repflow.voiceCount") private var voiceEnabled = true
+    @State private var showPlacementGuide = false
+    /// 거치 확인은 세션당 한 번이면 된다. 세트마다 다시 시키면 못 쓴다.
+    @State private var hasPassedPlacement = false
+    @State private var sourceStatus: String?
+    @State private var formNotes: [PoseGeometry.FormScore] = []
+    @State private var lastSpokenRest = -1
+
+    private var mode: CountingMode { CountingMode(rawValue: modeRaw) ?? .manual }
+
     /// 휴식 잔여를 갱신하기 위한 심박. 상태는 runner가 시계로 계산하므로 여기선 깨우기만 한다.
     private let tick = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
@@ -32,6 +47,7 @@ struct ProgramSessionView: View {
             RFColor.bg.ignoresSafeArea()
             VStack(spacing: RFSpace.lg) {
                 progressHeader
+                if case .working = runner.phase { modePicker }
                 Spacer(minLength: 0)
                 phaseBody
                 Spacer(minLength: 0)
@@ -45,8 +61,29 @@ struct ProgramSessionView: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
         // 운동 중에는 탭바를 치운다 — 실수로 다른 탭을 누르면 세션이 날아간다.
         .toolbar(.hidden, for: .tabBar)
-        .onReceive(tick) { _ in runner.tick() }
-        .onAppear { runner.start() }
+        .onReceive(tick) { _ in
+            runner.tick()
+            speakRestCountdownIfNeeded()
+        }
+        .onAppear {
+            runner.start()
+            speech.isEnabled = voiceEnabled
+            speech.activateAudioSession()
+            startSource()
+        }
+        .onDisappear {
+            stopSource()
+            speech.deactivateAudioSession()
+        }
+        .onChange(of: runner.phase) { old, new in
+            handlePhaseChange(from: old, to: new)
+        }
+        .navigationDestination(isPresented: $showPlacementGuide) {
+            PlacementGuideView(counter: camera) {
+                hasPassedPlacement = true
+                showPlacementGuide = false
+            }
+        }
         .confirmationDialog("세션을 그만둘까요?", isPresented: $showAbandonConfirm) {
             Button("그만두기", role: .destructive) {
                 runner.abandon()
@@ -65,6 +102,30 @@ struct ProgramSessionView: View {
     }
 
     // MARK: - 조각
+
+    /// 카운트 방식 전환. 세트 중에는 바꾸지 못하게 한다 — 바꾸는 순간 세던 수가 꼬인다.
+    private var modePicker: some View {
+        VStack(spacing: RFSpace.xs) {
+            Picker("카운트 방식", selection: $modeRaw) {
+                ForEach(CountingMode.allCases) { m in
+                    Label(m.displayName, systemImage: m.symbol).tag(m.rawValue)
+                }
+            }
+            .pickerStyle(.segmented)
+            .disabled(runner.currentReps > 0)
+            .onChange(of: modeRaw) { _, _ in
+                stopSource()
+                hasPassedPlacement = false   // 방식을 바꾸면 거치도 다시 확인한다
+                startSource()
+            }
+
+            Text(sourceStatus ?? mode.hint)
+                .font(.rfCaptionSm)
+                .foregroundStyle(sourceStatus == nil ? RFColor.fgSubtle : RFColor.warning)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+        }
+    }
 
     private var progressHeader: some View {
         HStack(spacing: RFSpace.xs) {
@@ -118,7 +179,10 @@ struct ProgramSessionView: View {
         }
         .frame(maxWidth: .infinity, minHeight: 300)
         .contentShape(Rectangle())
-        .onTapGesture { runner.addRep() }
+        .onTapGesture {
+            guard mode == .manual else { return }   // 자동 모드에서 실수로 두 번 세지 않게
+            addAutoRep()
+        }
         .rfCard()
     }
 
@@ -236,6 +300,82 @@ struct ProgramSessionView: View {
         }
     }
 
+    // MARK: - 카운트 소스
+
+    private func startSource() {
+        switch mode {
+        case .manual:
+            sourceStatus = nil
+
+        case .camera:
+            camera.kneeVariant = enrollment.level.allowsKneeVariant
+            camera.onRep = { addAutoRep() }
+            camera.onStatus = { sourceStatus = $0 }
+            camera.onForm = { formNotes.append($0) }
+            if hasPassedPlacement {
+                camera.start()
+            } else {
+                // 첫 시작 전 거치를 확인한다. 이 게이트가 없으면 대부분 천장을 찍다가 0개로 끝난다.
+                showPlacementGuide = true
+            }
+
+        case .proximity:
+            proximity.onRep = { addAutoRep() }
+            proximity.onStatus = { sourceStatus = $0 }
+            proximity.start()
+        }
+    }
+
+    private func stopSource() {
+        camera.onRep = nil
+        camera.onForm = nil
+        camera.stop()
+        proximity.onRep = nil
+        proximity.stop()
+        sourceStatus = nil
+    }
+
+    /// 자동 소스가 센 1회. 수동 탭과 같은 입구로 들어간다.
+    private func addAutoRep() {
+        runner.addRep()
+        speech.announce(
+            count: runner.currentReps,
+            target: runner.currentTarget?.reps,
+            isAMRAP: runner.isAMRAPSet
+        )
+    }
+
+    // MARK: - 음성
+
+    private func handlePhaseChange(from old: ProgramSessionRunner.Phase, to new: ProgramSessionRunner.Phase) {
+        switch new {
+        case .resting(let afterSetIndex, _):
+            speech.announceSetComplete(setIndex: afterSetIndex, total: runner.session.sets.count)
+            speech.announceRest(seconds: Int(runner.restDuration))
+            lastSpokenRest = -1
+            // 휴식 중에는 카메라를 끈다 — 계속 돌리면 발열과 배터리만 먹는다.
+            camera.stop()
+
+        case .working:
+            if case .resting = old { startSource() }
+
+        case .finished, .abandoned:
+            stopSource()
+            speech.announceSessionComplete(totalReps: runner.totalReps)
+
+        case .ready:
+            break
+        }
+    }
+
+    private func speakRestCountdownIfNeeded() {
+        guard case .resting = runner.phase else { return }
+        let remaining = Int(runner.remainingRest.rounded(.up))
+        guard remaining != lastSpokenRest else { return }
+        lastSpokenRest = remaining
+        speech.announceRestCountdown(remaining)
+    }
+
     /// 한 번만 저장한다 — `.onAppear` 는 여러 번 불릴 수 있다.
     @State private var didSave = false
 
@@ -255,6 +395,12 @@ struct ProgramSessionView: View {
             endedAt: .now
         ))
         try? context.save()
+
+        // 다음 세션을 워치로 밀어둔다. 허브로 돌아가지 않고 바로 워치를 드는 경우가 있다.
+        PhoneSessionService.shared.sendProgramSession(
+            enrollment.nextSession,
+            restBonusSeconds: enrollment.restBonusSeconds
+        )
     }
 }
 
