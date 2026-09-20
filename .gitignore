@@ -51,3 +51,10 @@ fastlane/AuthKey*.p8
 build/
 *.ipa
 *.dSYM.zip
+
+# 서명 자산 — 리포에 들어가면 안 된다
+*.mobileprovision
+*.p12
+
+# xcodegen 생성물. project.yml 이 단일 진실이므로 프로젝트 파일은 추적하지 않는다.
+*.xcodeproj/

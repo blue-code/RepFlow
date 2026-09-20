@@ -2,6 +2,9 @@ import SwiftUI
 
 struct MenuView: View {
     @Environment(WatchCoordinator.self) private var coord
+    @State private var showAdvanced = false
+
+    private var autoDetectEnabled: Bool { AutoDetectSettings.isEnabled() }
 
     var body: some View {
         ScrollView {
@@ -34,19 +37,45 @@ struct MenuView: View {
 
                 Divider().padding(.vertical, 4)
 
-                Text("캘리브레이션")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button {
+                    coord.haptic(.click)
+                    showAdvanced.toggle()
+                } label: {
+                    HStack {
+                        Text("고급")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Image(systemName: showAdvanced ? "chevron.up" : "chevron.down")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
 
-                ForEach(ExerciseKind.allCases) { kind in
-                    Button {
-                        coord.haptic(.click)
-                        coord.openCalibration(exercise: kind)
-                    } label: {
-                        Label(kind.displayName, systemImage: "scope")
-                            .font(.caption)
+                if showAdvanced {
+                    if autoDetectEnabled {
+                        Text("자동 감지 캘리브레이션")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
+
+                        ForEach(ExerciseKind.allCases) { kind in
+                            Button {
+                                coord.haptic(.click)
+                                coord.openCalibration(exercise: kind)
+                            } label: {
+                                Label(kind.displayName, systemImage: "scope")
+                                    .font(.caption)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                        }
+                    } else {
+                        Text("자동 감지는 폰 설정에서 켤 수 있어요 (실험적)")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 4)
                     }
                 }
             }

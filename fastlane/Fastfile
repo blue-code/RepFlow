@@ -1,116 +1,53 @@
 default_platform(:ios)
 
+API_KEY_ID    = "33P5W93GJQ"
+API_ISSUER_ID = "ed28e2d3-ce1d-4d24-8e58-373132e4b554"
+API_KEY_PATH  = "/Volumes/SSD/DEV_SSD/MY/BurnCoach/fastlane/AuthKey_33P5W93GJQ.p8"
+TEAM_ID       = "KUDC7C6Z9H"
+
 platform :ios do
-
-  before_all do
-    setup_ci if ENV["CI"]
-  end
-
-  desc "App Store Connect API 인증"
-  private_lane :authenticate do
-    app_store_connect_api_key(
-      key_id: ENV["ASC_KEY_ID"],
-      issuer_id: ENV["ASC_ISSUER_ID"],
-      key_filepath: ENV["ASC_KEY_PATH"],
-      duration: 1200,
-      in_house: false
-    )
-  end
-
-  desc "App Store Connect에 앱 등록"
-  lane :create_app do
-    authenticate
-
-    create_app_online(
-      app_identifier: "com.digimaru.repflow",
-      app_name: "RepFlow",
-      language: "ko",
-      sku: "com.digimaru.repflow.001",
-      team_id: ENV["TEAM_ID"],
-      platforms: ["ios"],
-      skip_devcenter: false
-    )
-  end
 
   desc "TestFlight에 새 빌드 업로드"
   lane :beta do
-    authenticate
-
-    if ENV["AUTO_INCREMENT_BUILD_NUMBER"] == "true"
-      increment_build_number(
-        build_number: latest_testflight_build_number + 1,
-        xcodeproj: "RepFlow.xcodeproj"
-      )
-    end
-
-    # 워치 bundle ID는 Developer Portal에만 등록 (ASC App 생성 불필요)
-    produce(
-      app_identifier: "com.digimaru.repflow.watch",
-      app_name: "RepFlowWatch",
-      team_id: ENV["TEAM_ID"],
-      skip_itc: true
+    api_key = app_store_connect_api_key(
+      key_id: API_KEY_ID,
+      issuer_id: API_ISSUER_ID,
+      key_filepath: API_KEY_PATH,
+      duration: 1200,
+      in_house: false
     )
 
-    # 수동 서명: sigh로 App Store 프로비저닝 프로파일 가져오기 (없으면 생성)
-    get_provisioning_profile(
+    build_num = latest_testflight_build_number(
       app_identifier: "com.digimaru.repflow",
-      team_id: ENV["TEAM_ID"],
-      output_path: "./build",
-      filename: "main.mobileprovision",
-      ignore_profiles_with_different_name: false
-    )
-    main_profile_name = lane_context[SharedValues::SIGH_NAME]
+      api_key: api_key
+    ) + 1
 
-    get_provisioning_profile(
-      app_identifier: "com.digimaru.repflow.watch",
-      team_id: ENV["TEAM_ID"],
-      output_path: "./build",
-      filename: "watch.mobileprovision",
-      ignore_profiles_with_different_name: false
-    )
-    watch_profile_name = lane_context[SharedValues::SIGH_NAME]
-
-    UI.message("📋 Main profile: #{main_profile_name}")
-    UI.message("📋 Watch profile: #{watch_profile_name}")
-
-    # 자동 서명에서 수동 서명으로 전환 (xcconfig)
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      path: "RepFlow.xcodeproj",
-      bundle_identifier: "com.digimaru.repflow",
-      team_id: ENV["TEAM_ID"],
-      profile_name: main_profile_name,
-      code_sign_identity: "Apple Distribution",
-      targets: ["RepFlow"]
-    )
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      path: "RepFlow.xcodeproj",
-      bundle_identifier: "com.digimaru.repflow.watch",
-      team_id: ENV["TEAM_ID"],
-      profile_name: watch_profile_name,
-      code_sign_identity: "Apple Distribution",
-      targets: ["RepFlowWatch"]
+    increment_build_number(
+      build_number: build_num,
+      xcodeproj: "RepFlow.xcodeproj"
     )
 
-    build_app(
-      project: "RepFlow.xcodeproj",
-      scheme: "RepFlow",
-      clean: true,
-      export_method: "app-store",
-      export_options: {
-        signingStyle: "manual",
-        teamID: ENV["TEAM_ID"],
-        provisioningProfiles: {
-          "com.digimaru.repflow" => main_profile_name,
-          "com.digimaru.repflow.watch" => watch_profile_name
-        }
-      },
-      output_directory: "./build",
-      output_name: "RepFlow.ipa"
-    )
+    # Let xcodebuild handle everything — automatic signing + provisioning
+    # Xcode 26 auto-provisions HealthKit-capable profiles via API key
+    auth = "-allowProvisioningUpdates" \
+      " -authenticationKeyID #{API_KEY_ID}" \
+      " -authenticationKeyIssuerID #{API_ISSUER_ID}" \
+      " -authenticationKeyPath #{API_KEY_PATH}"
+
+    sh("cd .. && xcodebuild -project RepFlow.xcodeproj -scheme RepFlow" \
+      " -configuration Release -destination 'generic/platform=iOS'" \
+      " clean archive -archivePath ./build/RepFlow.xcarchive" \
+      " #{auth}")
+
+    sh("cd .. && xcodebuild -exportArchive" \
+      " -archivePath ./build/RepFlow.xcarchive" \
+      " -exportPath ./build" \
+      " -exportOptionsPlist fastlane/ios_export.plist" \
+      " #{auth}")
 
     upload_to_testflight(
+      api_key: api_key,
+      ipa: "./build/RepFlow.ipa",
       skip_waiting_for_build_processing: true,
       changelog: changelog_from_git_commits(
         commits_count: 10,
@@ -120,54 +57,6 @@ platform :ios do
     )
 
     clean_build_artifacts
-  end
-
-  desc "빌드만 실행 (업로드 없이)"
-  lane :build_only do
-    build_app(
-      project: "RepFlow.xcodeproj",
-      scheme: "RepFlow",
-      clean: true,
-      export_method: "app-store",
-      api_key_path: ENV["ASC_KEY_PATH"],
-      export_options: {
-        signingStyle: "automatic",
-        teamID: ENV["TEAM_ID"]
-      },
-      export_xcargs: "-allowProvisioningUpdates -authenticationKeyIssuerID #{ENV['ASC_ISSUER_ID']} -authenticationKeyID #{ENV['ASC_KEY_ID']} -authenticationKeyPath #{File.expand_path(ENV['ASC_KEY_PATH'])}",
-      xcargs: "-allowProvisioningUpdates -authenticationKeyIssuerID #{ENV['ASC_ISSUER_ID']} -authenticationKeyID #{ENV['ASC_KEY_ID']} -authenticationKeyPath #{File.expand_path(ENV['ASC_KEY_PATH'])}",
-      output_directory: "./build",
-      output_name: "RepFlow.ipa"
-    )
-  end
-
-  desc "Bundle ID에 HealthKit capability 활성화"
-  lane :enable_healthkit do
-    authenticate
-
-    require 'spaceship'
-    ['com.digimaru.repflow', 'com.digimaru.repflow.watch'].each do |bid|
-      bundle = Spaceship::ConnectAPI::BundleId.find(bid)
-      unless bundle
-        UI.important("Bundle #{bid} not found")
-        next
-      end
-      caps = bundle.get_capabilities
-      existing = caps.map { |c| c.capability_type }
-      UI.message("#{bid}: existing capabilities = #{existing}")
-      unless existing.include?('HEALTHKIT')
-        begin
-          # Spaceship API: BundleIdCapability.create takes bundle_id_id + capability_type
-          Spaceship::ConnectAPI.post_bundle_id_capability(
-            bundle_id_id: bundle.id,
-            capability_type: Spaceship::ConnectAPI::BundleIdCapability::Type::HEALTHKIT
-          )
-          UI.success("✅ enabled HEALTHKIT on #{bid}")
-        rescue => e
-          UI.error("⚠️ failed: #{e.message}")
-        end
-      end
-    end
   end
 
   desc "유닛 테스트"
@@ -180,27 +69,18 @@ platform :ios do
     )
   end
 
-  desc "다국어 App Store 스크린샷 자동 생성"
-  lane :screenshots do
-    capture_ios_screenshots(
-      project: "RepFlow.xcodeproj",
-      scheme: "RepFlow",
-      output_directory: "./fastlane/screenshots",
-      clear_previous_screenshots: true,
-      devices: ["iPhone 17"],
-      languages: ["ko", "en-US", "ja", "zh-Hans"],
-      override_status_bar: true,
-      stop_after_first_error: false,
-      concurrent_simulators: false,
-      reinstall_app: true,
-      app_identifier: "com.digimaru.repflow"
-    )
-  end
-
   desc "스크린샷 + 메타데이터 ASC 업로드"
   lane :upload_metadata do
-    authenticate
+    api_key = app_store_connect_api_key(
+      key_id: API_KEY_ID,
+      issuer_id: API_ISSUER_ID,
+      key_filepath: API_KEY_PATH,
+      duration: 1200,
+      in_house: false
+    )
+
     upload_to_app_store(
+      api_key: api_key,
       skip_binary_upload: true,
       skip_screenshots: false,
       overwrite_screenshots: true,

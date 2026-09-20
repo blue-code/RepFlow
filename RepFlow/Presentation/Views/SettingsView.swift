@@ -44,7 +44,7 @@ struct SettingsView: View {
                                 .buttonStyle(.plain)
 
                                 NavigationLink { CalibrationGuideView() } label: {
-                                    settingRow(symbol: "scope", title: "디텍션 정확도", chip: nil)
+                                    settingRow(symbol: "wand.and.stars", title: "자동 카운트", chip: "Beta")
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -74,6 +74,7 @@ struct SettingsView: View {
                                 linkRow(label: "개인정보처리방침", url: "https://blue-code.github.io/legal/repflow/privacy.html")
                                 linkRow(label: "이용약관", url: "https://blue-code.github.io/legal/repflow/terms.html")
                                 linkRow(label: "지원/문의", url: "https://blue-code.github.io/legal/repflow/support.html")
+                                linkRow(label: "피드백 보내기", url: FeedbackLink.url.absoluteString)
                             }
                             .background(RFColor.bgElevated, in: RoundedRectangle(cornerRadius: RFRadius.md))
                             .overlay(RoundedRectangle(cornerRadius: RFRadius.md).stroke(RFColor.border, lineWidth: 1))
@@ -197,5 +198,35 @@ struct SettingsView: View {
             }
             .padding(RFSpace.md)
         }
+    }
+}
+
+/// The "피드백 보내기" destination — the blue-code feedback form, shared across every app and
+/// filtered by the `app` field (AppCommonSkill `06-legal-privacy-review.md`).
+///
+/// The form is *opened*, never posted to: the user fills it in Safari, a separate app, so this app
+/// still collects nothing and its `DATA_NOT_COLLECTED` privacy label stays honest. An in-app POST
+/// would break that — don't add one.
+///
+/// Version and locale are prefilled so a report arrives already saying which build and language it
+/// came from; both are visible in the form before the user submits.
+private enum FeedbackLink {
+    private static let appSlug = "repflow"
+
+    static var url: URL {
+        var components = URLComponents(
+            string: "https://docs.google.com/forms/d/e/"
+                + "1FAIpQLSekD7Uyg8Oa5WVWX0zV15PEyWS2y9A5sIGxA_pSeAcvWVtf6Q/viewform")!
+        let info = Bundle.main.infoDictionary
+        let short = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+        components.queryItems = [
+            URLQueryItem(name: "usp", value: "pp_url"),
+            URLQueryItem(name: "entry.1556462282", value: appSlug),
+            URLQueryItem(name: "entry.88571063", value: "\(short) (\(build))"),
+            URLQueryItem(name: "entry.1277534382", value: Locale.current.identifier),
+        ]
+        // Safe: the base is a string literal and URLComponents percent-encodes every value.
+        return components.url!
     }
 }

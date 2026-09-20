@@ -91,6 +91,20 @@ enum CalibrationStore {
     }
 }
 
+/// 자동 카운트(모션 디텍션) 활성화 여부. 기본은 OFF — 사용자가 명시적으로 켜야 동작.
+/// 푸시업 손목 모션의 본질적 노이즈 한계로 인해 탭 카운트가 기본, 자동은 실험 옵션.
+enum AutoDetectSettings {
+    private static let enabledKey = "repflow.autoDetect.enabled"
+
+    static func isEnabled(_ defaults: UserDefaults = .standard) -> Bool {
+        defaults.bool(forKey: enabledKey)
+    }
+
+    static func setEnabled(_ value: Bool, to defaults: UserDefaults = .standard) {
+        defaults.set(value, forKey: enabledKey)
+    }
+}
+
 // 캘리브레이션 동기화 메시지 키 (iPhone Settings 변경 → Watch UserDefaults 동기화)
 enum CalibrationSyncKey {
     static let event = "calibrationSync"
@@ -98,4 +112,5 @@ enum CalibrationSyncKey {
     static let exerciseRaw = "exercise"
     static let calibrationData = "calibrationData"
     static let clearCalibrationFor = "clearCalibration"
+    static let autoDetectEnabled = "autoDetectEnabled"
 }
