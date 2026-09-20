@@ -44,8 +44,17 @@ final class CameraRepCounter: NSObject, RepSource {
     private var currentRepPoses: [PoseGeometry.Pose] = []
     private var lastGoodSampleAt: TimeInterval?
     private var isSignalLost = false
-    /// Vision 은 비싸다. 30fps 전부 돌리지 않고 절반만 쓴다.
-    private var frameIndex = 0
+    /// 프레임 스킵 카운터. 캡처 델리게이트는 단일 직렬 큐에서만 불리므로 락이 필요 없다.
+    private final class FrameCounter: @unchecked Sendable {
+        private var value = 0
+        /// 두 프레임 중 하나만 처리한다.
+        func shouldProcess() -> Bool {
+            value += 1
+            return value.isMultiple(of: 2)
+        }
+        func reset() { value = 0 }
+    }
+    private let frames = FrameCounter()
 
     var previewSession: AVCaptureSession { session }
 
@@ -58,6 +67,19 @@ final class CameraRepCounter: NSObject, RepSource {
         isSignalLost = false
 
         Task { await configureAndRun() }
+    }
+
+    /// 캡처는 유지한 채 카운트만 처음으로 되돌린다.
+    /// 거치 확인 중에 한 시험 동작이 세어지거나, 자세를 잡는 동안의 어깨 높이가
+    /// 락아웃 기준값으로 굳는 걸 막는다.
+    func resetCounting() {
+        detector = DepthRepDetector()
+        baselineGap = nil
+        currentRepPoses = []
+        lastGoodSampleAt = nil
+        isSignalLost = false
+        startedAt = .now
+        frames.reset()
     }
 
     func stop() {
@@ -176,6 +198,9 @@ extension CameraRepCounter: AVCaptureVideoDataOutputSampleBufferDelegate {
         from connection: AVCaptureConnection
     ) {
         guard let buffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        // Vision 은 비싸다. 30fps 전부 돌리면 10분짜리 세션에서 발열로 스로틀링이 걸린다.
+        // 푸시업 한 번이 최소 0.7초라 15fps로도 충분하다.
+        guard frames.shouldProcess() else { return }
         let time = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
 
         let request = VNDetectHumanBodyPoseRequest()

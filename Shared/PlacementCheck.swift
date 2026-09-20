@@ -4,6 +4,10 @@ import Foundation
 ///
 /// 푸시업은 바닥 자세다. 폰을 세워 정측면에서 전신을 담지 않으면 Vision 이 관절을 못 잡고,
 /// 그 상태로 세션을 시작하면 카운트가 0으로 끝난다. 그래서 **시작 전에 막는 게 이 모드의 MVP**다.
+///
+/// ⚠️ 여기 좌표는 **화면 기준**(가로로 누운 몸 = span > height)이다. Vision 의 정규화 좌표는
+/// `VNImageRequestHandler` 의 orientation 에 따라 축이 돌아가므로, 그 값이 틀리면
+/// 멀쩡히 누운 사람이 세로로 길게 들어와 `notSideView` 가 영원히 걸린다. §14.9 참조.
 struct PlacementCheck {
 
     /// 핵심 관절이 이 신뢰도는 넘어야 한다.

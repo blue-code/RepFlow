@@ -803,6 +803,19 @@ Vision이 저신뢰 좌표를 낸다). 깊이 산출은 두 방식이 있고 **�
 
 시뮬레이터에는 카메라도 근접센서도 없다. **아래는 전부 실기기에서만 확정된다.**
 
+> 🔴 **0. 가장 먼저 의심할 것 — Vision orientation.**
+> `CameraRepCounter.captureOutput` 은 지금 `VNImageRequestHandler(cvPixelBuffer:orientation: .up)` 이다.
+> `.up` 은 버퍼를 센서 기준 가로로 본다는 뜻인데, 이 앱은 **세로 고정**(`UIInterfaceOrientationPortrait`)
+> 이라 후면 카메라에서는 `.right` 가 맞을 가능성이 높다.
+> 틀리면 축이 90° 돌아가 **멀쩡히 누운 사람이 세로로 길게 들어오고**, `PlacementCheck` 의
+> 정측면 판정(`span > height`)이 영원히 실패해 "폰을 바닥에 세워 옆에서 찍어주세요"만 반복된다.
+> 카메라 모드가 "아예 안 된다"면 십중팔구 여기다. 실기기에서 관절 좌표를 한 번 찍어보고 확정할 것
+> — 추측으로 바꾸지 않았다.
+>
+> 관련 위험: `ProgramSessionView.onDisappear { stopSource() }` 가 `PlacementGuideView` 를 **push** 할 때도
+> 불릴 수 있다. 그러면 가이드가 막 켠 카메라가 곧바로 꺼진다. 되돌아올 때 `onAppear` 가 우연히
+> 살려내지만 순서에 의존한다. **가이드 화면이 새까맣게 나오면 이것부터 본다.**
+
 1. 20회 기준 영상 3종(정측면 / 30° 사선 / 저조도)을 **리포 밖**에 녹화 보관
 2. `DepthMethod` 두 방식을 같은 영상으로 비교 → 하나 확정
 3. `DepthRepDetector` 임계(0.25 / 0.75 / 0.35s)를 기준 영상 오차 ≤±1회가 되도록 조정

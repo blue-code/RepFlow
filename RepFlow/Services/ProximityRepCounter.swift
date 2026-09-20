@@ -21,6 +21,8 @@ final class ProximityRepCounter: RepSource {
 
     /// 근접센서를 켜면 화면이 꺼진다. 이 모드는 소리로 안내하는 게 전제다.
     func start() {
+        // 세트마다 다시 시작되므로, 이전 옵저버와 타이머가 쌓이지 않게 먼저 정리한다.
+        teardown()
         detector = DepthRepDetector()
         startedAt = .now
         device.isProximityMonitoringEnabled = true
@@ -42,15 +44,19 @@ final class ProximityRepCounter: RepSource {
     }
 
     func stop() {
+        teardown()
+        // 마지막 1회를 흘리지 않는다. 콜백이 살아 있을 때 불러야 의미가 있다.
+        if detector.flush(at: elapsed) { onRep?() }
+        device.isProximityMonitoringEnabled = false
+        startedAt = nil
+    }
+
+    private func teardown() {
         poller?.invalidate()
         poller = nil
         NotificationCenter.default.removeObserver(
             self, name: UIDevice.proximityStateDidChangeNotification, object: nil
         )
-        // 마지막 1회를 흘리지 않는다.
-        if detector.flush(at: elapsed) { onRep?() }
-        device.isProximityMonitoringEnabled = false
-        startedAt = nil
     }
 
     @objc private func proximityChanged() {

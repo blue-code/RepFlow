@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 /// 프로그램 세션 한 번을 진행한다.
 ///
@@ -82,6 +83,11 @@ struct ProgramSessionView: View {
             PlacementGuideView(counter: camera) {
                 hasPassedPlacement = true
                 showPlacementGuide = false
+                // 캡처는 그대로 두고 카운트만 0부터. 자세를 잡는 동안의 어깨 높이가
+                // 락아웃 기준값으로 굳으면 깊이 신호가 통째로 틀어진다.
+                camera.resetCounting()
+                camera.onRep = { addAutoRep() }
+                camera.onForm = { formNotes.append($0) }
             }
         }
         .confirmationDialog("세션을 그만둘까요?", isPresented: $showAbandonConfirm) {
@@ -303,19 +309,24 @@ struct ProgramSessionView: View {
     // MARK: - 카운트 소스
 
     private func startSource() {
+        // 카메라 모드는 폰이 바닥에 놓인 채 아무도 안 만진다. 자동 잠금이 걸리면
+        // 캡처가 끊겨서, 2세트를 마치고 일어나면 잠금화면만 남는다.
+        setIdleTimerDisabled(mode != .manual)
+
         switch mode {
         case .manual:
             sourceStatus = nil
 
         case .camera:
             camera.kneeVariant = enrollment.level.allowsKneeVariant
-            camera.onRep = { addAutoRep() }
             camera.onStatus = { sourceStatus = $0 }
-            camera.onForm = { formNotes.append($0) }
             if hasPassedPlacement {
+                camera.onRep = { addAutoRep() }
+                camera.onForm = { formNotes.append($0) }
                 camera.start()
             } else {
                 // 첫 시작 전 거치를 확인한다. 이 게이트가 없으면 대부분 천장을 찍다가 0개로 끝난다.
+                // 콜백은 통과한 뒤에 붙인다 — 자세를 잡으며 한 시험 동작이 세어지면 안 된다.
                 showPlacementGuide = true
             }
 
@@ -327,12 +338,15 @@ struct ProgramSessionView: View {
     }
 
     private func stopSource() {
+        // stop() 안에서 마지막 1회를 flush 하며 onRep 을 부른다.
+        // 콜백을 먼저 끊으면 그 안전망이 통째로 죽는다.
+        camera.stop()
+        proximity.stop()
         camera.onRep = nil
         camera.onForm = nil
-        camera.stop()
         proximity.onRep = nil
-        proximity.stop()
         sourceStatus = nil
+        setIdleTimerDisabled(false)
     }
 
     /// 자동 소스가 센 1회. 수동 탭과 같은 입구로 들어간다.
@@ -347,14 +361,19 @@ struct ProgramSessionView: View {
 
     // MARK: - 음성
 
+    private func setIdleTimerDisabled(_ disabled: Bool) {
+        UIApplication.shared.isIdleTimerDisabled = disabled
+    }
+
     private func handlePhaseChange(from old: ProgramSessionRunner.Phase, to new: ProgramSessionRunner.Phase) {
         switch new {
         case .resting(let afterSetIndex, _):
             speech.announceSetComplete(setIndex: afterSetIndex, total: runner.session.sets.count)
             speech.announceRest(seconds: Int(runner.restDuration))
             lastSpokenRest = -1
-            // 휴식 중에는 카메라를 끈다 — 계속 돌리면 발열과 배터리만 먹는다.
-            camera.stop()
+            // 휴식 중에는 소스를 통째로 내린다. 카메라는 발열·배터리 때문이고,
+            // 근접센서는 start() 가 세트마다 불리며 옵저버와 타이머가 쌓이기 때문이다.
+            stopSource()
 
         case .working:
             if case .resting = old { startSource() }
