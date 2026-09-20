@@ -14,6 +14,8 @@ struct WatchPayload: Equatable {
         case workoutEnded(WorkoutReport)
         /// GTG 알림 응답.
         case gtgAcknowledged(exercise: ExerciseKind, repsDone: Int, doneAt: Date)
+        /// 워치에서 끝낸 프로그램 세션. 주간 판정은 폰이 한다.
+        case programSessionCompleted(SessionResult, totalReps: Int, endedAt: Date)
     }
 
     struct WorkoutReport: Equatable {
@@ -68,6 +70,18 @@ struct WatchPayload: Equatable {
                 repsDone: message[WatchMessageKey.reps] as? Int ?? 0,
                 doneAt: (message[WatchMessageKey.timestamp] as? Double)
                     .map(Date.init(timeIntervalSince1970:)) ?? .now
+            )
+
+        case .programSessionCompleted:
+            guard let data = message[WatchMessageKey.sessionResult] as? Data,
+                  let result = try? JSONDecoder().decode(SessionResult.self, from: data)
+            else { return nil }
+            let endedAt = (message[WatchMessageKey.timestamp] as? Double)
+                .map(Date.init(timeIntervalSince1970:)) ?? .now
+            kind = .programSessionCompleted(
+                result,
+                totalReps: message[WatchMessageKey.totalReps] as? Int ?? result.achieved.reduce(0, +),
+                endedAt: endedAt
             )
 
         case .workoutStarted, .setCompleted, .requestProgram:

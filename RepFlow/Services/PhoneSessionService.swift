@@ -76,6 +76,21 @@ final class PhoneSessionService: NSObject {
         sendMessage(payload)
     }
 
+    /// 다음 프로그램 세션을 워치로 민다.
+    ///
+    /// `updateApplicationContext` 라서 워치가 꺼져 있었어도 다음 활성화 때 최신 세션을 받는다.
+    /// 워치가 폰 없이 세션을 완주할 수 있어야 하므로 "요청하면 준다"가 아니라 미리 밀어둔다.
+    func sendProgramSession(_ program: ProgramSession?, restBonusSeconds: Int) {
+        guard let program, let data = try? JSONEncoder().encode(program) else { return }
+        let payload: [String: Any] = [
+            WatchMessageKey.event: PhoneEvent.programUpdated.rawValue,
+            WatchMessageKey.programSession: data,
+            WatchMessageKey.restBonus: restBonusSeconds
+        ]
+        try? session?.updateApplicationContext(payload)
+        sendMessage(payload)
+    }
+
     private func sendMessage(_ message: [String: Any]) {
         guard let session, session.isReachable else { return }
         session.sendMessage(message, replyHandler: nil, errorHandler: nil)
@@ -100,6 +115,17 @@ final class PhoneSessionService: NSObject {
             } catch {
                 // 저장 실패는 조용히 넘기지 않는다 — 기록이 통째로 사라지는 경로다.
                 assertionFailure("운동 기록 저장 실패: \(error)")
+            }
+            totalCompletedSessions += 1
+            ReviewPromptService.sessionCompleted(totalCount: totalCompletedSessions)
+
+        case .programSessionCompleted(let result, let totalReps, let endedAt):
+            do {
+                try activeIngest.ingestProgramSession(
+                    result, totalReps: totalReps, endedAt: endedAt
+                )
+            } catch {
+                assertionFailure("프로그램 세션 저장 실패: \(error)")
             }
             totalCompletedSessions += 1
             ReviewPromptService.sessionCompleted(totalCount: totalCompletedSessions)

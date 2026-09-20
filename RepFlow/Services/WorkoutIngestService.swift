@@ -69,6 +69,33 @@ struct WorkoutIngestService {
         return singleSetReps
     }
 
+    /// 워치에서 끝낸 프로그램 세션. 운동 기록으로 남기고 주간 판정까지 돌린다.
+    ///
+    /// 판정을 워치가 아니라 폰에서 하는 이유: 주차·연속 미달·훈련최대 이력이 모두
+    /// `ProgramEnrollment`(폰의 SwiftData)에 있고, 워치는 그 상태를 들고 있지 않다.
+    @discardableResult
+    func ingestProgramSession(
+        _ result: SessionResult,
+        totalReps: Int,
+        endedAt: Date
+    ) throws -> ProgramAdjustment? {
+        try ingest(WatchPayload.WorkoutReport(
+            exercise: .pushUp,
+            mode: .sets,
+            totalReps: totalReps,
+            durationSec: 0,
+            avgTempo: 0,
+            endedAt: endedAt
+        ))
+
+        guard let enrollment = try context.fetch(FetchDescriptor<ProgramEnrollment>()).first else {
+            return nil
+        }
+        let adjustment = enrollment.record(result, at: endedAt)
+        try context.save()
+        return adjustment
+    }
+
     /// GTG 응답을 오늘자 `GTGDay` 에 누적한다. 오늘 기록이 없으면 프로필 설정으로 만든다.
     @discardableResult
     func ingestGTG(exercise: ExerciseKind, repsDone: Int, at date: Date = .now) throws -> GTGDay {

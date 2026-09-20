@@ -19,6 +19,11 @@ enum WatchMessageKey {
     /// 메시지 고유 ID. 종료 리포트는 sendMessage + transferUserInfo로 이중 송신되므로
     /// 수신 측이 이 값으로 중복을 제거한다.
     static let messageId = "messageId"
+    /// 폰 → 워치: 다음 프로그램 세션(JSON). 워치가 폰 없이 진행할 수 있도록 미리 밀어둔다.
+    static let programSession = "programSession"
+    static let restBonus = "restBonus"
+    /// 워치 → 폰: 끝난 프로그램 세션 결과(JSON).
+    static let sessionResult = "sessionResult"
 }
 
 // Watch → iPhone
@@ -29,6 +34,8 @@ enum WatchAction: String {
     case setCompleted
     case gtgPromptAcknowledged
     case requestProgram
+    /// 프로그램 세션 완료. 폰이 주간 판정까지 한다.
+    case programSessionCompleted
 }
 
 // iPhone → Watch
@@ -36,6 +43,8 @@ enum PhoneEvent: String {
     case startWorkout         // 운동 시작 명령
     case stopWorkout
     case gtgPrompt            // GTG 알림: "지금 5개"
+    /// 다음 프로그램 세션이 바뀜(주차 진행·훈련최대 변경). applicationContext 로 밀어
+    /// 워치가 꺼져 있었어도 다음 활성화 때 최신 세션을 갖게 한다.
     case programUpdated
 }
 

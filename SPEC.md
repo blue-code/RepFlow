@@ -56,9 +56,15 @@
 - ✅ 스크린샷 자동화 훅: `UI_TESTING_TAB=n` / `UI_TESTING_ROUTE=session|maxTest` (§9.5)
 - 시뮬레이터 실행으로 허브·세션 화면 확인 완료
 
-**다음 (M4)** — 워치 프로그램 진행 화면. `ProgramSessionRunner` 를 그대로 쓰고,
-`WatchCoordinator` 에 `.program(...)` Screen 을 추가한다. 메시지 프로토콜(§6)에
-프로그램 세션 동기화 액션을 더해야 한다.
+**M4 (워치 프로그램) — 완료 @ 2026-09-20**
+- ✅ `RepFlowWatch/Views/ProgramRunView.swift` — 폰과 **같은** `ProgramSessionRunner` 사용
+- ✅ `WatchCoordinator.Screen.program(...)` + `MenuView` 최상단 진입점
+- ✅ 메시지 프로토콜 확장 (§6.1 `programSessionCompleted` / §6.2 `programUpdated`)
+- ✅ 폰이 다음 세션을 `updateApplicationContext` 로 미리 밀어 **워치 단독 완주** 가능
+- 🔲 **실기기 검증 필요** — 폰 없이 완주 → 폰 기록·주차 반영, Health 저장
+
+**다음 (M5)** — 폰 카메라 카운트 (Vision). 거치 가이드(정측면 1.5~2m) 필수,
+깊이 신호 두 후보를 기준 영상으로 비교 후 확정, 무릎 변형 힙라인 기준점 분기.
 
 **이후**
 - M3 iOS 프로그램 UI + 최대 측정 · M4 워치 프로그램 진행 화면
@@ -125,6 +131,7 @@ RepFlowWatch/        — watchOS 앱
     WatchWorkoutManager.swift            — HKWorkoutSession 라이프사이클
   Views/
     RootWatchView.swift                  — Screen switch
+    ProgramRunView.swift                 — 「푸시업 100」 세션 (폰과 동일한 ProgramSessionRunner)
     MenuView.swift                       — 운동 종목 + 인터벌 + 캘리브레이션 진입
     WorkoutLiveView.swift                — freeCount 모드 실시간 카운트
     IntervalRunView.swift                — EMOM/Tabata/AMRAP 인터벌
@@ -150,7 +157,7 @@ Shared/              — 양쪽 컴파일됨 (UIKit/WatchKit 사용 불가)
   RepDetectorService.swift               — CoreMotion 50Hz, gravity projection +
                                            gyro fusion + zero-crossing
 
-RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 (85 tests)
+RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 / 워치 왕복 (91 tests)
 fastlane/Fastfile    — lanes: beta, test, upload_metadata
                        (ASC API key는 외부 경로: BurnCoach 디렉토리의 .p8)
 project.yml          — XcodeGen 정의 (Signing=Automatic, healthkit entitlement true)
@@ -296,6 +303,7 @@ v3는 zero-crossing이라 up/down 구분 불필요 — 단일 amplitude로 처�
 `WatchCoordinator.Screen`:
 ```
 .menu                                       — MenuView
+.program(ProgramSession, restBonusSeconds)  — ProgramRunView    (「푸시업 100」, 폰 없이 완주 가능)
 .workout(ExerciseKind, WorkoutMode)         — WorkoutLiveView   (freeCount 전용)
 .interval(IntervalProgram)                  — IntervalRunView   (EMOM/Tabata/AMRAP)
 .gtgQuick(ExerciseKind, Int)                — GTGQuickView      (GTG 알림 응답)
@@ -371,6 +379,7 @@ v3는 zero-crossing이라 up/down 구분 불필요 — 단일 amplitude로 처�
 | `repCounted` | `totalReps` | rep 카운트 갱신. 실시간 표시 전용, 유실 허용 |
 | `workoutEnded` | `exercise`, `mode`, `totalReps`, `durationSec`, `avgTempo`, `timestamp`, `messageId` | 세션 완료. **보장 송신** |
 | `gtgPromptAcknowledged` | `exercise`, `reps` (0 = 건너뜀), `timestamp`, `messageId` | GTG 프롬프트 응답. **보장 송신** |
+| `programSessionCompleted` | `sessionResult` (JSON), `totalReps`, `timestamp`, `messageId` | 「푸시업 100」 세션 완료. **보장 송신**. 주간 판정은 폰이 한다 |
 | `setCompleted` | - | (정의됨, 현재 미사용) |
 | `requestProgram` | - | (정의됨, 미사용) |
 | `workoutStarted` | - | (정의됨, 미사용) |
@@ -380,9 +389,9 @@ v3는 zero-crossing이라 up/down 구분 불필요 — 단일 amplitude로 처�
 | Event | 추가 페이로드 | 비고 |
 |---|---|---|
 | `gtgPrompt` | `exercise`, `reps` | GTG 즉시 트리거 → 워치가 `GTGQuickView` 열기 |
+| `programUpdated` | `programSession` (JSON), `restBonus` | 다음 「푸시업 100」 세션. `updateApplicationContext` 로 밀어 워치가 꺼져 있었어도 다음 활성화 때 받는다 |
 | `startWorkout` | - | (정의됨, 미사용) |
 | `stopWorkout` | - | (정의됨, 미사용) |
-| `programUpdated` | - | (정의됨, 미사용) |
 
 ### 6.3 캘리브레이션 동기화 (`CalibrationSyncKey`)
 

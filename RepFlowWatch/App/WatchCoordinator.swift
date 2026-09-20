@@ -11,6 +11,8 @@ final class WatchCoordinator {
         case interval(IntervalProgram)
         case gtgQuick(ExerciseKind, Int)
         case calibrate(ExerciseKind)
+        /// 「푸시업 100」 세션. 폰이 미리 밀어둔 세션을 워치 단독으로 진행한다.
+        case program(ProgramSession, restBonusSeconds: Int)
     }
 
     var screen: Screen = .menu
@@ -32,6 +34,10 @@ final class WatchCoordinator {
 
     func openCalibration(exercise: ExerciseKind) {
         screen = .calibrate(exercise)
+    }
+
+    func startProgram(_ session: ProgramSession, restBonusSeconds: Int) {
+        screen = .program(session, restBonusSeconds: restBonusSeconds)
     }
 
     func backToMenu() {

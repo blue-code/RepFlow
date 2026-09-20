@@ -39,7 +39,21 @@ struct ProgramsView: View {
             }
             .navigationTitle("푸시업 100")
             .toolbarColorScheme(.dark, for: .navigationBar)
+            // 워치가 폰 없이 완주할 수 있어야 하므로, 다음 세션을 미리 밀어둔다.
+            // applicationContext 라서 워치가 꺼져 있었어도 다음 활성화 때 받는다.
+            .onAppear { pushSessionToWatch() }
+            .onChange(of: enrollment?.currentWeek) { _, _ in pushSessionToWatch() }
+            .onChange(of: enrollment?.sessionIndexInWeek) { _, _ in pushSessionToWatch() }
+            .onChange(of: enrollment?.trainingMax) { _, _ in pushSessionToWatch() }
         }
+    }
+
+    private func pushSessionToWatch() {
+        guard let enrollment else { return }
+        PhoneSessionService.shared.sendProgramSession(
+            enrollment.nextSession,
+            restBonusSeconds: enrollment.restBonusSeconds
+        )
     }
 
     // MARK: - 시작 전

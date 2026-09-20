@@ -10,6 +10,10 @@ final class WatchSessionService: NSObject {
     var isPhoneReachable: Bool = false
     var pendingGTGPrompt: (exercise: ExerciseKind, reps: Int)?
 
+    /// 폰이 미리 밀어둔 다음 프로그램 세션. 폰이 꺼져 있어도 워치 단독으로 완주할 수 있다.
+    var programSession: ProgramSession?
+    var programRestBonusSeconds: Int = 0
+
     private var session: WCSession?
 
     override private init() {
@@ -49,6 +53,17 @@ final class WatchSessionService: NSObject {
             WatchMessageKey.totalReps: totalReps,
             WatchMessageKey.durationSec: durationSec,
             WatchMessageKey.avgTempo: avgTempo,
+            WatchMessageKey.timestamp: Date.now.timeIntervalSince1970
+        ])
+    }
+
+    /// 프로그램 세션 결과. 주간 판정(주차·연속 미달·훈련최대)은 폰이 하므로 반드시 도착해야 한다.
+    func sendProgramSessionCompleted(_ result: SessionResult, totalReps: Int) {
+        guard let data = try? JSONEncoder().encode(result) else { return }
+        sendReliably([
+            WatchMessageKey.action: WatchAction.programSessionCompleted.rawValue,
+            WatchMessageKey.sessionResult: data,
+            WatchMessageKey.totalReps: totalReps,
             WatchMessageKey.timestamp: Date.now.timeIntervalSince1970
         ])
     }
@@ -125,6 +140,13 @@ extension WatchSessionService: WCSessionDelegate {
         guard let event = PhoneEvent(rawValue: eventRaw) else { return }
         Task { @MainActor in
             switch event {
+            case .programUpdated:
+                if let data = message[WatchMessageKey.programSession] as? Data,
+                   let program = try? JSONDecoder().decode(ProgramSession.self, from: data) {
+                    self.programSession = program
+                    self.programRestBonusSeconds = message[WatchMessageKey.restBonus] as? Int ?? 0
+                }
+
             case .gtgPrompt:
                 let exerciseRaw = message[WatchMessageKey.exercise] as? String ?? ExerciseKind.pushUp.rawValue
                 let reps = message[WatchMessageKey.reps] as? Int ?? 5

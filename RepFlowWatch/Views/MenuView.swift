@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuView: View {
     @Environment(WatchCoordinator.self) private var coord
+    @State private var session = WatchSessionService.shared
     @State private var showAdvanced = false
 
     private var autoDetectEnabled: Bool { AutoDetectSettings.isEnabled() }
@@ -12,6 +13,30 @@ struct MenuView: View {
                 Text("RepFlow")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
+
+                // 「푸시업 100」이 히어로다 — 폰이 밀어둔 다음 세션이 있으면 맨 위에 둔다.
+                if let program = session.programSession {
+                    Button {
+                        coord.haptic(.click)
+                        coord.startProgram(program, restBonusSeconds: session.programRestBonusSeconds)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(program.isRetest
+                                 ? "재측정 · 한 세트 최대"
+                                 : "\(program.week)주 \(program.kind.shortName) · \(program.totalTargetReps)개")
+                                .font(.footnote.weight(.semibold))
+                                .minimumScaleFactor(0.8)
+                                .lineLimit(1)
+                            Text("푸시업 100")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .tint(.orange)
+
+                    Divider().padding(.vertical, 4)
+                }
 
                 ForEach(ExerciseKind.allCases) { kind in
                     NavigationGroup(kind: kind)
