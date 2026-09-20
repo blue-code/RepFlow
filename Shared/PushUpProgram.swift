@@ -163,6 +163,18 @@ enum ProgramLadder {
 
     static func hasGraduated(bestSingleSet: Int) -> Bool { bestSingleSet >= goal }
 
+    /// 그 주에 해야 할 세션 수. 재측정 주는 AMRAP 한 세션으로 끝난다.
+    static func sessionsPerWeek(_ week: Int) -> Int {
+        isRetestWeek(week) ? 1 : SessionKind.allCases.count
+    }
+
+    /// 그 주 `index` 번째 세션의 종류. 재측정 주는 종류가 의미 없어 볼륨으로 고정한다.
+    static func kind(forSessionIndex index: Int, week: Int) -> SessionKind {
+        guard !isRetestWeek(week) else { return .volume }
+        let ordered = SessionKind.allCases.sorted { $0.orderInWeek < $1.orderInWeek }
+        return ordered[min(max(0, index), ordered.count - 1)]
+    }
+
     /// 100까지 남은 주 수. 최근 훈련최대 이력(오래된 것 → 최신)으로 선형 외삽한다.
     /// 아직 늘지 않았거나 이력이 부족하면 nil — 모르면 모른다고 해야지 아무 숫자나 보여주면 안 된다.
     static func estimatedWeeksTo100(history: [Int]) -> Int? {

@@ -9,7 +9,8 @@ enum PersistenceService {
             WorkoutSet.self,
             GTGDay.self,
             GTGPrompt.self,
-            UserProfile.self
+            UserProfile.self,
+            ProgramEnrollment.self
         ])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {

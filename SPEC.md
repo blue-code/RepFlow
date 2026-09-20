@@ -48,8 +48,10 @@
 - ✅ 재측정 주간은 진행 판정에서 제외 — 세트가 하나뿐이라 매번 미달이 적립되고 있었다
 - ✅ 테스트 총 56개 통과 (iOS) / watchOS 빌드 통과
 
-**다음 (M3)** — iOS 프로그램 UI + 최대 측정 화면 + `ProgramEnrollment` (@Model) 영속화.
-`ProgramsView` 를 인터벌 프리셋 목록에서 100 프로그램 허브로 교체한다.
+**M3 (진행 중)**
+- ✅ `Shared/ProgramSessionRunner.swift` — 세션 진행 상태머신. **폰과 워치가 같은 것을 쓴다**(§14.6)
+- ✅ `ProgramEnrollment` (@Model) — 훈련최대·주차·이력·이월 상태 영속화 (§14.7)
+- 🔲 iOS UI: `ProgramsView` 를 100 프로그램 허브로 교체 + 최대 측정 화면 + 세션 진행 화면
 
 **이후**
 - M3 iOS 프로그램 UI + 최대 측정 · M4 워치 프로그램 진행 화면
@@ -133,6 +135,7 @@ Shared/              — 양쪽 컴파일됨 (UIKit/WatchKit 사용 불가)
                                            WCSession 의존 없음 → 단독 테스트)
   PushUpProgram.swift                    — 100개 프로그램: PushUpLevel / SessionKind /
                                            ProgramLadder / ProgressionRule (순수 Foundation, §14)
+  ProgramSessionRunner.swift             — 세션 진행 상태머신. 폰·워치 공용, 시계 주입 (§14.6)
   IntervalProgram.swift                  — IntervalProgram, IntervalState
   IntervalTimerProtocol.swift / Service  — Timer 기반 인터벌 엔진
   RepDetectorProtocol.swift              — UserCalibration / CalibrationStore /
@@ -140,7 +143,7 @@ Shared/              — 양쪽 컴파일됨 (UIKit/WatchKit 사용 불가)
   RepDetectorService.swift               — CoreMotion 50Hz, gravity projection +
                                            gyro fusion + zero-crossing
 
-RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 (56 tests)
+RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 (85 tests)
 fastlane/Fastfile    — lanes: beta, test, upload_metadata
                        (ASC API key는 외부 경로: BurnCoach 디렉토리의 .p8)
 project.yml          — XcodeGen 정의 (Signing=Automatic, healthkit entitlement true)
@@ -668,3 +671,42 @@ Gating:
 | 12개 | 34주 (~8개월) |
 | 25개 | 23주 (~5개월) |
 | 40개 | 15주 (~3.5개월) |
+
+### 14.6 세션 진행 상태머신 (`ProgramSessionRunner`)
+
+`Shared/ProgramSessionRunner.swift`. `@Observable`, Foundation + Observation 만 import.
+
+```
+ready → working(setIndex) ⇄ resting(afterSetIndex, until) → … → finished
+                                                          ↘ abandoned
+```
+
+**폰과 워치가 같은 것을 쓴다.** 카운트가 어디서 오는지(탭·크라운·카메라·근접센서·모션)는
+이 타입이 알 필요가 없다 — 모든 소스가 `addRep(_:)` 하나로 들어온다. UI 안에 상태를 넣으면
+M4에서 워치용으로 통째로 다시 만들어야 한다.
+
+- 시계를 주입받는다(`now: () -> Date`) → 테스트가 실제로 기다리지 않는다
+- 마지막 AMRAP 세트에는 상한도 그 뒤 휴식도 없다
+- `abandon()` 은 남은 세트를 0회로 채워 `SessionResult` 길이를 맞춘다. 안 그러면
+  `metFixedSets` 가 조용히 false를 낸다
+- `result` 는 끝난 뒤에만 나오고, 그대로 `ProgressionRule.apply` 에 넣을 수 있다
+
+### 14.7 진행 상태 영속화 (`ProgramEnrollment`)
+
+`@Model`. 규칙은 전부 `Shared/` 의 순수 함수에 있고, 이 모델은 그 함수들이 요구하는 상태만 들고 있다.
+
+| 필드 | 쓰임 |
+|---|---|
+| `trainingMax` | 현재 `W` |
+| `trainingMaxHistory` | 주차별 이력 → 100까지 남은 기간 예측 |
+| `currentWeek` | 1부터 |
+| `completedSessionsThisWeek` | 주가 끝나면 판정 후 비운다 |
+| `consecutiveMissedWeeks`, `restBonusSeconds` | `ProgressionRule` 이월 상태 |
+| `bestSingleSet`, `graduatedAt` | 졸업 판정 |
+
+`record(_:)` 가 세션을 적립하고, 그 주 세션 수를 채우면 `finishWeek` 가 판정 후 다음 주로 넘긴다.
+재측정 주는 판정이 아니라 실측이라 결과가 곧 새 `W` 가 된다.
+
+⚠️ **아직 없는 것: 휴식일 강제.** 한 주를 다 끝내면 `nextSession` 이 곧바로 다음 주 A 세션을 연다.
+하루에 몰아서 할 수 있다는 뜻이다. 날짜 기반 스케줄링은 UI(M3) 또는 후속에서 다룬다.
+테스트 헬퍼에서 `while !isWeekComplete` 로 돌면 무한 루프가 되는 것도 같은 이유다.
