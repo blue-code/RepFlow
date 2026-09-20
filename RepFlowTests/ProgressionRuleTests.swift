@@ -78,6 +78,44 @@ struct ProgressionRuleTests {
         #expect(outcome.consecutiveMissedWeeks == 0, "미달로 세지도 않는다")
     }
 
+    @Test("재측정 주간은 세트가 하나뿐이라 판정하지 않는다")
+    func retestWeekIsNeverJudged() {
+        #expect(ProgramLadder.isRetestWeek(7))
+        let retest = ProgramLadder.generate(trainingMax: 20, week: 7, kind: .volume)
+        let result = SessionResult(
+            kind: .volume,
+            targets: retest.sets.map(\.reps),
+            achieved: retest.sets.map(\.reps)
+        )
+        #expect(result.metFixedSets == false, "세트가 하나면 고정 세트 달성 판정이 불가능하다")
+
+        let outcome = ProgressionRule.apply(trainingMax: 20, week: 7, results: [result])
+        #expect(outcome.adjustment == .hold)
+        #expect(outcome.consecutiveMissedWeeks == 0, "재측정을 할 때마다 미달이 적립되면 안 된다")
+    }
+
+    @Test("재측정을 반복해도 훈련최대가 깎이지 않는다")
+    func repeatedRetestsDoNotBackOff() {
+        var trainingMax = 20
+        var misses = 0
+        for week in [7, 14, 21, 28] {
+            let session = ProgramLadder.generate(trainingMax: trainingMax, week: week, kind: .volume)
+            let result = SessionResult(
+                kind: .volume,
+                targets: session.sets.map(\.reps),
+                achieved: session.sets.map(\.reps)
+            )
+            let outcome = ProgressionRule.apply(
+                trainingMax: trainingMax, week: week,
+                results: [result], consecutiveMissedWeeks: misses
+            )
+            trainingMax = outcome.trainingMax
+            misses = outcome.consecutiveMissedWeeks
+        }
+        #expect(trainingMax == 20)
+        #expect(misses == 0)
+    }
+
     @Test("아주 낮은 훈련최대에서도 최소 1은 오르내린다")
     func movesAtLeastOne() {
         let up = ProgressionRule.apply(trainingMax: 3, week: 1, results: week(surplus: 5))

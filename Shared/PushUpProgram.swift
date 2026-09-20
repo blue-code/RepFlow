@@ -250,6 +250,12 @@ enum ProgressionRule {
         guard !ProgramLadder.isDeloadWeek(week) else {
             return unchanged(.hold, misses: consecutiveMissedWeeks, rest: restBonusSeconds)
         }
+        // 재측정 주간도 판정 대상이 아니다. 세트가 하나뿐이라 `metFixedSets` 가 항상 false가 되어
+        // 가만두면 재측정을 할 때마다 미달 한 번이 적립된다. 재측정 결과로 훈련최대를 새로 잡는 건
+        // 호출자의 몫이고(`W = 새 M`), 이 함수는 판정을 거부한다.
+        guard !ProgramLadder.isRetestWeek(week) else {
+            return unchanged(.hold, misses: consecutiveMissedWeeks, rest: restBonusSeconds)
+        }
         guard !results.isEmpty else {
             return unchanged(.hold, misses: consecutiveMissedWeeks, rest: restBonusSeconds)
         }

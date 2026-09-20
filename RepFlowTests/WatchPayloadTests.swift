@@ -78,9 +78,30 @@ struct WatchPayloadTests {
         let payload = try #require(WatchPayload.parse([
             WatchMessageKey.action: WatchAction.gtgPromptAcknowledged.rawValue,
             WatchMessageKey.exercise: ExerciseKind.pullUp.rawValue,
-            WatchMessageKey.reps: 5
+            WatchMessageKey.reps: 5,
+            WatchMessageKey.timestamp: 1_700_000_000.0
         ]))
-        #expect(payload.kind == .gtgAcknowledged(exercise: .pullUp, repsDone: 5))
+        #expect(payload.kind == .gtgAcknowledged(
+            exercise: .pullUp,
+            repsDone: 5,
+            doneAt: Date(timeIntervalSince1970: 1_700_000_000)
+        ))
+    }
+
+    @Test("GTG 응답도 워치가 찍은 시각을 쓴다 — 자정을 넘겨 도착할 수 있다")
+    func gtgAckKeepsWatchTime() throws {
+        let yesterday = Date().addingTimeInterval(-86_400)
+        let payload = try #require(WatchPayload.parse([
+            WatchMessageKey.action: WatchAction.gtgPromptAcknowledged.rawValue,
+            WatchMessageKey.exercise: ExerciseKind.pushUp.rawValue,
+            WatchMessageKey.reps: 5,
+            WatchMessageKey.timestamp: yesterday.timeIntervalSince1970
+        ]))
+        guard case .gtgAcknowledged(_, _, let doneAt) = payload.kind else {
+            Issue.record("gtgAcknowledged 가 아님")
+            return
+        }
+        #expect(abs(doneAt.timeIntervalSince(yesterday)) < 0.001)
     }
 
     @Test("모르는 메시지는 조용히 무시한다", arguments: [

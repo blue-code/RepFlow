@@ -74,6 +74,66 @@ struct WorkoutIngestServiceTests {
         #expect(session.sets.isEmpty)
     }
 
+    @Test("기록을 깨면 개인최고가 갱신된다")
+    func updatesPersonalBest() throws {
+        let context = try makeContext()
+        context.insert(UserProfile(pushUpBest: 30))
+        try context.save()
+
+        try WorkoutIngestService(context: context).ingest(report(totalReps: 42))
+
+        let profile = try #require(try context.fetch(FetchDescriptor<UserProfile>()).first)
+        #expect(profile.pushUpBest == 42)
+    }
+
+    @Test("기록에 못 미치면 개인최고를 건드리지 않는다")
+    func keepsHigherBest() throws {
+        let context = try makeContext()
+        context.insert(UserProfile(pushUpBest: 50))
+        try context.save()
+
+        try WorkoutIngestService(context: context).ingest(report(totalReps: 20))
+
+        let profile = try #require(try context.fetch(FetchDescriptor<UserProfile>()).first)
+        #expect(profile.pushUpBest == 50)
+    }
+
+    @Test("종목별로 각자의 기록에 들어간다")
+    func routesBestByExercise() throws {
+        let context = try makeContext()
+        context.insert(UserProfile())
+        try context.save()
+        let ingest = WorkoutIngestService(context: context)
+
+        try ingest.ingest(report(exercise: .pushUp, totalReps: 40))
+        try ingest.ingest(report(exercise: .pullUp, totalReps: 11))
+        try ingest.ingest(report(exercise: .dip, totalReps: 17))
+
+        let profile = try #require(try context.fetch(FetchDescriptor<UserProfile>()).first)
+        #expect(profile.pushUpBest == 40)
+        #expect(profile.pullUpBest == 11)
+        #expect(profile.dipBest == 17)
+    }
+
+    @Test("파이크 푸시업은 푸시업 기록을 오염시키지 않는다")
+    func variantDoesNotPolluteBest() throws {
+        let context = try makeContext()
+        context.insert(UserProfile(pushUpBest: 10))
+        try context.save()
+
+        try WorkoutIngestService(context: context).ingest(report(exercise: .pikePushUp, totalReps: 25))
+
+        let profile = try #require(try context.fetch(FetchDescriptor<UserProfile>()).first)
+        #expect(profile.pushUpBest == 10)
+    }
+
+    @Test("프로필이 아직 없어도 저장은 성공한다")
+    func survivesMissingProfile() throws {
+        let context = try makeContext()
+        try WorkoutIngestService(context: context).ingest(report(totalReps: 30))
+        #expect(try context.fetch(FetchDescriptor<WorkoutSession>()).count == 1)
+    }
+
     @Test("GTG 응답은 오늘자 하루 기록에 누적된다")
     func accumulatesGTG() throws {
         let context = try makeContext()
@@ -88,6 +148,22 @@ struct WorkoutIngestServiceTests {
         let day = try #require(days.first)
         #expect(day.prompts.count == 2)
         #expect(day.completedReps == 12)
+    }
+
+    @Test("자정을 넘겨 도착한 응답은 수행한 날짜에 적립된다")
+    func filesUnderPerformedDay() throws {
+        let context = try makeContext()
+        let ingest = WorkoutIngestService(context: context)
+        let lateNight = Date(timeIntervalSince1970: 1_700_000_000)   // 어제 밤
+        let nextMorning = lateNight.addingTimeInterval(9 * 3600)     // 날짜가 바뀐 뒤
+
+        try ingest.ingestGTG(exercise: .pushUp, repsDone: 5, at: lateNight)
+        try ingest.ingestGTG(exercise: .pushUp, repsDone: 5, at: nextMorning)
+
+        let days = try context.fetch(FetchDescriptor<GTGDay>())
+        let expected = Set([lateNight.startOfDay, nextMorning.startOfDay])
+        #expect(days.count == expected.count)
+        #expect(Set(days.map(\.date)) == expected)
     }
 
     @Test("종목이 다르면 같은 날이라도 하루 기록을 따로 만든다")

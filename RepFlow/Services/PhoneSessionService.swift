@@ -104,9 +104,9 @@ final class PhoneSessionService: NSObject {
             totalCompletedSessions += 1
             ReviewPromptService.sessionCompleted(totalCount: totalCompletedSessions)
 
-        case .gtgAcknowledged(let exercise, let repsDone):
+        case .gtgAcknowledged(let exercise, let repsDone, let doneAt):
             do {
-                try activeIngest.ingestGTG(exercise: exercise, repsDone: repsDone)
+                try activeIngest.ingestGTG(exercise: exercise, repsDone: repsDone, at: doneAt)
             } catch {
                 assertionFailure("GTG 응답 저장 실패: \(error)")
             }

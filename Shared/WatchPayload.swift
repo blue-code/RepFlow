@@ -13,7 +13,7 @@ struct WatchPayload: Equatable {
         /// 운동 종료 리포트. 기록으로 영속되어야 하는 유일한 메시지.
         case workoutEnded(WorkoutReport)
         /// GTG 알림 응답.
-        case gtgAcknowledged(exercise: ExerciseKind, repsDone: Int)
+        case gtgAcknowledged(exercise: ExerciseKind, repsDone: Int, doneAt: Date)
     }
 
     struct WorkoutReport: Equatable {
@@ -65,7 +65,9 @@ struct WatchPayload: Equatable {
             let exercise = ExerciseKind(rawValue: message[WatchMessageKey.exercise] as? String ?? "") ?? .pushUp
             kind = .gtgAcknowledged(
                 exercise: exercise,
-                repsDone: message[WatchMessageKey.reps] as? Int ?? 0
+                repsDone: message[WatchMessageKey.reps] as? Int ?? 0,
+                doneAt: (message[WatchMessageKey.timestamp] as? Double)
+                    .map(Date.init(timeIntervalSince1970:)) ?? .now
             )
 
         case .workoutStarted, .setCompleted, .requestProgram:

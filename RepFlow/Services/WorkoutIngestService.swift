@@ -40,8 +40,33 @@ struct WorkoutIngestService {
             ]
         }
         context.insert(session)
+        try updatePersonalBest(exercise: report.exercise, singleSetReps: report.totalReps)
         try context.save()
         return session
+    }
+
+    /// 개인최고 갱신. 이것 역시 설정 화면의 스테퍼로만 바뀌고 실제 운동으로는
+    /// 한 번도 갱신된 적이 없었다 — 대시보드의 "푸시업 최고"가 손으로 적은 숫자였다.
+    ///
+    /// 전용 필드가 있는 세 종목만 기록한다. 파이크/인버티드로우는 `bestFor` 가 읽기 쪽에서
+    /// 각각 푸시업/풀업 기록을 빌려 쓰는데, 쓰기까지 합치면 더 어려운 변형의 낮은 횟수가
+    /// 본 종목 기록을 오염시킨다.
+    @discardableResult
+    func updatePersonalBest(exercise: ExerciseKind, singleSetReps: Int) throws -> Int? {
+        guard singleSetReps > 0 else { return nil }
+        guard let profile = try context.fetch(FetchDescriptor<UserProfile>()).first else { return nil }
+
+        switch exercise {
+        case .pushUp where singleSetReps > profile.pushUpBest:
+            profile.pushUpBest = singleSetReps
+        case .pullUp where singleSetReps > profile.pullUpBest:
+            profile.pullUpBest = singleSetReps
+        case .dip where singleSetReps > profile.dipBest:
+            profile.dipBest = singleSetReps
+        default:
+            return nil
+        }
+        return singleSetReps
     }
 
     /// GTG 응답을 오늘자 `GTGDay` 에 누적한다. 오늘 기록이 없으면 프로필 설정으로 만든다.

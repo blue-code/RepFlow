@@ -58,7 +58,9 @@ final class WatchSessionService: NSObject {
         sendReliably([
             WatchMessageKey.action: WatchAction.gtgPromptAcknowledged.rawValue,
             WatchMessageKey.exercise: exercise.rawValue,
-            WatchMessageKey.reps: reps
+            WatchMessageKey.reps: reps,
+            // 큐잉된 응답이 자정을 넘겨 도착하면 엉뚱한 날짜에 적립된다.
+            WatchMessageKey.timestamp: Date.now.timeIntervalSince1970
         ])
     }
 

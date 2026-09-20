@@ -38,13 +38,15 @@
 - ✅ 워치 운동 기록 SwiftData 영속화 (`WorkoutIngestService`) — 이전까지 저장 경로가 아예 없었다
 - ✅ `didReceiveUserInfo` 구현 + 수신 단일 디스패처 (§6.5)
 - ✅ 보장 송신 + `messageId` 중복 제거 (§6.4)
-- ✅ `RepFlowTests` 실동작화 — 17개 통과 (이전까지 0바이트 빈 디렉터리)
+- ✅ 개인최고(`pushUpBest` 등)가 실제 운동으로 갱신되도록 수정 — 이전까지 설정 화면 스테퍼로만 바뀌었다
+- ✅ `RepFlowTests` 실동작화 (이전까지 0바이트 빈 디렉터리)
 - ✅ 리포 위생: `*.mobileprovision`/`*.p12`/`*.xcodeproj` gitignore, `xcodeVersion` 27.0
 - 🔲 **실기기 검증 필요** — 워치 운동 → 폰 기록 반영, 비행기모드 폴백 경로
 
 **M2 (100 프로그램 도메인) — 완료 @ 2026-09-20**
 - ✅ `Shared/PushUpProgram.swift` — 레벨·사다리·진행 판정. 순수 Foundation이라 워치에서도 컴파일된다 (§14)
-- ✅ 테스트 30개 추가 (총 47개 통과)
+- ✅ 재측정 주간은 진행 판정에서 제외 — 세트가 하나뿐이라 매번 미달이 적립되고 있었다
+- ✅ 테스트 총 56개 통과 (iOS) / watchOS 빌드 통과
 
 **다음 (M3)** — iOS 프로그램 UI + 최대 측정 화면 + `ProgramEnrollment` (@Model) 영속화.
 `ProgramsView` 를 인터벌 프리셋 목록에서 100 프로그램 허브로 교체한다.
@@ -138,7 +140,7 @@ Shared/              — 양쪽 컴파일됨 (UIKit/WatchKit 사용 불가)
   RepDetectorService.swift               — CoreMotion 50Hz, gravity projection +
                                            gyro fusion + zero-crossing
 
-RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 (47 tests)
+RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 (56 tests)
 fastlane/Fastfile    — lanes: beta, test, upload_metadata
                        (ASC API key는 외부 경로: BurnCoach 디렉토리의 .p8)
 project.yml          — XcodeGen 정의 (Signing=Automatic, healthkit entitlement true)
@@ -358,7 +360,7 @@ v3는 zero-crossing이라 up/down 구분 불필요 — 단일 amplitude로 처�
 |---|---|---|
 | `repCounted` | `totalReps` | rep 카운트 갱신. 실시간 표시 전용, 유실 허용 |
 | `workoutEnded` | `exercise`, `mode`, `totalReps`, `durationSec`, `avgTempo`, `timestamp`, `messageId` | 세션 완료. **보장 송신** |
-| `gtgPromptAcknowledged` | `exercise`, `reps` (0 = 건너뜀), `messageId` | GTG 프롬프트 응답. **보장 송신** |
+| `gtgPromptAcknowledged` | `exercise`, `reps` (0 = 건너뜀), `timestamp`, `messageId` | GTG 프롬프트 응답. **보장 송신** |
 | `setCompleted` | - | (정의됨, 현재 미사용) |
 | `requestProgram` | - | (정의됨, 미사용) |
 | `workoutStarted` | - | (정의됨, 미사용) |
@@ -406,8 +408,9 @@ iPhone Settings에서 sensitivity 또는 자동 감지 토글 변경 →
 파싱은 `Shared/WatchPayload.swift` 의 `WatchPayload.parse(_:)` — `WCSession` 의존이 없는 순수
 Foundation 코드라 단독 테스트 가능하다.
 
-⚠️ `workoutEnded` 의 종료 시각은 **워치가 찍은 `timestamp`** 를 쓴다. 큐잉된 메시지는 몇 시간 뒤에
-도착할 수 있어 수신 시각(`.now`)을 쓰면 기록 시각이 틀어진다.
+⚠️ 시각은 **워치가 찍은 `timestamp`** 를 쓴다(`workoutEnded`, `gtgPromptAcknowledged` 모두).
+큐잉된 메시지는 몇 시간 뒤에 도착할 수 있어 수신 시각(`.now`)을 쓰면 기록 시각이 틀어지고,
+GTG는 자정을 넘기면 아예 다른 날짜에 적립된다.
 
 ---
 
@@ -646,7 +649,9 @@ Gating:
 
 - 세 세션 모두 고정 세트 달성 **AND** AMRAP 여유 평균 ≥ +3 → `W += max(1, round(W × 0.1))`, 미달 카운터 0
 - 아니면 미달 카운터 +1. **2주 연속** 미달이면 `W -= 10%`, 휴식 +30s, 카운터 0
-- 디로드 주간은 일부러 볼륨을 줄인 주라 성과로 판정하지 않는다(미달로도 세지 않는다)
+- **디로드·재측정 주간은 판정하지 않는다**(미달로도 세지 않는다). 특히 재측정은 세트가 하나뿐이라
+  `metFixedSets` 가 항상 false가 되어, 막지 않으면 재측정을 할 때마다 미달이 적립된다.
+  재측정 결과로 `W = 새 M` 을 잡는 건 호출자의 몫이다
 - `W` 는 1 아래로 내려가지 않고, 증감은 최소 1
 
 ### 14.5 졸업과 예측
