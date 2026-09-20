@@ -48,10 +48,17 @@
 - ✅ 재측정 주간은 진행 판정에서 제외 — 세트가 하나뿐이라 매번 미달이 적립되고 있었다
 - ✅ 테스트 총 56개 통과 (iOS) / watchOS 빌드 통과
 
-**M3 (진행 중)**
+**M3 (iOS 프로그램 UI) — 완료 @ 2026-09-20**
 - ✅ `Shared/ProgramSessionRunner.swift` — 세션 진행 상태머신. **폰과 워치가 같은 것을 쓴다**(§14.6)
 - ✅ `ProgramEnrollment` (@Model) — 훈련최대·주차·이력·이월 상태 영속화 (§14.7)
-- 🔲 iOS UI: `ProgramsView` 를 100 프로그램 허브로 교체 + 최대 측정 화면 + 세션 진행 화면
+- ✅ `ProgramsView` → 100 프로그램 허브 (인터벌은 아래로 강등). 탭 이름도 "푸시업 100"
+- ✅ `MaxTestView` (최대 측정 / 재측정) · `ProgramSessionView` (세션 진행)
+- ✅ 스크린샷 자동화 훅: `UI_TESTING_TAB=n` / `UI_TESTING_ROUTE=session|maxTest` (§9.5)
+- 시뮬레이터 실행으로 허브·세션 화면 확인 완료
+
+**다음 (M4)** — 워치 프로그램 진행 화면. `ProgramSessionRunner` 를 그대로 쓰고,
+`WatchCoordinator` 에 `.program(...)` Screen 을 추가한다. 메시지 프로토콜(§6)에
+프로그램 세션 동기화 액션을 더해야 한다.
 
 **이후**
 - M3 iOS 프로그램 UI + 최대 측정 · M4 워치 프로그램 진행 화면
@@ -507,6 +514,27 @@ fastlane beta
 - `AppStore_com.digimaru.repflow.mobileprovision` — provisioning profile, **commit 금지**
 - `AppStore_com.digimaru.repflow.watch.mobileprovision` — 동상
 - `fastlane/ios_export.plist` — 배포 옵션. 현재 lane이 참조 → commit 필요 가능성 있음. 확인할 것.
+
+---
+
+### 9.5 스크린샷 자동화 훅
+
+실기기 없이 특정 화면을 캡처하기 위한 런치 인자(`MockDataLoader`).
+
+| 인자 | 효과 |
+|---|---|
+| `UI_TESTING` | UI 테스트 모드 |
+| `UI_TESTING_MOCK_DATA` | 프로필·세션·GTG·**프로그램 진행 상태** 주입 |
+| `UI_TESTING_SKIP_ONBOARDING` | 온보딩 건너뛰기 |
+| `UI_TESTING_PRO` | Pro 활성 |
+| `UI_TESTING_TAB=n` | 시작 탭 (0 홈 / 1 푸시업100 / 2 기록 / 3 설정) |
+| `UI_TESTING_ROUTE=session` | 프로그램 세션 화면을 바로 연다 |
+
+```sh
+xcrun simctl launch "iPhone 17" com.digimaru.repflow \
+  UI_TESTING UI_TESTING_MOCK_DATA UI_TESTING_SKIP_ONBOARDING UI_TESTING_TAB=1
+xcrun simctl io "iPhone 17" screenshot shot.png
+```
 
 ---
 

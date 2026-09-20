@@ -68,7 +68,9 @@ enum SessionKind: String, CaseIterable, Codable, Sendable {
 
 // MARK: - 세트 / 세션
 
-struct SetTarget: Equatable, Codable, Sendable {
+struct SetTarget: Equatable, Codable, Sendable, Identifiable {
+    /// 세트 순번이 곧 세션 안의 식별자다.
+    var id: Int { index }
     var index: Int
     /// 목표 횟수. AMRAP 세트에서는 "최소 이만큼"이라는 뜻이다.
     var reps: Int

@@ -4,6 +4,8 @@ import SwiftData
 struct RootView: View {
     @Query private var profiles: [UserProfile]
     @Environment(\.modelContext) private var context
+    /// 스크린샷 자동화에서 특정 탭으로 바로 열기 위한 선택 상태.
+    @State private var selectedTab: Int = MockDataLoader.initialTab ?? 0
 
     init() {
         let appearance = UITabBarAppearance()
@@ -24,18 +26,22 @@ struct RootView: View {
     }
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             DashboardView()
                 .tabItem { Label("홈", systemImage: "house.fill") }
+                .tag(0)
 
             ProgramsView()
-                .tabItem { Label("프로그램", systemImage: "list.bullet.rectangle.portrait") }
+                .tabItem { Label("푸시업 100", systemImage: "target") }
+                .tag(1)
 
             HistoryView()
                 .tabItem { Label("기록", systemImage: "chart.line.uptrend.xyaxis") }
+                .tag(2)
 
             SettingsView()
                 .tabItem { Label("설정", systemImage: "gearshape.fill") }
+                .tag(3)
         }
         .tint(RFColor.accent)
         .preferredColorScheme(.dark)

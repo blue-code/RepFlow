@@ -21,6 +21,29 @@ enum MockDataLoader {
         ProcessInfo.processInfo.arguments.contains("UI_TESTING_PRO")
     }
 
+    /// 스크린샷 자동화용 — `UI_TESTING_TAB=2` 처럼 시작 탭을 지정한다.
+    /// 지정이 없으면 nil(홈).
+    static var initialTab: Int? {
+        guard let arg = ProcessInfo.processInfo.arguments
+            .first(where: { $0.hasPrefix("UI_TESTING_TAB=") })?
+            .split(separator: "=").last else { return nil }
+        return Int(arg)
+    }
+
+    /// 스크린샷 자동화용 딥링크 — `UI_TESTING_ROUTE=session` 처럼 화면을 바로 연다.
+    /// 세션 진행·최대 측정처럼 탭 한 번을 더 거쳐야 하는 화면을 캡처하기 위한 것.
+    enum Route: String {
+        case session      // 프로그램 세션 진행
+        case maxTest      // 최대 측정
+    }
+
+    static var route: Route? {
+        ProcessInfo.processInfo.arguments
+            .first { $0.hasPrefix("UI_TESTING_ROUTE=") }
+            .flatMap { $0.split(separator: "=").last }
+            .flatMap { Route(rawValue: String($0)) }
+    }
+
     static func inject(into context: ModelContext) {
         guard shouldInjectMockData else { return }
 
@@ -38,6 +61,18 @@ enum MockDataLoader {
             gtgPromptCount: 8
         )
         context.insert(profile)
+
+        // 프로그램 진행 중 상태 — 3주차, 한 세션 완료.
+        let enrollment = ProgramEnrollment(
+            trainingMax: 32,
+            trainingMaxHistory: [24, 27, 30, 32],
+            currentWeek: 3,
+            bestSingleSet: 47
+        )
+        enrollment.completedSessionsThisWeek = [
+            SessionResult(kind: .volume, targets: [13, 16, 13, 13, 13], achieved: [13, 16, 13, 13, 18])
+        ]
+        context.insert(enrollment)
 
         // Recent sessions (지난 7일 분포)
         let now = Date.now
