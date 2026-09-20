@@ -2,6 +2,10 @@ import XCTest
 
 /// Fastlane Snapshot 기반 자동 스크린샷 캡처.
 /// fastlane screenshots 실행 시 ko/en/ja/zh-Hans 각각 4개 화면 캡처.
+///
+/// `setupSnapshot`/`snapshot` 은 MainActor 격리된 전역 함수라 Xcode 27 에서는
+/// 클래스 전체를 MainActor 로 묶어야 컴파일된다 (UI 테스트는 어차피 메인에서 돈다).
+@MainActor
 final class RepFlowSnapshotTests: XCTestCase {
 
     var app: XCUIApplication!

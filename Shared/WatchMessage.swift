@@ -16,6 +16,9 @@ enum WatchMessageKey {
     static let avgTempo = "avgTempo"
     static let timestamp = "timestamp"
     static let payload = "payload"
+    /// 메시지 고유 ID. 종료 리포트는 sendMessage + transferUserInfo로 이중 송신되므로
+    /// 수신 측이 이 값으로 중복을 제거한다.
+    static let messageId = "messageId"
 }
 
 // Watch → iPhone
