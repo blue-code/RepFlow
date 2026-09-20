@@ -42,8 +42,12 @@
 - ✅ 리포 위생: `*.mobileprovision`/`*.p12`/`*.xcodeproj` gitignore, `xcodeVersion` 27.0
 - 🔲 **실기기 검증 필요** — 워치 운동 → 폰 기록 반영, 비행기모드 폴백 경로
 
-**다음 (M2)** — 100개 프로그램 도메인 + 테스트 먼저. `Shared/PushUpProgram.swift` 에
-`ProgramLadder.generate(trainingMax:week:session:)` / `ProgressionRule.apply(result:)` (순수 Foundation).
+**M2 (100 프로그램 도메인) — 완료 @ 2026-09-20**
+- ✅ `Shared/PushUpProgram.swift` — 레벨·사다리·진행 판정. 순수 Foundation이라 워치에서도 컴파일된다 (§14)
+- ✅ 테스트 30개 추가 (총 47개 통과)
+
+**다음 (M3)** — iOS 프로그램 UI + 최대 측정 화면 + `ProgramEnrollment` (@Model) 영속화.
+`ProgramsView` 를 인터벌 프리셋 목록에서 100 프로그램 허브로 교체한다.
 
 **이후**
 - M3 iOS 프로그램 UI + 최대 측정 · M4 워치 프로그램 진행 화면
@@ -125,6 +129,8 @@ Shared/              — 양쪽 컴파일됨 (UIKit/WatchKit 사용 불가)
                                            PhoneEvent, WatchMessageKey, 픽토그램
   WatchPayload.swift                     — [String: Any] → 타입 있는 값 파싱 (순수 Foundation,
                                            WCSession 의존 없음 → 단독 테스트)
+  PushUpProgram.swift                    — 100개 프로그램: PushUpLevel / SessionKind /
+                                           ProgramLadder / ProgressionRule (순수 Foundation, §14)
   IntervalProgram.swift                  — IntervalProgram, IntervalState
   IntervalTimerProtocol.swift / Service  — Timer 기반 인터벌 엔진
   RepDetectorProtocol.swift              — UserCalibration / CalibrationStore /
@@ -132,7 +138,7 @@ Shared/              — 양쪽 컴파일됨 (UIKit/WatchKit 사용 불가)
   RepDetectorService.swift               — CoreMotion 50Hz, gravity projection +
                                            gyro fusion + zero-crossing
 
-RepFlowTests/        — Swift Testing. WatchPayload 파싱 / 영속화 / 중복 제거 (17 tests)
+RepFlowTests/        — Swift Testing. 파싱 / 영속화 / 중복 제거 / 100 프로그램 (47 tests)
 fastlane/Fastfile    — lanes: beta, test, upload_metadata
                        (ASC API key는 외부 경로: BurnCoach 디렉토리의 .p8)
 project.yml          — XcodeGen 정의 (Signing=Automatic, healthkit entitlement true)
@@ -589,3 +595,71 @@ Gating:
 - `ASO.md` — 앱스토어 최적화 메타데이터
 - `CLAUDE.md` — Claude 에이전트 진입 지점 (→ SPEC.md 참조 지시)
 - **`SPEC.md` (이 문서)** — 현재 상태의 단일 진실. Claude 작업의 출발점.
+
+
+---
+
+## 14. 푸시업 100 프로그램
+
+`Shared/PushUpProgram.swift`. 순수 Foundation — iOS·watchOS 양쪽에서 컴파일되고 단독 테스트된다.
+
+> ⚠️ 시판 6주 프로그램의 표를 베끼지 않았다(저작권 + 기억 재현 부정확). 자체 설계한 비율 기반
+> 사다리이고, 아래 상수는 **초기값**이다. 실사용 데이터가 쌓이면 조정한다.
+
+### 14.1 레벨 (`PushUpLevel`)
+
+최대 측정(폼 유지 AMRAP 한 세트) 결과 `M` 으로 배정. 레벨은 **휴식 시간과 무릎 변형 허용 여부만**
+결정한다. 세트 수치는 레벨이 아니라 훈련최대 `W` 의 비율로 나온다.
+
+| 레벨 | M | 휴식 | 비고 |
+|---|---|---|---|
+| L1 | ≤5 | 90s | 무릎 푸시업 허용 |
+| L2 | 6–10 | 90s | |
+| L3 | 11–20 | 90s | |
+| L4 | 21–30 | 60s | |
+| L5 | 31–45 | 60s | |
+| L6 | 46+ | 60s | 100 사정권 |
+
+⚠️ `allowsKneeVariant` 는 폼 분석기(M5)도 읽어야 한다. 무릎 푸시업에서 힙라인을
+`shoulder–hip–ankle` 로 재면 모든 rep이 "허리 처짐"으로 오판된다 → `shoulder–hip–knee` 로 바꿀 것.
+
+### 14.2 주 3회 세션 (`SessionKind`)
+
+| 세션 | 고정 4세트 비율 | AMRAP 하한 | 휴식 |
+|---|---|---|---|
+| A 볼륨 | `.40 .50 .40 .40` | `.40` | 레벨 기본 |
+| B 강도 | `.50 .60 .50 .50` | `.50` | 레벨 기본 |
+| C 밀도 | `.45 ×4` | `.45` | 레벨 기본의 **절반** |
+
+각 세트 목표 = `max(1, round(비율 × W))`. 한 주 합계 ≈ 6.95W, 상한은 8W(안전장치).
+
+### 14.3 주기
+
+- **디로드**: 4주마다 전 세트 볼륨 60%
+- **재측정**: 7주마다. 사다리 대신 AMRAP 한 세트만 하고 `W = 새 M`
+- 둘이 겹치는 주(28, 56…)는 **재측정이 우선**
+
+### 14.4 진행 판정 (`ProgressionRule.apply`)
+
+**주 1회, 그 주 세 세션이 끝난 뒤에만 부른다.** 세션마다 +10%를 적용하면 주당 +33%가 되어
+며칠 만에 "2주 연속 미달"로 무너진다. 한 주가 한 단위다.
+
+- 세 세션 모두 고정 세트 달성 **AND** AMRAP 여유 평균 ≥ +3 → `W += max(1, round(W × 0.1))`, 미달 카운터 0
+- 아니면 미달 카운터 +1. **2주 연속** 미달이면 `W -= 10%`, 휴식 +30s, 카운터 0
+- 디로드 주간은 일부러 볼륨을 줄인 주라 성과로 판정하지 않는다(미달로도 세지 않는다)
+- `W` 는 1 아래로 내려가지 않고, 증감은 최소 1
+
+### 14.5 졸업과 예측
+
+- **졸업 = 한 세트 100개** (`ProgramLadder.hasGraduated`)
+- `estimatedWeeksTo100(history:)` — 최근 4주 `W` 증가분으로 선형 외삽. 정체·감소·이력 부족이면
+  **nil**. 모르면 모른다고 해야지 아무 숫자나 보여주면 안 된다.
+
+매주 성공하는 이상적 경우 기준(참고값, 상한 아님):
+
+| 시작 최대 | 100까지 |
+|---|---|
+| 5개 | 46주 (~11개월) |
+| 12개 | 34주 (~8개월) |
+| 25개 | 23주 (~5개월) |
+| 40개 | 15주 (~3.5개월) |
