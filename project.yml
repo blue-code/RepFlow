@@ -79,7 +79,11 @@ targets:
       - sdk: CoreMotion.framework
       - sdk: UserNotifications.framework
       - target: RepFlowWatch
+        # 워치 앱은 iOS 앱 안에 동봉되어 함께 서명된다. platformFilter 가 없으면
+        # 다른 플랫폼 빌드에까지 끼어들고, codeSign 이 없으면 기기 설치가 실패한다.
         embed: true
+        codeSign: true
+        platformFilter: iOS
 
   RepFlowWatch:
     type: application
@@ -102,6 +106,8 @@ targets:
         TARGETED_DEVICE_FAMILY: "4"
         WATCHOS_DEPLOYMENT_TARGET: "10.0"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # 아카이브에 워치 앱이 단독으로도 들어가는 걸 막는다(ASC 검증 실패 원인).
+        SKIP_INSTALL: "YES"
     entitlements:
       path: RepFlowWatch/Resources/RepFlowWatch.entitlements
       properties:

@@ -9,12 +9,13 @@ import SwiftUI
 struct PlacementGuideView: View {
 
     let counter: CameraRepCounter
-    let onReady: () -> Void
+    /// true = 거치 확인 통과, false = 사용자가 포기(탭 모드로 되돌린다).
+    let onFinish: (Bool) -> Void
 
-    @Environment(\.dismiss) private var dismiss
     @State private var gate = PlacementGate()
     @State private var status: String?
     @State private var startedAt = Date.now
+    @State private var permissionDenied = false
 
     var body: some View {
         ZStack {
@@ -34,7 +35,11 @@ struct PlacementGuideView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .onAppear {
-            counter.onStatus = { status = $0 }
+            counter.onStatus = { message in
+                status = message
+                // 권한 거부는 화면에서 빠져나갈 길을 줘야 한다.
+                permissionDenied = message?.contains("권한") == true
+            }
             counter.onPose = { pose, confidence in
                 gate.update(
                     pose: pose, confidence: confidence,
@@ -77,15 +82,28 @@ struct PlacementGuideView: View {
             ProgressView(value: gate.progress)
                 .tint(RFColor.success)
 
-            Button("시작") {
-                counter.onPose = nil
-                onReady()
+            if permissionDenied {
+                Button("설정에서 카메라 켜기") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                .buttonStyle(RFPrimaryButton())
+            } else {
+                Button("시작") {
+                    counter.onPose = nil
+                    onFinish(true)
+                }
+                .buttonStyle(RFPrimaryButton())
+                .disabled(!gate.isReady)
             }
-            .buttonStyle(RFPrimaryButton())
-            .disabled(!gate.isReady)
 
-            Button("탭으로 세기") { dismiss() }
-                .buttonStyle(RFSecondaryButton())
+            Button("탭으로 세기") {
+                counter.onPose = nil
+                counter.stop()
+                onFinish(false)
+            }
+            .buttonStyle(RFSecondaryButton())
         }
         .padding(RFSpace.lg)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: RFRadius.lg))

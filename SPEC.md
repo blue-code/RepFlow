@@ -539,6 +539,37 @@ fastlane beta
 
 ---
 
+### 9.4.5 실기기 설치 (TestFlight 불필요)
+
+개발 중 검증은 TestFlight를 거치지 않는다. 빌드 → 업로드 → 처리 대기가 매번 10~20분인데
+필요한 건 즉각 피드백이다. TestFlight는 출시 직전 실제 결제 흐름과 배포용 빌드 확인용이다.
+
+```sh
+export DEVELOPER_DIR=/Volumes/SSD/Applications/Xcode.app/Contents/Developer
+PHONE=00008110-000A08940E01801E    # iPhone 13 "Mare"
+WATCH=00008310-000C3C9426A0E01E    # Apple Watch SE 3
+
+xcrun devicectl list devices                       # UDID 확인
+xcodebuild build -project RepFlow.xcodeproj -scheme RepFlow \
+  -destination "platform=iOS,id=$PHONE" -allowProvisioningUpdates \
+  -authenticationKeyID 33P5W93GJQ \
+  -authenticationKeyIssuerID ed28e2d3-ce1d-4d24-8e58-373132e4b554 \
+  -authenticationKeyPath /Volumes/SSD/DEV_SSD/MY/BurnCoach/fastlane/AuthKey_33P5W93GJQ.p8
+xcrun devicectl device install app --device $PHONE \
+  ~/Library/Developer/Xcode/DerivedData/RepFlow-*/Build/Products/Debug-iphoneos/RepFlow.app
+xcrun devicectl device process launch --device $PHONE com.digimaru.repflow
+```
+
+⚠️ **워치는 기기에서 개발자 모드를 먼저 켜야 한다** (설정 → 개인정보 보호 및 보안 → 개발자 모드).
+꺼져 있으면 기기 등록이 안 되어 프로비저닝 프로파일에 워치 UDID가 들어가지 않고,
+동봉된 워치 앱이 조용히 설치되지 않는다 (§12 교훈 #17).
+
+설치된 프로파일에 기기가 들어갔는지 확인:
+```sh
+security cms -D -i <App>.app/Watch/<Watch>.app/embedded.mobileprovision \
+  | plutil -extract ProvisionedDevices xml1 -o - -
+```
+
 ### 9.5 스크린샷 자동화 훅
 
 실기기 없이 특정 화면을 캡처하기 위한 런치 인자(`MockDataLoader`).
@@ -608,6 +639,10 @@ Gating:
 | 13 | 워치가 `transferUserInfo` 로 폴백해도 폰에 `didReceiveUserInfo` 구현이 없어 전부 버려짐. 에러도 로그도 없음 | `WCSessionDelegate` 는 구현하지 않은 콜백을 조용히 무시한다. **송신 경로를 추가하면 수신 경로도 같은 커밋에서** 추가하고, 세 경로를 단일 디스패처로 모을 것 (§6.5) |
 | 14 | Xcode 27 에서 `RepFlowUITests` 컴파일 실패 — fastlane `setupSnapshot`/`snapshot` 이 MainActor 격리 전역 함수 | 스냅샷 테스트 클래스에 `@MainActor`. `-only-testing:` 을 줘도 스킴의 **모든** 테스트 타깃이 빌드되므로 UI 테스트가 깨지면 유닛 테스트도 못 돈다 |
 | 15 | `project.yml` 의 `xcodeVersion` 이 16.0 인데 이 맥에는 Xcode 27.0 만 설치됨 | xcodegen 값은 실제 설치 버전을 따라간다. `xcodebuild -version` 으로 먼저 확인 |
+| 16 | 카메라 모드를 눌러도 거치 가이드가 안 열림 | 같은 `NavigationStack` 안에 `navigationDestination(isPresented:)` 가 **둘 이상**이면 서로 충돌해 열리지 않는다. 카메라 가이드는 `fullScreenCover` 로 전환. 부모의 `onDisappear` 가 가이드가 막 켠 캡처를 끄는 문제도 같이 해결됨 |
+| 17 | 워치에 개발자 빌드가 설치되지 않음 | **워치 자체의 개발자 모드**가 꺼져 있었다(설정 → 개인정보 보호 및 보안 → 개발자 모드). 꺼져 있으면 워치가 기기 등록조차 안 되어 프로비저닝 프로파일에 UDID가 안 들어간다. `security cms -D -i embedded.mobileprovision` 으로 `ProvisionedDevices` 를 직접 확인할 것 |
+| 18 | 워치 프로파일 Platform 이 `iOS/xrOS/visionOS` 로 잡힘 | 워치가 등록되지 않아 watchOS 프로파일이 생성되지 못하고 iOS 프로파일이 재사용된 결과. #17을 고치면 함께 해결된다 |
+| 19 | `project.yml` 워치 의존성에 `codeSign`/`platformFilter`, 타깃에 `SKIP_INSTALL` 누락 | BurnCoach·RunStamp 의 검증된 형태를 따른다: 의존성 `embed: true, codeSign: true, platformFilter: iOS` / 타깃 `SKIP_INSTALL: YES`. 없으면 기기 설치·아카이브 검증에서 문제가 난다 |
 
 ---
 

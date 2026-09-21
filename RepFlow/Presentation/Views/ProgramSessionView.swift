@@ -79,15 +79,25 @@ struct ProgramSessionView: View {
         .onChange(of: runner.phase) { old, new in
             handlePhaseChange(from: old, to: new)
         }
-        .navigationDestination(isPresented: $showPlacementGuide) {
-            PlacementGuideView(counter: camera) {
-                hasPassedPlacement = true
-                showPlacementGuide = false
-                // 캡처는 그대로 두고 카운트만 0부터. 자세를 잡는 동안의 어깨 높이가
-                // 락아웃 기준값으로 굳으면 깊이 신호가 통째로 틀어진다.
-                camera.resetCounting()
-                camera.onRep = { addAutoRep() }
-                camera.onForm = { formNotes.append($0) }
+        // 네비게이션 push 가 아니라 전체화면 커버다. 이유 둘:
+        // ① 같은 NavigationStack 안에 `navigationDestination(isPresented:)` 가 둘이면
+        //    (ProgramsView 의 세션 진입과 여기) 서로 충돌해 아예 안 열린다.
+        // ② push 는 부모의 onDisappear 를 부를 수 있어서, 가이드가 막 켠 카메라를 곧바로 끈다.
+        .fullScreenCover(isPresented: $showPlacementGuide) {
+            NavigationStack {
+                PlacementGuideView(counter: camera) { passed in
+                    showPlacementGuide = false
+                    guard passed else {
+                        modeRaw = CountingMode.manual.rawValue   // 포기하면 탭으로 되돌린다
+                        return
+                    }
+                    hasPassedPlacement = true
+                    // 캡처는 그대로 두고 카운트만 0부터. 자세를 잡는 동안의 어깨 높이가
+                    // 락아웃 기준값으로 굳으면 깊이 신호가 통째로 틀어진다.
+                    camera.resetCounting()
+                    camera.onRep = { addAutoRep() }
+                    camera.onForm = { formNotes.append($0) }
+                }
             }
         }
         .confirmationDialog("세션을 그만둘까요?", isPresented: $showAbandonConfirm) {
