@@ -53,8 +53,7 @@ struct DashboardView: View {
             HStack(spacing: RFSpace.lg) {
                 StatChip(value: "\(sessions.count)", label: "세션")
                 if let profile {
-                    StatChip(value: "\(profile.pushUpBest)", label: "푸시업 최고")
-                    StatChip(value: "\(profile.pullUpBest)", label: "풀업 최고")
+                    StatChip(value: "\(profile.pushUpBest)", label: "한 세트 최고")
                 }
             }
         }
@@ -88,7 +87,7 @@ struct DashboardView: View {
                         .rfChip(profile?.gtgEnabled == true ? RFColor.success : RFColor.fgMuted)
                 }
 
-                Text("워치가 하루 종일 가벼운 푸시업/풀업을 알려줍니다. 검증된 GTG 훈련법으로 진짜 진보가 시작됩니다.")
+                Text("워치가 하루 종일 가벼운 푸시업을 알려줍니다. 검증된 GTG 훈련법으로 진짜 진보가 시작됩니다.")
                     .font(.rfCaption)
                     .foregroundStyle(RFColor.fgMuted)
                     .multilineTextAlignment(.leading)
@@ -122,8 +121,9 @@ struct DashboardView: View {
             Text("QUICK START")
                 .rfSectionHeader()
 
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: RFSpace.md), GridItem(.flexible())], spacing: RFSpace.md) {
-                ForEach(ExerciseKind.allCases) { kind in
+            // 종목이 하나뿐일 때 2열이면 오른쪽 절반이 비어 실수처럼 보인다 — 그때는 1열 전폭.
+            LazyVGrid(columns: quickStartColumns, spacing: RFSpace.md) {
+                ForEach(ExerciseKind.visibleCases) { kind in
                     NavigationLink {
                         QuickStartDetailView(exercise: kind)
                     } label: {
@@ -133,6 +133,12 @@ struct DashboardView: View {
                 }
             }
         }
+    }
+
+    private var quickStartColumns: [GridItem] {
+        ExerciseKind.visibleCases.count == 1
+            ? [GridItem(.flexible())]
+            : [GridItem(.flexible(), spacing: RFSpace.md), GridItem(.flexible())]
     }
 
     // MARK: - Recent

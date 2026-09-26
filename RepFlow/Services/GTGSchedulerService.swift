@@ -53,7 +53,8 @@ final class GTGSchedulerService: GTGSchedulerProtocol {
         await cancelAll()
 
         let count = max(1, profile.gtgPromptCount)
-        let exerciseKind = ExerciseKind(rawValue: profile.preferredGTGExercise) ?? .pushUp
+        // 이전 버전에서 고른 종목이 지금은 숨겨져 있을 수 있다 — 알림까지 그 종목으로 나가면 안 된다.
+        let exerciseKind = (ExerciseKind(rawValue: profile.preferredGTGExercise) ?? .pushUp).visibleOrDefault
         let perPrompt = max(1, profile.gtgDailyTarget / count)
 
         let totalMinutes = (profile.gtgEndHour - profile.gtgStartHour) * 60

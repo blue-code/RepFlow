@@ -12,7 +12,7 @@
 "dashboard.gtgTitle" = "GTG 模式";
 "dashboard.on" = "开启";
 "dashboard.off" = "关闭";
-"dashboard.gtgBlurb" = "Apple Watch 全天提醒你做轻量俯卧撑/引体向上。\n经过验证的 GTG 训练法,真正的进步从这里开始。";
+"dashboard.gtgBlurb" = "Apple Watch 全天提醒你做轻量俯卧撑。\n经过验证的 GTG 训练法,真正的进步从这里开始。";
 "dashboard.gtgProgress" = "%d / %d 已完成";
 "dashboard.quickStart" = "快速开始";
 "dashboard.startOnWatch" = "在 Watch 上开始";
@@ -20,7 +20,7 @@
 
 /* Onboarding */
 "onb.welcome" = "Watch 就是你的教练";
-"onb.welcomeBody" = "自动计数俯卧撑和引体向上。用 GTG 训练法全天分散小量训练,快速提升最大次数。";
+"onb.welcomeBody" = "一组做到 100 个。先测出当前最大次数,再用每周三练的阶梯计划提升,并配合全天分散的 GTG。";
 "onb.differentiator1" = "Watch 运动自动计数";
 "onb.differentiator2" = "GTG: 经过验证的进阶方法";
 "onb.differentiator3" = "EMOM · 塔巴塔 · AMRAP";

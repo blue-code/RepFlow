@@ -104,10 +104,10 @@ struct GTGSettingsView: View {
                         Text("종목").font(.rfBody).foregroundStyle(RFColor.fg)
                         Spacer()
                         Picker("", selection: Binding(
-                            get: { ExerciseKind(rawValue: profile.preferredGTGExercise) ?? .pushUp },
+                            get: { (ExerciseKind(rawValue: profile.preferredGTGExercise) ?? .pushUp).visibleOrDefault },
                             set: { profile.preferredGTGExercise = $0.rawValue; try? context.save(); Task { await syncSchedule() } }
                         )) {
-                            ForEach(ExerciseKind.allCases) { kind in
+                            ForEach(ExerciseKind.visibleCases) { kind in
                                 Text(kind.displayName).tag(kind)
                             }
                         }

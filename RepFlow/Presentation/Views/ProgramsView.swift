@@ -10,14 +10,17 @@ struct ProgramsView: View {
 
     private var enrollment: ProgramEnrollment? { enrollments.first }
 
-    private let intervals: [IntervalProgram] = [
-        .tabata(.pushUp),
-        .emom(.pushUp, reps: 10, rounds: 10),
-        .amrap(.pushUp, minutes: 5),
-        .tabata(.pullUp),
-        .emom(.pullUp, reps: 5, rounds: 8),
-        .amrap(.pullUp, minutes: 3)
-    ]
+    /// 종목은 `ExerciseKind.visibleCases` 하나로 통제한다 — 배열을 직접 지우지 않는다.
+    private var intervals: [IntervalProgram] {
+        [
+            .tabata(.pushUp),
+            .emom(.pushUp, reps: 10, rounds: 10),
+            .amrap(.pushUp, minutes: 5),
+            .tabata(.pullUp),
+            .emom(.pullUp, reps: 5, rounds: 8),
+            .amrap(.pullUp, minutes: 3)
+        ].filter { ExerciseKind.visibleCases.contains($0.exercise) }
+    }
 
     var body: some View {
         NavigationStack {

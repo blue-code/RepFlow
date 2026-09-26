@@ -12,7 +12,7 @@
 "dashboard.gtgTitle" = "GTGモード";
 "dashboard.on" = "ON";
 "dashboard.off" = "OFF";
-"dashboard.gtgBlurb" = "Apple Watchが一日中、軽いプッシュアップ・プルアップを通知します。\n実証済みのGTG法で本物の進歩を。";
+"dashboard.gtgBlurb" = "Apple Watchが一日中、軽いプッシュアップを通知します。\n実証済みのGTG法で本物の進歩を。";
 "dashboard.gtgProgress" = "%d / %d 完了";
 "dashboard.quickStart" = "クイックスタート";
 "dashboard.startOnWatch" = "Watchで開始";
@@ -20,7 +20,7 @@
 
 /* Onboarding */
 "onb.welcome" = "Watchがあなたのコーチ";
-"onb.welcomeBody" = "プッシュアップとプルアップを自動カウント。GTG法で一日中軽く分散して鍛え、最大反復回数を素早く伸ばそう。";
+"onb.welcomeBody" = "1セット100回まで。今の最大回数を測り、週3回のラダーで伸ばす。一日中軽く分散するGTGも一緒に。";
 "onb.differentiator1" = "Watchモーション自動カウント";
 "onb.differentiator2" = "GTG: 実証済み進歩トレーニング法";
 "onb.differentiator3" = "EMOM・タバタ・AMRAP";

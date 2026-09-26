@@ -22,12 +22,8 @@ struct SettingsView: View {
                             if let profile {
                                 VStack(spacing: 1) {
                                     profileRow(label: "이름", value: profile.displayName)
-                                    stepperRow(label: "푸시업 최고", value: profile.pushUpBest, range: 0...500) {
+                                    stepperRow(label: "한 세트 최고", value: profile.pushUpBest, range: 0...500) {
                                         profile.pushUpBest = $0
-                                        try? context.save()
-                                    }
-                                    stepperRow(label: "풀업 최고", value: profile.pullUpBest, range: 0...100) {
-                                        profile.pullUpBest = $0
                                         try? context.save()
                                     }
                                 }

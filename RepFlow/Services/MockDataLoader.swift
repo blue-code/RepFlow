@@ -78,11 +78,11 @@ enum MockDataLoader {
         let now = Date.now
         let mockSessions: [(ExerciseKind, WorkoutMode, Int, Double, TimeInterval)] = [
             (.pushUp, .freeCount, 38, 1.4, -3600 * 1),
-            (.pullUp, .emom, 24, 2.2, -3600 * 5),
+            (.pushUp, .emom, 24, 2.2, -3600 * 5),
             (.pushUp, .tabata, 56, 1.1, -3600 * 24),
-            (.dip, .freeCount, 18, 1.8, -3600 * 30),
+            (.pushUp, .freeCount, 18, 1.8, -3600 * 30),
             (.pushUp, .amrap, 42, 1.3, -3600 * 50),
-            (.pullUp, .freeCount, 14, 2.6, -3600 * 72),
+            (.pushUp, .freeCount, 14, 2.6, -3600 * 72),
             (.pushUp, .emom, 60, 1.0, -3600 * 96)
         ]
 

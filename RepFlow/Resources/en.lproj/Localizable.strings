@@ -12,7 +12,7 @@
 "dashboard.gtgTitle" = "GTG Mode";
 "dashboard.on" = "ON";
 "dashboard.off" = "OFF";
-"dashboard.gtgBlurb" = "Your watch nudges you all day for light push-ups/pull-ups.\nThe proven GTG method actually moves the needle.";
+"dashboard.gtgBlurb" = "Your watch nudges you all day for light push-ups.\nThe proven GTG method actually moves the needle.";
 "dashboard.gtgProgress" = "%d / %d done";
 "dashboard.quickStart" = "Quick Start";
 "dashboard.startOnWatch" = "Start on Watch";
@@ -20,7 +20,7 @@
 
 /* Onboarding */
 "onb.welcome" = "Your watch is your coach";
-"onb.welcomeBody" = "Auto-count push-ups & pull-ups, and grow fast with GTG — small reps spread through the day.";
+"onb.welcomeBody" = "From your max to 100 in a single set. Test where you are, then climb a 3-a-week ladder — with GTG reps spread through the day.";
 "onb.differentiator1" = "Watch motion auto-count";
 "onb.differentiator2" = "GTG: proven progress method";
 "onb.differentiator3" = "EMOM · Tabata · AMRAP";

@@ -12,7 +12,7 @@
 "dashboard.gtgTitle" = "GTG 모드";
 "dashboard.on" = "ON";
 "dashboard.off" = "OFF";
-"dashboard.gtgBlurb" = "워치가 하루 종일 가벼운 푸시업/풀업을 알려줍니다.\n검증된 GTG 훈련법으로 진짜 진보가 시작됩니다.";
+"dashboard.gtgBlurb" = "워치가 하루 종일 가벼운 푸시업을 알려줍니다.\n검증된 GTG 훈련법으로 진짜 진보가 시작됩니다.";
 "dashboard.gtgProgress" = "%d / %d개 완료";
 "dashboard.quickStart" = "바로 시작";
 "dashboard.startOnWatch" = "워치에서 시작";
@@ -20,7 +20,7 @@
 
 /* Onboarding */
 "onb.welcome" = "워치가 너의 코치다";
-"onb.welcomeBody" = "푸시업·풀업을 자동으로 카운트하고, 하루 종일 가볍게 분산해서 운동하는 GTG 훈련법으로 빠르게 늘어보자.";
+"onb.welcomeBody" = "한 세트 100개까지. 지금 몇 개를 하는지 재고, 주 3회 사다리로 올린다. 하루 종일 가볍게 나눠 하는 GTG도 함께.";
 "onb.differentiator1" = "워치 모션 자동 카운트";
 "onb.differentiator2" = "GTG: 검증된 진보 훈련법";
 "onb.differentiator3" = "EMOM · 타바타 · AMRAP";

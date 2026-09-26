@@ -84,6 +84,21 @@ enum ExerciseKind: String, Codable, CaseIterable, Identifiable, Hashable {
     var symbol: String { assetName }
 }
 
+extension ExerciseKind {
+    /// 「푸시업 100」 전문화 — **UI 진입점에 노출할 종목**. 여기 한 줄만 돌리면 되돌아온다.
+    ///
+    /// enum 케이스 자체는 절대 줄이지 않는다: 저장된 `WorkoutSession.exerciseRaw`,
+    /// 워치 메시지 파싱, HealthKit 매핑이 전 종목에 의존한다. 케이스를 지우면 과거 기록이
+    /// 디코드되지 않고 SwiftData 마이그레이션까지 끌려온다. **가리는 것과 없애는 것은 다르다.**
+    /// 기록 화면(`HistoryView`)은 필터하지 않는다 — 이미 쌓인 풀업 기록은 계속 보여야 한다.
+    static let visibleCases: [ExerciseKind] = [.pushUp]
+
+    /// 숨겨진 종목이 설정값에 남아 있을 때 되돌릴 기본값 (예: 기존 사용자의 GTG 종목이 풀업).
+    var visibleOrDefault: ExerciseKind {
+        Self.visibleCases.contains(self) ? self : .pushUp
+    }
+}
+
 #if canImport(SwiftUI)
 import SwiftUI
 

@@ -40,7 +40,7 @@ struct OnboardingView: View {
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("푸시업·풀업을 자동으로 카운트하고, 하루 종일 가볍게 분산해서 운동하는 GTG 훈련법으로 빠르게 늘어보자.")
+                Text("한 세트 100개까지. 지금 몇 개를 하는지 재고, 주 3회 사다리로 올린다. 하루 종일 가볍게 나눠 하는 GTG도 함께.")
                     .font(.rfBody)
                     .foregroundStyle(RFColor.fgMuted)
                     .multilineTextAlignment(.leading)

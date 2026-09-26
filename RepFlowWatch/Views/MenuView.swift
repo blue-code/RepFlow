@@ -38,7 +38,7 @@ struct MenuView: View {
                     Divider().padding(.vertical, 4)
                 }
 
-                ForEach(ExerciseKind.allCases) { kind in
+                ForEach(ExerciseKind.visibleCases) { kind in
                     NavigationGroup(kind: kind)
                 }
 
@@ -54,9 +54,9 @@ struct MenuView: View {
 
                 Button {
                     coord.haptic(.click)
-                    coord.startInterval(program: .emom(.pullUp, reps: 5, rounds: 8))
+                    coord.startInterval(program: .emom(.pushUp, reps: 10, rounds: 10))
                 } label: {
-                    Label("EMOM 풀업 5×8", systemImage: "metronome")
+                    Label("EMOM 푸시업 10×10", systemImage: "metronome")
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
@@ -85,7 +85,7 @@ struct MenuView: View {
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                        ForEach(ExerciseKind.allCases) { kind in
+                        ForEach(ExerciseKind.visibleCases) { kind in
                             Button {
                                 coord.haptic(.click)
                                 coord.openCalibration(exercise: kind)

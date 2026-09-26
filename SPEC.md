@@ -6,19 +6,20 @@
 
 ---
 
-## 0. 한눈에 보는 현재 상태 (Status @ 2026-09-20)
+## 0. 한눈에 보는 현재 상태 (Status @ 2026-09-26)
 
 | 항목 | 값 |
 |---|---|
-| 마케팅 버전 | **1.0.3** (배포 시 1.0.4로 bump 예정) |
-| 빌드 번호 | **11** 배포됨 / **12** 미배포 (탭 카운트 주력화 + 코어 루프 수리) |
-| 입력 모델 | **탭 카운트 + 크라운 회전** (기본) / **모션 자동 감지** (실험적 opt-in) |
+| 마케팅 버전 | **1.0.4** (푸시업 전문화 · 자동 카운트 빌드) |
+| 빌드 번호 | **11** 배포됨 / 다음 업로드는 fastlane 이 자동 증가 |
+| 입력 모델 | **탭 카운트 + 크라운 회전** (기본) / **모션 자동 감지** (실험적 opt-in) / 폰 **카메라·근접센서** (M5, 실기기 튜닝 전) |
+| 노출 종목 | **푸시업 단독** — `ExerciseKind.visibleCases` (§14.10). enum·기록·메시지는 5종 그대로 |
 | 알고리즘 버전 | RepDetectorAlgorithm v3 — 자동 감지 켰을 때만 동작 |
 | 최소 OS | iOS 17.0 / watchOS 10.0 |
 | 번들 ID | `com.digimaru.repflow` (iOS) / `com.digimaru.repflow.watch` (watch) |
 | 팀 ID | KUDC7C6Z9H |
 | 메인 브랜치 | `main` |
-| 마지막 커밋 | `d6f7e9d feat: rep 자동 카운트 알고리즘 v3 — 가속도+자이로 fusion + adaptive baseline` |
+| 마지막 커밋 | `723effc fix: 카메라 가이드가 안 열리던 문제 + 워치 임베딩 설정 보강` |
 
 ### 전략 전환 (2026-06-01)
 - 워치 단독 모션 카운트(특히 푸시업)는 손목 가속도 진폭이 노이즈와 겹치는 본질적 한계. Apple Fitness도 미해결.
@@ -31,6 +32,12 @@
 **100개 프로그램과 카메라 카운트만 푸시업 전용**으로 한다.
 
 계획 문서: `~/.claude/plans/purrfect-soaring-starlight.md` (M1~M8).
+
+### 종목 전문화 (2026-09-26) — 푸시업만 노출
+
+"푸시업 5종 앱"이 아니라 **푸시업 전문 앱**으로 먼저 낸다. 종목이 5개면 스토어 카피도
+온보딩도 초점이 흐려지고, 카메라 카운트·100 프로그램은 애초에 푸시업 전용이라 나머지 4종은
+"그냥 세는" 화면만 늘린다. **가리는 것이지 없애는 것이 아니다** — 구현 규약은 §14.10.
 
 ### 미해결 / 대기 항목
 
@@ -87,7 +94,10 @@
 
 ## 1. 제품 개요
 
-**RepFlow** — 푸시업/풀업 전용 iOS + watchOS 앱.
+**RepFlow** — **푸시업 전문** iOS + watchOS 앱.
+
+현재 UI에 노출되는 종목은 푸시업 하나뿐이다(§14.10). 풀업·딥스·인버티드 로우·파이크 푸시업은
+도메인에 그대로 남아 있고 과거 기록도 계속 보이지만, 새로 시작할 수 있는 진입점은 없다.
 
 핵심 차별점 3개:
 1. **GTG (Grease the Groove)** — 시장에 빈 자리. 하루 동안 적은 양을 분산 시행해 신경계를 적응시키는 검증된 훈련법. RPE 5 상한.
@@ -373,8 +383,9 @@ v3는 zero-crossing이라 up/down 구분 불필요 — 단일 amplitude로 처�
 
 ### 5.4 MenuView 구성
 
-- 상단: 운동 종목별 NavigationGroup (프리 카운트 / AMRAP 5분)
-- 중간: 타바타·EMOM 빠른 시작
+- 최상단: 폰이 밀어둔 「푸시업 100」 다음 세션 (있을 때만)
+- 상단: 종목별 NavigationGroup (프리 카운트 / AMRAP 5분) — **`visibleCases` 라서 지금은 푸시업 한 줄**
+- 중간: 타바타 푸시업 · EMOM 푸시업 10×10 빠른 시작
 - 하단: **"고급"** 토글 섹션
   - 자동 감지 ON 시: 종목별 캘리브레이션 진입 버튼 노출
   - 자동 감지 OFF 시: "자동 감지는 폰 설정에서 켤 수 있어요 (실험적)" 안내
@@ -643,6 +654,7 @@ Gating:
 | 17 | 워치에 개발자 빌드가 설치되지 않음 | **워치 자체의 개발자 모드**가 꺼져 있었다(설정 → 개인정보 보호 및 보안 → 개발자 모드). 꺼져 있으면 워치가 기기 등록조차 안 되어 프로비저닝 프로파일에 UDID가 안 들어간다. `security cms -D -i embedded.mobileprovision` 으로 `ProvisionedDevices` 를 직접 확인할 것 |
 | 18 | 워치 프로파일 Platform 이 `iOS/xrOS/visionOS` 로 잡힘 | 워치가 등록되지 않아 watchOS 프로파일이 생성되지 못하고 iOS 프로파일이 재사용된 결과. #17을 고치면 함께 해결된다 |
 | 19 | `project.yml` 워치 의존성에 `codeSign`/`platformFilter`, 타깃에 `SKIP_INSTALL` 누락 | BurnCoach·RunStamp 의 검증된 형태를 따른다: 의존성 `embed: true, codeSign: true, platformFilter: iOS` / 타깃 `SKIP_INSTALL: YES`. 없으면 기기 설치·아카이브 검증에서 문제가 난다 |
+| 20 | 종목을 줄이려고 `ExerciseKind` 케이스를 지우면 저장된 `exerciseRaw` 가 디코드되지 않고 SwiftData 마이그레이션까지 끌려온다 | **노출과 존재를 분리한다** — `ExerciseKind.visibleCases` 로 UI 진입점만 거른다 (§14.10). 되돌릴 때도 한 줄 |
 
 ---
 
@@ -857,3 +869,29 @@ Vision이 저신뢰 좌표를 낸다). 깊이 산출은 두 방식이 있고 **�
 4. `PlacementCheck` 거리 상수(`minBodySpan` 0.30 / `maxBodySpan` 0.88)를 실제 1.5~2m 촬영으로 검증
 5. `FormScore` 임계(깊이 95° / 락아웃 160° / 힙 20°)를 육안 라벨과 대조
 6. 근접센서 모드는 책상에서 20/20 확인 (실기기 필요하지만 운동은 불필요)
+
+### 14.10 종목 노출 범위 (`ExerciseKind.visibleCases`)
+
+`Shared/WatchMessage.swift` 의 `static let visibleCases: [ExerciseKind] = [.pushUp]` **한 줄**이
+UI에 보이는 종목 전부를 결정한다. 되돌리려면 `ExerciseKind.allCases` 로 바꾸면 된다.
+
+**건드리지 않는 것** — enum 케이스, `Codable`, `UserProfile.pullUpBest/dipBest`,
+`WatchPayload` 파싱, `HealthKitService`/`WatchWorkoutManager` 매핑, `WorkoutIngestService`.
+전 종목이 그대로 살아 있어야 과거 기록이 디코드되고 마이그레이션이 없다.
+
+| 위치 | 처리 |
+|---|---|
+| `DashboardView` 퀵스타트 · `MenuView` 종목/캘리브레이션 · `GTGSettingsView` 종목 Picker | `visibleCases` 로 `ForEach` |
+| `ProgramsView.intervals` | 배열은 그대로 두고 `filter { visibleCases.contains($0.exercise) }` |
+| `DashboardView` 통계칩 · `SettingsView` 스테퍼 | "풀업 최고" 행 제거, "푸시업 최고" → "한 세트 최고" |
+| `MockDataLoader` 세션 시드 | 전부 푸시업 — 스크린샷(§9.5)에 숨긴 종목이 찍히면 안 된다 |
+| 온보딩 · GTG 안내 문구 · `*.lproj` 4언어 | "푸시업·풀업" → 푸시업 단독 카피 |
+
+⚠️ **숨긴 종목이 설정값에 남아 있는 경우**: 이전 버전에서 GTG 종목을 풀업으로 고른 사용자가
+있다. `visibleOrDefault` 로 읽는 쪽에서 푸시업으로 떨어뜨린다 — `GTGSettingsView`(Picker가
+없는 태그를 만나면 선택이 깨진다)와 `GTGSchedulerService`(숨긴 종목으로 알림이 나간다) 둘 다.
+
+`HistoryView` 는 **필터하지 않는다**. 이미 쌓인 풀업 기록은 계속 보여야 한다 —
+가린다는 건 새로 시작할 수 없다는 뜻이지 지운다는 뜻이 아니다.
+
+M7 잔여: README·ASO·스토어 스크린샷이 아직 5종을 광고한다. 리브랜딩 때 같이 정리한다.
