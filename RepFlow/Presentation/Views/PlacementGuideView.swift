@@ -3,9 +3,9 @@ import SwiftUI
 
 /// 카메라 모드 시작 전 거치 확인.
 ///
-/// 이 화면이 카메라 모드의 실질적 MVP다. 푸시업은 바닥 자세라 셀피 각도로는 절대 잡히지 않는데,
-/// 안내 없이 "카메라로 세기"만 열어두면 대부분 천장을 찍다가 0개로 끝난다.
-/// 3초 연속 조건을 만족해야만 시작 버튼이 열린다.
+/// 이 화면이 카메라 모드의 실질적 MVP다. **전면 렌즈**라 사용자는 여기서 자기 모습을 보며
+/// 폰 위치를 맞춘다 — 그래도 손에 들고 셀피처럼 내려다보면 몸이 가로로 눕지 않아 통과하지 못한다.
+/// 폰을 바닥에 세워 옆에서 찍어야 한다. 3초 연속 조건을 만족해야만 시작 버튼이 열린다.
 struct PlacementGuideView: View {
 
     let counter: CameraRepCounter
@@ -74,7 +74,7 @@ struct PlacementGuideView: View {
                 .foregroundStyle(gate.verdict.isOK ? RFColor.success : RFColor.fg)
                 .multilineTextAlignment(.center)
 
-            Text("폰을 바닥에 세워 옆에서 1.5~2m. 영상은 기기 안에서만 분석되고 저장되지 않습니다.")
+            Text("폰을 바닥에 세워 옆에서 1.5~2m — 화면이 나를 보게. 영상은 기기 안에서만 분석되고 저장되지 않습니다.")
                 .font(.rfCaptionSm)
                 .foregroundStyle(RFColor.fgMuted)
                 .multilineTextAlignment(.center)

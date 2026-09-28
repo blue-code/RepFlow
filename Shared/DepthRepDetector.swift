@@ -15,9 +15,20 @@ struct DepthRepDetector {
     var downThreshold: Double = 0.75
     /// 이 아래(이하)면 "위 구간". 둘 사이는 중간 구간 — 히스테리시스다.
     var upThreshold: Double = 0.25
-    /// 구간을 **연속으로** 이만큼 유지해야 인정한다.
-    /// 진입 시각만 보면 0.05초 간격으로 위아래를 오가는 신호도 통과해 버린다.
-    var minPhaseDuration: TimeInterval = 0.35
+    /// 아래 구간을 **연속으로** 이만큼 유지해야 인정한다.
+    /// 카메라처럼 노이즈가 있는 신호는 0.35초쯤 필요하지만, 근접센서처럼 하드웨어가
+    /// 디바운스한 이진 신호는 **0이 맞다** — 닿았다는 이벤트 자체가 이미 진짜다.
+    /// 여기가 길면 "머리가 스치듯 닿는" 실제 푸시업이 통째로 무시된다.
+    var minDownDuration: TimeInterval = 0.35
+    /// 위 구간(락아웃)을 이만큼 유지해야 인정한다. **아래를 0으로 풀 때 디바운스는 이쪽이 맡는다** —
+    /// 센서가 near/far 를 빠르게 튕겨도 위 구간을 제대로 머물기 전엔 1회로 확정되지 않는다.
+    var minUpDuration: TimeInterval = 0.35
+
+    /// 양쪽을 같은 값으로 다루는 기존 호출부·테스트용.
+    var minPhaseDuration: TimeInterval {
+        get { max(minDownDuration, minUpDuration) }
+        set { minDownDuration = newValue; minUpDuration = newValue }
+    }
 
     /// 신호가 속한 구간.
     enum Zone: Equatable { case up, middle, down }
@@ -39,6 +50,21 @@ struct DepthRepDetector {
 
     init() {}
 
+    /// 소스 특성에 맞춰 구간별 체류를 따로 준다 (근접센서: 아래 0 · 위 0.25).
+    init(minDownDuration: TimeInterval, minUpDuration: TimeInterval) {
+        self.minDownDuration = minDownDuration
+        self.minUpDuration = minUpDuration
+    }
+
+    /// 지금 머무는 구간을 인정받는 데 필요한 체류 시간.
+    private var requiredDwell: TimeInterval {
+        switch currentZone {
+        case .down:   return minDownDuration
+        case .up:     return minUpDuration
+        case .middle: return 0   // 중간 구간은 인정해도 전이가 없다
+        }
+    }
+
     /// 신호 한 샘플. rep이 완성되면 true.
     ///
     /// `time` 은 샘플 시각(초). 시간 기반이라 프레임레이트가 흔들려도 판정이 흔들리지 않는다.
@@ -58,12 +84,12 @@ struct DepthRepDetector {
         }
 
         if newZone == currentZone {
-            guard time - enteredAt >= minPhaseDuration else { return false }
+            guard time - enteredAt >= requiredDwell else { return false }
             return confirmCurrentZone()
         }
 
         // 구간을 떠난다 — 충분히 머물렀다면 그 구간을 인정한다.
-        let counted = (time - enteredAt >= minPhaseDuration) ? confirmCurrentZone() : false
+        let counted = (time - enteredAt >= requiredDwell) ? confirmCurrentZone() : false
         currentZone = newZone
         zoneEnteredAt = time
         return counted
@@ -73,7 +99,7 @@ struct DepthRepDetector {
     /// 안 그러면 마지막 1회가 다음 이벤트를 기다리다 영영 안 세어진다.
     @discardableResult
     mutating func flush(at time: TimeInterval) -> Bool {
-        guard let enteredAt = zoneEnteredAt, time - enteredAt >= minPhaseDuration else { return false }
+        guard let enteredAt = zoneEnteredAt, time - enteredAt >= requiredDwell else { return false }
         return confirmCurrentZone()
     }
 

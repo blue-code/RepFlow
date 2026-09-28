@@ -143,6 +143,55 @@ struct DepthRepDetectorTests {
         #expect(d.count == 10)
     }
 
+    // MARK: - 근접센서 설정 (아래 0 · 위 0.25)
+
+    /// 사용자 리포트: "완전히 손으로 가려야만 세어진다. 머리가 살짝 닿으면 세어져야 한다."
+    /// 이진 센서에 아래 체류 0.35초를 요구하던 게 원인이었다.
+    @Test("이마가 스치듯 닿는 0.05초 접촉도 20회 전부 센다")
+    func countsBriefTouches() {
+        var d = DepthRepDetector(minDownDuration: 0, minUpDuration: 0.25)
+        var t: TimeInterval = 0
+        d.ingest(depth: 0, at: t)          // 시작은 떨어진 상태
+        t += 0.5
+        for _ in 0..<20 {
+            d.ingest(depth: 1, at: t); t += 0.05    // 닿았다 — 아주 잠깐
+            d.ingest(depth: 0, at: t); t += 0.75    // 올라가서 다음 회차까지
+        }
+        // 마지막 회차는 다음 접촉이 없어 미완성으로 남는다 — 세션 종료의 flush 가 확정한다.
+        #expect(d.count == 19)
+        d.flush(at: t)
+        #expect(d.count == 20)
+    }
+
+    /// 아래 체류를 0으로 풀면 디바운스는 위 구간이 맡는다.
+    @Test("센서가 near/far 로 튕겨도 한 번 닿은 것은 1회다")
+    func bouncingContactCountsOnce() {
+        var d = DepthRepDetector(minDownDuration: 0, minUpDuration: 0.25)
+        var t: TimeInterval = 0
+        d.ingest(depth: 0, at: t); t += 0.5
+        // 접촉 중 센서가 떨렸다 — 위 구간을 제대로 머문 적이 없다
+        for _ in 0..<4 {
+            d.ingest(depth: 1, at: t); t += 0.04
+            d.ingest(depth: 0, at: t); t += 0.03
+        }
+        d.ingest(depth: 1, at: t); t += 0.05
+        d.ingest(depth: 0, at: t); t += 0.8      // 진짜로 올라왔다
+        d.ingest(depth: 0, at: t)
+        #expect(d.count == 1)
+    }
+
+    @Test("카메라 기본값은 그대로 깐깐하다 — 0.05초 흔들림을 세지 않는다")
+    func cameraDefaultsStillStrict() {
+        var d = DepthRepDetector()
+        var t: TimeInterval = 0
+        d.ingest(depth: 0, at: t); t += 0.5
+        for _ in 0..<5 {
+            d.ingest(depth: 1, at: t); t += 0.05
+            d.ingest(depth: 0, at: t); t += 0.05
+        }
+        #expect(d.count == 0)
+    }
+
     @Test("flush 는 충분히 머물지 않은 구간까지 세지는 않는다")
     func flushDoesNotInventReps() {
         var d = DepthRepDetector()

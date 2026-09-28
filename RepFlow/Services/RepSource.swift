@@ -18,9 +18,10 @@ protocol RepSource: AnyObject {
 enum CountingMode: String, CaseIterable, Identifiable {
     /// 화면 탭 / 크라운. 항상 된다.
     case manual
-    /// 폰을 바닥에 세워 정측면에서 촬영 — 폼 점수까지 나온다.
+    /// 폰을 바닥에 세워 정측면에서 **전면(셀피) 렌즈**로 촬영 — 화면이 나를 보고 있어야
+    /// 프레임에 들어왔는지 확인할 수 있다. 폼 점수까지 나온다.
     case camera
-    /// 폰을 가슴 아래 바닥에 눕힌다. 거치도 조명도 필요 없다.
+    /// 폰을 머리 아래 바닥에 눕힌다. 거치도 조명도 필요 없다.
     case proximity
 
     var id: String { rawValue }
@@ -46,9 +47,9 @@ enum CountingMode: String, CaseIterable, Identifiable {
         case .manual:
             return "화면 어디를 눌러도 1개."
         case .camera:
-            return "폰을 바닥에 세워 정측면 1.5~2m. 전신이 들어와야 합니다."
+            return "폰을 바닥에 세워 옆에서 1.5~2m. 셀피 화면으로 내가 다 들어왔는지 보면서 맞추세요."
         case .proximity:
-            return "폰을 가슴 아래 바닥에 화면이 위로 오게 둡니다. 가슴이 닿을 만큼 내려가면 1개."
+            return "폰 위쪽 끝(카메라 옆)이 이마 아래 오게 눕힙니다. 이마가 살짝 닿기만 해도 1개."
         }
     }
 }

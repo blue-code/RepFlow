@@ -4,9 +4,10 @@ import Vision
 
 /// 폰을 바닥에 세워두고 Vision 으로 세는 카메라 모드.
 ///
-/// **거치 전제**: 푸시업은 바닥 자세라 셀피 각도로는 절대 잡히지 않는다. 폰을 바닥에 세워
-/// **정측면, 1.5~2m, 가로 방향**이어야 한다. 그 조건을 `PlacementGuideView` 가 먼저 확인하고
-/// 통과해야만 세션을 시작할 수 있다.
+/// **전면(셀피) 렌즈를 쓴다.** 혼자 운동하는 사람이 후면 렌즈를 쓰면 화면이 반대쪽을 보고 있어
+/// 자기가 프레임에 들어왔는지, 몇 개를 셌는지 확인할 방법이 없다. 렌즈만 앞으로 돌린 것이고
+/// **거치 전제는 그대로다** — 폰을 바닥에 세워 **정측면, 1.5~2m**. 셀피라고 위에서 내려다보면
+/// 몸이 가로로 눕지 않아 `PlacementGuideView` 게이트를 통과하지 못한다.
 ///
 /// 판정 자체는 이 클래스가 하지 않는다 — 정규화 깊이를 `DepthRepDetector`(순수)에 넘긴다.
 /// 관절 → 깊이 변환도 `PoseGeometry`(순수)에 있다. 여기 남는 건 캡처 파이프라인뿐이다.
@@ -124,7 +125,7 @@ final class CameraRepCounter: NSObject, RepSource {
         // 720p면 관절 추정에 충분하고, 그 이상은 발열과 배터리만 먹는다.
         session.sessionPreset = .hd1280x720
 
-        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
               let input = try? AVCaptureDeviceInput(device: device),
               session.canAddInput(input) else { return false }
         session.addInput(input)
@@ -133,6 +134,15 @@ final class CameraRepCounter: NSObject, RepSource {
         output.setSampleBufferDelegate(self, queue: queue)
         guard session.canAddOutput(output) else { return false }
         session.addOutput(output)
+
+        // 버퍼를 세로(앱 고정 방향)로 돌려서 내보낸다. 이렇게 하면 Vision 에 넘길 orientation 이
+        // 추측이 아니라 `.up` 으로 **확정**된다. 전에는 센서 기준 가로 버퍼를 `.up` 이라고 우겨서,
+        // 축이 90° 돌아가면 누운 사람이 세로로 길게 들어와 거치 판정이 영영 실패할 수 있었다.
+        // 미러링은 걸지 않는다 — 좌우 중 어느 쪽을 쓸지는 신뢰도로 고르므로 의미가 없다.
+        if let connection = output.connection(with: .video),
+           connection.isVideoRotationAngleSupported(90) {
+            connection.videoRotationAngle = 90
+        }
         return true
     }
 
@@ -200,6 +210,7 @@ extension CameraRepCounter: AVCaptureVideoDataOutputSampleBufferDelegate {
         guard let buffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         // Vision 은 비싸다. 30fps 전부 돌리면 10분짜리 세션에서 발열로 스로틀링이 걸린다.
         // 푸시업 한 번이 최소 0.7초라 15fps로도 충분하다.
+        // orientation 은 `.up` 으로 맞다 — 캡처 커넥션에서 이미 세로로 돌려 내보낸다.
         guard frames.shouldProcess() else { return }
         let time = CMTimeGetSeconds(CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
 
