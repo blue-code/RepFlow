@@ -74,7 +74,7 @@ struct PlacementGuideView: View {
                 .foregroundStyle(gate.verdict.isOK ? RFColor.success : RFColor.fg)
                 .multilineTextAlignment(.center)
 
-            Text("폰을 바닥에 세워 옆에서 1.5~2m — 화면이 나를 보게. 영상은 기기 안에서만 분석되고 저장되지 않습니다.")
+            Text(subtitle)
                 .font(.rfCaptionSm)
                 .foregroundStyle(RFColor.fgMuted)
                 .multilineTextAlignment(.center)
@@ -107,6 +107,19 @@ struct PlacementGuideView: View {
         }
         .padding(RFSpace.lg)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: RFRadius.lg))
+    }
+
+    /// 전신이 안 들어와도 시작할 수 있다는 걸 여기서 알려준다 — 모르면 다들 뒤로 물러나기만 한다.
+    private var subtitle: String {
+        guard gate.verdict.isOK else {
+            return "폰을 바닥에 세워 옆에서 — 화면이 나를 보게. 전신이 안 들어와도 상체만 보이면 셀 수 있습니다."
+        }
+        switch gate.framing {
+        case .fullBody:
+            return "전신이 들어왔습니다 — 폼 점수까지 나옵니다."
+        case .upperBody:
+            return "상체 기준으로 셉니다 — 카운트는 되고 폼 점수는 없습니다. 다리까지 넣으려면 조금 더 뒤로."
+        }
     }
 
     private var message: String {

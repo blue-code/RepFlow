@@ -55,10 +55,58 @@ struct PlacementCheckTests {
         #expect(PlacementCheck().evaluate(pose: goodPose(), confidence: 0.1) == .problem(.lowConfidence))
     }
 
-    @Test("몸이 프레임을 벗어나면 막는다")
+    @Test("상체가 프레임을 벗어나면 막는다")
     func blocksOutOfFrame() {
-        let off = shifted(goodPose(), dx: 0.2)
+        // 어깨·팔꿈치·손목·엉덩이는 깊이 신호의 재료다. 이게 잘리면 셀 수 없다.
+        let off = shifted(goodPose(), dx: 0.5)
         #expect(PlacementCheck().evaluate(pose: off, confidence: 0.8) == .problem(.outOfFrame))
+    }
+
+    // MARK: - 상체 기준 (다리가 안 들어와도 시작한다)
+
+    /// 세로 고정 화면의 가로 화각이 좁아 성인 전신은 2m 넘게 떨어져야 들어온다.
+    /// 방에서 그게 안 되는 사람을 막지 않는 게 이 분기의 존재 이유다.
+    @Test("다리가 아예 안 잡혀도 상체만으로 통과한다")
+    func passesUpperBodyOnly() {
+        var p = goodPose()
+        p.ankle = nil
+        p.knee = nil
+        #expect(PlacementCheck().evaluate(pose: p, confidence: 0.8) == .ok)
+        #expect(PlacementCheck().framing(for: p) == .upperBody)
+    }
+
+    /// Vision 은 프레임 밖 관절에도 낮은 신뢰도 좌표를 내놓는다.
+    /// 그걸 "몸이 벗어났다"로 받으면 다리가 애매하게 걸린 사람은 영영 시작하지 못한다.
+    @Test("프레임 밖으로 나간 다리는 없는 것으로 친다")
+    func ignoresLegsOutsideFrame() {
+        var p = goodPose()
+        p.ankle = P(1.15, 0.50)
+        p.knee = P(1.02, 0.48)
+        #expect(PlacementCheck().evaluate(pose: p, confidence: 0.8) == .ok)
+        #expect(PlacementCheck().framing(for: p) == .upperBody)
+    }
+
+    @Test("다리가 보이면 전신 기준이고 폼 점수까지 간다")
+    func fullBodyWhenLegsVisible() {
+        #expect(PlacementCheck().framing(for: goodPose()) == .fullBody)
+    }
+
+    @Test("상체만 보여도 위에서 찍으면 막는다 — 몸통이 세로로 선다")
+    func blocksUpperBodyFromAbove() {
+        let standing = PoseGeometry.Pose(
+            shoulder: P(0.48, 0.20), elbow: P(0.46, 0.33), wrist: P(0.45, 0.45),
+            hip: P(0.50, 0.60), ankle: nil, knee: nil
+        )
+        #expect(PlacementCheck().evaluate(pose: standing, confidence: 0.8)
+                == .problem(.notSideView))
+    }
+
+    @Test("상체만 보이는데 너무 작으면 더 가까이 오라고 한다")
+    func upperBodyTooFar() {
+        var p = scaled(goodPose(), by: 0.3)
+        p.ankle = nil
+        p.knee = nil
+        #expect(PlacementCheck().evaluate(pose: p, confidence: 0.8) == .problem(.tooFar))
     }
 
     @Test("너무 멀면 막는다")

@@ -30,7 +30,8 @@ final class CameraRepCounter: NSObject, RepSource {
     var depthMethod: PoseGeometry.DepthMethod = .elbowAngle
 
     /// 이 아래로 떨어진 관절은 믿지 않는다.
-    private let minConfidence: Float = 0.3
+    private static let jointConfidenceFloor: Double = 0.3
+    private let minConfidence: Float = Float(jointConfidenceFloor)
     /// 신뢰도가 이만큼 연속으로 낮으면 카운트를 멈추고 알린다.
     private let signalLossGrace: TimeInterval = 1.0
 
@@ -234,8 +235,9 @@ extension CameraRepCounter: AVCaptureVideoDataOutputSampleBufferDelegate {
     ) -> (PoseGeometry.Pose?, Double) {
         guard let points = try? observation.recognizedPoints(.all) else { return (nil, 0) }
 
-        func point(_ name: VNHumanBodyPoseObservation.JointName) -> (PoseGeometry.Point, Double)? {
-            guard let p = points[name], p.confidence > 0 else { return nil }
+        func point(_ name: VNHumanBodyPoseObservation.JointName,
+                   floor: Double = 0) -> (PoseGeometry.Point, Double)? {
+            guard let p = points[name], Double(p.confidence) > floor else { return nil }
             return (PoseGeometry.Point(p.location.x, 1 - p.location.y), Double(p.confidence))
         }
 
@@ -258,9 +260,12 @@ extension CameraRepCounter: AVCaptureVideoDataOutputSampleBufferDelegate {
 
             let core = [shoulder.1, elbow.1, wrist.1, hip.1]
             let confidence = core.reduce(0, +) / Double(core.count)
+            // 다리는 저신뢰면 아예 넘기지 않는다. 프레임 밖 관절에도 Vision 은 좌표를 내는데,
+            // 그걸 받으면 거치 판정이 엉키고(상체 기준으로 못 떨어진다) 폼 점수도 헛값이 된다.
             let pose = PoseGeometry.Pose(
                 shoulder: shoulder.0, elbow: elbow.0, wrist: wrist.0, hip: hip.0,
-                ankle: point(side.ankle)?.0, knee: point(side.knee)?.0
+                ankle: point(side.ankle, floor: jointConfidenceFloor)?.0,
+                knee: point(side.knee, floor: jointConfidenceFloor)?.0
             )
             if confidence > (best?.1 ?? 0) { best = (pose, confidence) }
         }
