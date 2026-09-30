@@ -85,7 +85,7 @@ struct ProgramSessionView: View {
         // ② push 는 부모의 onDisappear 를 부를 수 있어서, 가이드가 막 켠 카메라를 곧바로 끈다.
         .fullScreenCover(isPresented: $showPlacementGuide) {
             NavigationStack {
-                PlacementGuideView(counter: camera) { passed in
+                PlacementGuideView(counter: camera, speech: speech) { passed in
                     showPlacementGuide = false
                     guard passed else {
                         modeRaw = CountingMode.manual.rawValue   // 포기하면 탭으로 되돌린다

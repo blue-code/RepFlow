@@ -47,7 +47,7 @@ enum CountingMode: String, CaseIterable, Identifiable {
         case .manual:
             return "화면 어디를 눌러도 1개."
         case .camera:
-            return "폰을 바닥에 세워 옆에서 1.5~2m. 셀피 화면으로 내가 다 들어왔는지 보면서 맞추세요."
+            return "폰을 바닥에 세워 옆에서. 자세를 3초 유지하면 소리로 세며 자동으로 시작합니다."
         case .proximity:
             return "폰 위쪽 끝(카메라 옆)이 이마 아래 오게 눕힙니다. 이마가 살짝 닿기만 해도 1개."
         }
