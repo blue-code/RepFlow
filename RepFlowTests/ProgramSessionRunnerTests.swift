@@ -32,6 +32,85 @@ struct ProgramSessionRunnerTests {
         runner.completeSet()
     }
 
+    // MARK: - 자동 세트 완료 (손이 폰에 닿지 않는 모드)
+
+    /// 카메라·근접센서 모드에서는 "세트 완료" 버튼이 1.5~2m 밖에 있다.
+    /// 목표를 채우고 멈추면 스스로 넘어가야 한다.
+    @Test("목표를 채우고 멈춰 있으면 세트를 자동으로 끝낸다")
+    func autoCompletesAfterIdle() {
+        let (runner, clock) = makeRunner()
+        runner.start()
+        let target = runner.currentTarget?.reps ?? 0
+        runner.addRep(target)
+
+        clock.advance(5)
+        #expect(runner.shouldAutoCompleteSet(idleFor: 6) == false)
+        clock.advance(1)
+        #expect(runner.shouldAutoCompleteSet(idleFor: 6))
+    }
+
+    @Test("1회를 더 세면 기다리는 시간이 다시 시작된다")
+    func newRepResetsIdleWindow() {
+        let (runner, clock) = makeRunner()
+        runner.start()
+        runner.addRep(runner.currentTarget?.reps ?? 0)
+
+        clock.advance(5)
+        runner.addRep()
+        clock.advance(5)
+        #expect(runner.shouldAutoCompleteSet(idleFor: 6) == false, "마지막 1회부터 다시 센다")
+        clock.advance(1)
+        #expect(runner.shouldAutoCompleteSet(idleFor: 6))
+    }
+
+    @Test("목표에 못 미치면 아무리 멈춰 있어도 끝내지 않는다")
+    func neverAutoCompletesBelowTarget() {
+        let (runner, clock) = makeRunner()
+        runner.start()
+        runner.addRep((runner.currentTarget?.reps ?? 0) - 1)
+        clock.advance(600)
+        #expect(runner.shouldAutoCompleteSet(idleFor: 6) == false)
+    }
+
+    /// AMRAP 은 잠깐 쉬었다 몇 개 더 하는 게 정상인 세트다. 끊으면 기록이 깎인다.
+    @Test("AMRAP 세트는 자동으로 끝내지 않는다")
+    func neverAutoCompletesAMRAP() {
+        let (runner, clock) = makeRunner()
+        runner.start()
+        // 마지막 세트까지 간다 — 사다리의 마지막은 AMRAP 이다.
+        while runner.currentSetIndex != runner.session.sets.count - 1 {
+            finishSet(runner)
+            runner.skipRest()
+        }
+        #expect(runner.isAMRAPSet, "마지막 세트는 AMRAP 이어야 한다")
+
+        runner.addRep((runner.currentTarget?.reps ?? 0) + 5)
+        clock.advance(600)
+        #expect(runner.shouldAutoCompleteSet(idleFor: 6) == false)
+    }
+
+    @Test("취소는 활동으로 치지 않는다 — 폰 앞에 있다는 뜻이다")
+    func undoDoesNotCountAsActivity() {
+        let (runner, clock) = makeRunner()
+        runner.start()
+        runner.addRep(runner.currentTarget?.reps ?? 0)
+        clock.advance(6)
+        runner.addRep(-1)
+        #expect(runner.hasMetCurrentTarget == false, "하나 줄었으니 목표 미달이다")
+        runner.addRep()
+        #expect(runner.shouldAutoCompleteSet(idleFor: 6) == false, "방금 센 1회부터 다시 센다")
+    }
+
+    @Test("휴식 뒤 다음 세트는 처음부터 기다린다")
+    func idleWindowResetsAcrossSets() {
+        let (runner, clock) = makeRunner()
+        runner.start()
+        finishSet(runner)
+        runner.skipRest()
+        clock.advance(600)
+        #expect(runner.shouldAutoCompleteSet(idleFor: 6) == false, "아직 한 개도 안 셌다")
+    }
+
     @Test("시작 전에는 아무 일도 일어나지 않는다")
     func idleBeforeStart() {
         let (runner, _) = makeRunner()

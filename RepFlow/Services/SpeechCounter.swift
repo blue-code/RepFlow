@@ -82,6 +82,12 @@ final class SpeechCounter {
         speak("시작")
     }
 
+    /// 목표를 채웠을 때 한 번. 폰까지 걸어와 "세트 완료"를 누를 필요가 없다는 안내다.
+    func announceAutoAdvance() {
+        guard isEnabled else { return }
+        speak("멈추면 자동으로 넘어갑니다")
+    }
+
     func announceSetComplete(setIndex: Int, total: Int) {
         guard isEnabled else { return }
         speak(setIndex + 1 >= total ? "마지막 세트 완료" : "\(setIndex + 1)세트 완료")

@@ -29,6 +29,12 @@ struct ProgramSessionView: View {
     @State private var sourceStatus: String?
     @State private var formNotes: [PoseGeometry.FormScore] = []
     @State private var lastSpokenRest = -1
+    /// 자동 완료 안내는 세트당 한 번이면 된다.
+    @State private var spokeAutoAdvanceHint = false
+
+    /// 목표를 채우고 이만큼 멈춰 있으면 세트를 자동으로 끝낸다 (카메라·근접센서 전용).
+    /// 마지막 1회 뒤에 숨을 고르는 시간이 있어야 해서 넉넉히 잡는다.
+    private let autoCompleteIdle: TimeInterval = 6
 
     private var mode: CountingMode { CountingMode(rawValue: modeRaw) ?? .manual }
 
@@ -65,6 +71,7 @@ struct ProgramSessionView: View {
         .onReceive(tick) { _ in
             runner.tick()
             speakRestCountdownIfNeeded()
+            autoCompleteSetIfIdle()
         }
         .onAppear {
             runner.start()
@@ -187,10 +194,14 @@ struct ProgramSessionView: View {
                 .font(.rfCaption)
                 .foregroundStyle(RFColor.fgMuted)
 
-            if runner.currentReps == 0 {
+            if runner.currentReps == 0 && !isHandsOff {
                 Text("화면 탭 = +1")
                     .font(.rfCaptionSm)
                     .foregroundStyle(RFColor.fgSubtle)
+            } else if isHandsOff, !runner.isAMRAPSet, runner.hasMetCurrentTarget {
+                Text("멈추면 자동으로 다음 세트")
+                    .font(.rfCaptionSm)
+                    .foregroundStyle(RFColor.success)
             }
         }
         .frame(maxWidth: .infinity, minHeight: 300)
@@ -367,6 +378,25 @@ struct ProgramSessionView: View {
             target: runner.currentTarget?.reps,
             isAMRAP: runner.isAMRAPSet
         )
+        announceAutoAdvanceHintIfNeeded()
+    }
+
+    /// 목표를 채운 순간 한 번만 — 그냥 멈추면 된다는 걸 모르면 폰까지 걸어온다.
+    private func announceAutoAdvanceHintIfNeeded() {
+        guard isHandsOff, !spokeAutoAdvanceHint else { return }
+        guard !runner.isAMRAPSet, runner.hasMetCurrentTarget else { return }
+        spokeAutoAdvanceHint = true
+        speech.announceAutoAdvance()
+    }
+
+    /// 폰이 손에 닿지 않는 모드. 여기서는 화면의 버튼이 없는 셈 친다.
+    private var isHandsOff: Bool { mode != .manual }
+
+    /// "세트 완료"도 누르러 갈 수 없다 — 목표를 채우고 멈추면 스스로 넘긴다.
+    /// AMRAP 제외는 `shouldAutoCompleteSet` 안에 있다.
+    private func autoCompleteSetIfIdle() {
+        guard isHandsOff, runner.shouldAutoCompleteSet(idleFor: autoCompleteIdle) else { return }
+        runner.completeSet()
     }
 
     // MARK: - 음성
@@ -386,6 +416,7 @@ struct ProgramSessionView: View {
             stopSource()
 
         case .working:
+            spokeAutoAdvanceHint = false
             if case .resting = old { startSource() }
 
         case .finished, .abandoned:

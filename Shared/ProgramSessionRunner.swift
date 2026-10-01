@@ -31,6 +31,8 @@ final class ProgramSessionRunner {
     private(set) var completedReps: [Int] = []
     /// 현재 세트에서 지금까지 센 횟수.
     private(set) var currentReps: Int = 0
+    /// 마지막으로 1회를 센 시각. 자동 세트 완료 판정에만 쓴다.
+    private(set) var lastRepAt: Date?
 
     @ObservationIgnored private let now: () -> Date
 
@@ -83,6 +85,18 @@ final class ProgramSessionRunner {
     /// 완료된 세트 + 진행 중인 세트의 누적.
     var totalReps: Int { completedReps.reduce(0, +) + currentReps }
 
+    /// **손이 폰에 닿지 않는 모드**(카메라·근접센서)에서는 "세트 완료"를 누를 수 없다.
+    /// 목표를 채우고 `idle` 만큼 멈춰 있으면 세트가 끝난 것으로 본다.
+    ///
+    /// AMRAP 은 제외한다 — 잠깐 쉬었다 몇 개 더 하는 게 정상인 세트라, 끊으면 기록이 깎인다.
+    /// 탭 모드도 제외다(판단은 호출부에서 한다): 그쪽은 손이 폰에 있으니 버튼이 멀쩡히 동작한다.
+    func shouldAutoCompleteSet(idleFor idle: TimeInterval) -> Bool {
+        guard case .working = phase else { return false }
+        guard !isAMRAPSet, hasMetCurrentTarget else { return false }
+        guard let lastRepAt else { return false }
+        return now().timeIntervalSince(lastRepAt) >= idle
+    }
+
     /// 끝난 세션의 결과. 진행 중이면 nil — 아직 판정할 게 없다.
     var result: SessionResult? {
         switch phase {
@@ -106,12 +120,16 @@ final class ProgramSessionRunner {
         guard case .ready = phase, !session.sets.isEmpty else { return }
         phase = .working(setIndex: 0)
         currentReps = 0
+        lastRepAt = nil
     }
 
     /// 카운트 소스(탭·크라운·카메라·근접센서·모션)가 부르는 단일 입구.
     func addRep(_ delta: Int = 1) {
         guard case .working = phase else { return }
         currentReps = max(0, currentReps + delta)
+        // 취소(-1)는 활동 시각으로 치지 않는다. 그건 사용자가 폰 앞에 있다는 뜻이고,
+        // 그 경우 자동 완료를 기다릴 이유가 없다.
+        if delta > 0 { lastRepAt = now() }
     }
 
     func undoRep() { addRep(-1) }
@@ -121,6 +139,7 @@ final class ProgramSessionRunner {
         guard case .working(let index) = phase else { return }
         completedReps.append(currentReps)
         currentReps = 0
+        lastRepAt = nil
 
         let isLastSet = index == session.sets.count - 1
         if isLastSet {
@@ -134,6 +153,7 @@ final class ProgramSessionRunner {
         guard case .resting(let afterSetIndex, _) = phase else { return }
         phase = .working(setIndex: afterSetIndex + 1)
         currentReps = 0
+        lastRepAt = nil
     }
 
     /// 휴식이 끝났으면 다음 세트로 넘긴다. 뷰가 타이머로 주기적으로 부른다.
