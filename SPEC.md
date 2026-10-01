@@ -11,7 +11,7 @@
 | 항목 | 값 |
 |---|---|
 | 마케팅 버전 | **1.0.4** (푸시업 전문화 · 자동 카운트 빌드) |
-| 빌드 번호 | **13** TestFlight 업로드됨 (1.0.4, 셀피 렌즈 · 근접센서 완화). 다음 업로드는 fastlane 이 자동 증가 |
+| 빌드 번호 | **14** TestFlight 업로드됨 (1.0.4, 상체 거치 · 자동 시작 · 자동 세트 완료). 다음 업로드는 fastlane 이 자동 증가 |
 | 입력 모델 | **탭 카운트 + 크라운 회전** (기본) / **모션 자동 감지** (실험적 opt-in) / 폰 **카메라·근접센서** (M5, 실기기 튜닝 전) |
 | 노출 종목 | **푸시업 단독** — `ExerciseKind.visibleCases` (§14.10). enum·기록·메시지는 5종 그대로 |
 | 알고리즘 버전 | RepDetectorAlgorithm v3 — 자동 감지 켰을 때만 동작 |
@@ -135,7 +135,7 @@ RepFlow/             — iOS 앱
                                            GTGSettings, CalibrationGuide, Paywall,
                                            Onboarding, QuickStartDetail, Root
   Resources/
-    Info.plist                           — CFBundleVersion=13
+    Info.plist                           — CFBundleVersion=14
     RepFlow.entitlements                 — HealthKit (key: com.apple.developer.healthkit)
     Assets.xcassets                      — AppIcon + 5개 운동 픽토그램
     {en,ko,ja,zh-Hans}.lproj             — 4언어 로컬라이제이션
@@ -158,7 +158,7 @@ RepFlowWatch/        — watchOS 앱
     GTGQuickView.swift                   — GTG 알림 응답 빠른 화면
     CalibrationView.swift                — 5회 측정 + 실시간 신호 bar
   Resources/
-    Info.plist                           — CFBundleVersion=13, WKBackgroundModes=[workout-processing]
+    Info.plist                           — CFBundleVersion=14, WKBackgroundModes=[workout-processing]
     RepFlowWatch.entitlements
     Assets.xcassets                      — AppIcon 단독
 
